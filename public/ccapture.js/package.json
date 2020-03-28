@@ -1,0 +1,52 @@
+{
+  "_from": "github:aceslowman/ccapture.js#npm-fix",
+  "_id": "ccapture.js@1.0.8",
+  "_inBundle": false,
+  "_integrity": "",
+  "_location": "/ccapture.js",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "git",
+    "raw": "aceslowman/ccapture.js#npm-fix",
+    "rawSpec": "aceslowman/ccapture.js#npm-fix",
+    "saveSpec": "github:aceslowman/ccapture.js#npm-fix",
+    "fetchSpec": null,
+    "gitCommittish": "npm-fix"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "github:aceslowman/ccapture.js#98b8046970c2bfbb25f749e732f196e15c3486fd",
+  "_spec": "aceslowman/ccapture.js#npm-fix",
+  "_where": "C:\\Users\\Henry Owen\\Documents\\react_course\\BoilerplateEmpty - Copy",
+  "author": {
+    "name": "Jaume Sanchez",
+    "email": "the.spite@gmail.com",
+    "url": "https://www.clicktorelease.com"
+  },
+  "bugs": {
+    "url": "https://github.com/spite/ccapture.js/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "A library to capture canvas-based animations at a fixed framerate",
+  "homepage": "https://github.com/spite/ccapture.js#readme",
+  "keywords": [
+    "capture",
+    "canvas",
+    "webgl",
+    "animation"
+  ],
+  "license": "MIT",
+  "main": "src/CCapture.js",
+  "name": "ccapture.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spite/ccapture.js.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.8"
+}

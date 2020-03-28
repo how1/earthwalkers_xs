@@ -1,0 +1,45 @@
+{
+  "name": "racing_game",
+  "version": "1.0.0",
+  "main": "index.html",
+  "author": "Henry Owen",
+  "license": "MIT",
+  "scripts": {
+    "serve": "live-server public/",
+    "build": "webpack",
+    "build:prod": "webpack -p --env production",
+    "start": "node server/server.js",
+    "dev-server": "webpack-dev-server",
+    "heroku-postbuild": "yarn run build:prod"
+  },
+  "engines": {
+    "node": "10.x"
+  },
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "cross-env": "^5.2.0",
+    "css-loader": "^1.0.0",
+    "dat.gui": "^0.7.2",
+    "dotenv": "^6.1.0",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "live-server": "^1.2.0",
+    "node-sass": "^4.9.2",
+    "normalize.css": "^8.0.0",
+    "package": "^1.0.1",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.22.0",
+    "three": "^0.97.0",
+    "three-orbit-controls": "^82.1.0",
+    "three-orbitcontrols-ts": "^0.1.2",
+    "webpack": "^4.22.0",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.9",
+    "webpack-merge": "^4.1.4",
+    "yarn": "^1.10.1"
+  }
+}
