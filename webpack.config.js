@@ -60,6 +60,24 @@ module.exports = (env) => {
 					"css-loader",
 					"sass-loader"
 				]
+			}, {
+			    test: /\.(jpe?g|gif|png|svg)$/i,
+			    use: {
+			      loader: 'url-loader',
+			      options: {
+			        limit: 10000
+			      }
+			    }
+			}, {
+				test: /\.txt$/,
+				use: {
+					loader: 'raw-loader'
+				}
+			}, {
+			    test: /\.mp3$/,
+			    use: {
+			    	loader: 'file-loader'
+			    }
 			}]
 		},
 		plugins: [

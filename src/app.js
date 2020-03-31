@@ -1,13 +1,13 @@
 import * as THREE from 'three';
-import { bodies, camera, renderer, scene, init } from "./physics/Initialize.js";
-import * as Physics from './physics/physics.js';
+import { bodies, camera, renderer, scene, init, load } from "./physics/Initialize.js";
+import * as GAMESTEP from "./physics/gameStep.js";
 import 'normalize.css';
 import './styles/styles.scss';
-init();
-
+load();
+GAMESTEP.makeHTMLScoreboard();
+// init();
 
 const update = () => {
-	Physics.updateCharacter();
 };
 
 const render = () => {
