@@ -1,13 +1,17 @@
 import * as THREE from 'three';
+import * as App from'../app.js';
+import {setThreeJSElements, setButtons} from './gameStep.js';
+
+export let scene = new THREE.Scene();
+export let camera = new THREE.PerspectiveCamera(75, (window.innerWidth-4) / (window.innerHeight-4), 0.1, 10001);
+export let renderer = new THREE.WebGLRenderer();
+setThreeJSElements();
+
 
 (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()
 
 let height = window.innerHeight-4;
 let width = window.innerWidth-4;
-
-export let scene = new THREE.Scene();
-export let camera = new THREE.PerspectiveCamera(75, (window.innerWidth-4) / (window.innerHeight-4), 0.1, 10001);
-export let renderer = new THREE.WebGLRenderer();
 
 renderer.setSize( width, height );
 document.body.appendChild( renderer.domElement );	
@@ -26,6 +30,8 @@ export let background;
 export let button;
 export let gameoverButton;
 export let restartButton;
+export let startButton;
+export let winButton;
 
 export let bgTex;
 let physicalTex;
@@ -34,8 +40,13 @@ let secondaryTex;
 let blankTex;
 export let maps = [];
 let buttonTex;
+let startTex;
 let gameoverButtonTex;
 let restartButtonTex;
+let winButtonTex;
+
+let bar = App.bar;
+// const setGameState = 
 
 export const setBackground = (tex) => {
 	background = maps[tex];
@@ -49,25 +60,46 @@ export const init = () => {
 	if (!background){
 		background = getBackgroundMesh( bgTex , 0, 0, geom, 1 );
 	}
- 	geom = new THREE.PlaneGeometry(500, 250, 32);
-    mat = new THREE.MeshBasicMaterial({map: buttonTex, side: THREE.DoubleSide});
  	if (!button){
+ 		geom = new THREE.PlaneGeometry(500, 250, 32);
+    	mat = new THREE.MeshBasicMaterial({map: buttonTex, side: THREE.DoubleSide});
  		button = new THREE.Mesh(geom, mat);
- 		button.position.y = -950;
-    	button.position.x = 1900;
+ 		button.material.transparent = true;
+ 		button.material.opacity = .7;
+ 		button.position.y = window.innerHeight/2- 100;
+    	button.position.x = 0;
     	button.position.z = 2;
  	}
  	if (!gameoverButton){
  		gameoverButton = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({map: gameoverButtonTex, side: THREE.FrontSide}));
- 		gameoverButton.position.y = -950;
-    	gameoverButton.position.x = 1900;
+ 		gameoverButton.material.transparent = true;
+ 		gameoverButton.material.opacity = .7;
+ 		gameoverButton.position.y = window.innerHeight/2 - 100;
+    	gameoverButton.position.x = 0;
     	gameoverButton.position.z = 2;
  	}
  	if (!restartButton){
  		restartButton = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({map: restartButtonTex, side: THREE.FrontSide}));
- 		restartButton.position.y = -600;
-    	restartButton.position.x = 1900;
+ 		restartButton.material.transparent = true;
+ 		restartButton.material.opacity = .7;
+ 		restartButton.position.y = window.innerHeight/2 - 450;
+    	restartButton.position.x = 0;
     	restartButton.position.z = 2;
+ 	}
+ 	if (!startButton){
+ 		startButton = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({map: startTex, side: THREE.FrontSide}));
+ 		startButton.material.transparent = true;
+ 		startButton.material.opacity = .7;
+ 		startButton.position.y = -950;
+    	startButton.position.x = 1900;
+    	startButton.position.z = 2;
+ 	}
+ 	 if (!winButton){
+ 		winButton = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({map: winButtonTex, side: THREE.FrontSide}));
+ 		winButton.material.transparent = false;
+ 		winButton.position.y = window.innerHeight/2 - 100;
+    	winButton.position.x = 0;
+    	winButton.position.z = 2;
  	}
 	scene.add(background);
 	// scene.add(backgroundSquare);
@@ -99,21 +131,27 @@ let listener;
 let smallCheerFile = require("../sfx/smallCheer.mp3");
 let mediumCheerFile = require("../sfx/mediumCheer.mp3");
 let xtraBigCheerFile = require("../sfx/xtraBigCheer.mp3");
-let musicFile = require("../sfx/music.mp3");
+let musicFile = require("../sfx/lofi.mp3");
+let clickFile = require("../sfx/click.mp3");
 
 export let smallCheer;
 export let mediumCheer;
 export let bigCheer;
 export let music;
+export let click;
 
 export const load = () => {
 
 	buttonTex = getTexture(require('../pics/button.png'));
 	gameoverButtonTex = getTexture(require('../pics/gameover.png'));
 	restartButtonTex = getTexture(require('../pics/restart.png'));
+	startTex = getTexture(require('../pics/start.png'));
+	winButtonTex = getTexture(require('../pics/win.png'));
 	buttonTex.generateMipmaps = true;
 	gameoverButtonTex.generateMipmaps = true;
 	restartButtonTex.generateMipmaps = true;
+	startTex.generateMipmaps= true;
+	winButtonTex.generateMipmaps = true;
 	bordersTex = getTexture(require('../pics/with_borders.png'));
 	blankTex = getTexture(require('../pics/World_map_blank_without_borders.png'));
 	physicalTex = getTexture(require('../pics/physical.png'));
@@ -135,7 +173,7 @@ export const load = () => {
         function(buffer){
             smallCheer.setBuffer( buffer );
             smallCheer.setLoop(false);
-            smallCheer.setVolume(0.25);
+            smallCheer.setVolume(0.4);
         }, function ( xhr ) {
       
     });
@@ -145,7 +183,7 @@ export const load = () => {
         function(buffer){
             mediumCheer.setBuffer( buffer );
             mediumCheer.setLoop(false);
-            mediumCheer.setVolume(0.5);
+            mediumCheer.setVolume(0.4);
         }, function ( xhr ) {
       
     });
@@ -155,10 +193,27 @@ export const load = () => {
         function(buffer){
             bigCheer.setBuffer( buffer );
             bigCheer.setLoop(false);
-            bigCheer.setVolume(0.6);
+            bigCheer.setVolume(0.4);
             init();
+            // scene.add(startButton);
+            setButtons();
         }, function ( xhr ) {
       
+    });
+    click = new THREE.Audio(listener);
+    let clickLoader = new THREE.AudioLoader();
+    clickLoader.load(clickFile, 
+        function(buffer){
+            click.setBuffer( buffer );
+            click.setLoop(false);
+            click.setVolume(0.4);
+            // setTimeout(init, 3000);
+            // scene.add(startButton);
+            setTimeout(App.resetTime, 2000);
+            setTimeout(App.setLoading, 2000);
+            setButtons();
+        }, function ( xhr ) {
+ 
     });
     music = new THREE.Audio(listener);
     let musicLoader = new THREE.AudioLoader();

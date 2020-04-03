@@ -57,7 +57,7 @@ let text2;
 
 export const getRandomLocation = () => {
 	// let index = Math.floor(Math.random() * locations.length);  
-	let index = Math.floor(Math.random() * 5000);  
+	let index = Math.floor(Math.random() * 1000);  
 	let loc = locations[index];
 	if (!text2){
 		text2 = document.createElement('div');
@@ -71,9 +71,9 @@ export const getRandomLocation = () => {
 		document.body.appendChild(text2);
 	}
 	if (loc.city == loc.secondary || loc.secondary.length == 0){
-		text2.innerHTML = loc.city + ", " + loc.country;
+		text2.innerHTML = "Target: " + loc.city + ", " + loc.country;
 	} else {
-		text2.innerHTML = loc.city + ", " + loc.secondary + ", " + loc.country;
+		text2.innerHTML = "Target: " + loc.city + ", " + loc.secondary + ", " + loc.country;
 	}
 	return loc;
 }
