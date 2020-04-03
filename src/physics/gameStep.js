@@ -316,9 +316,9 @@ let circle3;
 let radius = 0;
 
 export const updateCircleRadius = () => {
-    circle.scale.set(circle.scale.x + 50, circle.scale.y + 50, 1);
+    circle.scale.set(circle.scale.x + 40, circle.scale.y + 40, 1);
     scene.remove(circle3);
-    let geometry = new THREE.RingGeometry( circle.scale.x-4, circle.scale.x, Math.round(distances[0]) );
+    let geometry = new THREE.RingGeometry( circle.scale.x-7, circle.scale.x, Math.round(distances[0]) );
     var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.FrontSide } );
     circle3 = new THREE.Mesh( geometry, material );
     circle3.position.set(circle.position.x, circle.position.y, 1);
@@ -326,7 +326,7 @@ export const updateCircleRadius = () => {
     if (circle.scale.x >= distances[0]) {
         circle.scale.set(distances[0], distances[0], 1);
         scene.remove(circle3);
-        let geometry = new THREE.RingGeometry( circle.scale.x-10, circle.scale.x, Math.round(distances[0]) );
+        let geometry = new THREE.RingGeometry( circle.scale.x-7, circle.scale.x, Math.round(distances[0]) );
         var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.FrontSide } );
         circle3 = new THREE.Mesh( geometry, material );
         circle3.position.set(circle.position.x, circle.position.y, 1);
@@ -344,12 +344,12 @@ const makeCircle = (distance, position) => {
     circle = new THREE.Mesh( geometry, material );
     circle.position.set(tmp.x, tmp.y, 1);
     scene.add( circle );
-    geometry = new THREE.CircleGeometry( 9, 32 );
+    geometry = new THREE.CircleGeometry( 6, 8 );
     material = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.FrontSide } );
     var circle2 = new THREE.Mesh( geometry, material );
     circle2.position.set(tmp.x, tmp.y, 1);
     scene.add( circle2 );
-    geometry = new THREE.RingGeometry( 0, 4, Math.round(distance) );
+    geometry = new THREE.RingGeometry( 0, 2, Math.round(distance) );
     var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.FrontSide } );
     circle3 = new THREE.Mesh( geometry, material );
     circle3.position.set(tmp.x, tmp.y, 1);
