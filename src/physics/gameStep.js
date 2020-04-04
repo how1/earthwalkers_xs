@@ -212,6 +212,7 @@ let resultPointsText;
 let goalText;
 
 export const restyleHTML = (offset) => {
+    console.log("asdf");
     let left = offset;//window.innerHeight/57.5 + 'px';
     // else if (App.getGameState() == "after") left = window.innerWidth/2 + 'px';
     playerPointsText.style.position = 'absolute';

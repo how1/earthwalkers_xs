@@ -26,10 +26,11 @@ window.addEventListener('resize', () => {
 	renderer.setSize(width, height);
 	camera.aspect = width/height;
 	camera.updateProjectionMatrix();
-	restyleHTML(windowOffset);
-	App.restyleHTMLApp(windowOffset);
-	Loc.restyleHTML(windowOffset);
-	updateLoaderBar();
+	if (App.getGameState() != "loading" && App.getGameState() != "loading done"){
+		restyleHTML(windowOffset);
+		App.restyleHTMLApp(windowOffset);
+		Loc.restyleHTMLLoc(windowOffset);
+	} else updateLoaderBar();
 });
 
 camera.position.z = 1400;
