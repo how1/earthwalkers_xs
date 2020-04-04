@@ -175,7 +175,7 @@ export const updateLoaderBar = () => {
 	htmlLoadingText.style.color = "#0f0";
 	htmlLoadingText.style.top = window.innerHeight / 2 - window.innerHeight/6 + 'px'; //+40
 	htmlLoadingText.style.left = window.innerWidth/2.5 + 'px';
-	htmlLoadingText.innerHTML = "Loading " + (textureLoadingProgress/arrProgress.length * 100).toFixed(2);
+	htmlLoadingText.innerHTML = "Loading " + (textureLoadingProgress/arrProgress.length * 100).toFixed(2) + "%";
 }
 
 export const removeLoaderBar = () => {
