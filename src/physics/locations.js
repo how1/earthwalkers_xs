@@ -55,7 +55,19 @@ export const getLocations = () => {
 
 let text2;
 
+export const restyleHTML = (offset) => {
+	text2.style.position = 'absolute';
+	//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+	text2.style.width = 100;
+	text2.style.height = 100;
+	text2.style.backgroundColor = "blue";
+	text2.style.top = window.innerHeight / 2 + 'px';
+	text2.style.fontSize = window.innerHeight/40 + 'px';
+	text2.style.left = offset;//window.innerHeight/57.5 + 'px';
+}
+
 export const getRandomLocation = () => {
+	let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';
 	// let index = Math.floor(Math.random() * locations.length);  
 	let index = Math.floor(Math.random() * 1000);  
 	let loc = locations[index];
@@ -67,7 +79,8 @@ export const getRandomLocation = () => {
 		text2.style.height = 100;
 		text2.style.backgroundColor = "blue";
 		text2.style.top = window.innerHeight / 2 + 'px';
-		text2.style.left = 10 + 'px';
+		text2.style.fontSize = window.innerHeight/40 + 'px';
+	    text2.style.left = windowOffset;// window.innerHeight/57.5 + 'px';
 		document.body.appendChild(text2);
 	}
 	if (loc.city == loc.secondary || loc.secondary.length == 0){

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as App from'../app.js';
-import {setThreeJSElements, setButtons} from './gameStep.js';
+import {setThreeJSElements, setButtons, restyleHTML} from './gameStep.js';
+import * as Loc from './locations.js';
 
 export let scene = new THREE.Scene();
 export let camera = new THREE.PerspectiveCamera(75, (window.innerWidth-4) / (window.innerHeight-4), 0.1, 10001);
@@ -16,12 +17,18 @@ let width = window.innerWidth-4;
 renderer.setSize( width, height );
 document.body.appendChild( renderer.domElement );	
 
+let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';
+
 window.addEventListener('resize', () => {
+	windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';
 	height = window.innerHeight-4;
 	width = window.innerWidth-4;
 	renderer.setSize(width, height);
 	camera.aspect = width/height;
 	camera.updateProjectionMatrix();
+	restyleHTML(windowOffset);
+	App.restyleHTMLApp(windowOffset);
+	Loc.restyleHTML(windowOffset);
 });
 
 camera.position.z = 1400;
@@ -194,9 +201,6 @@ export const load = () => {
             bigCheer.setBuffer( buffer );
             bigCheer.setLoop(false);
             bigCheer.setVolume(0.4);
-            init();
-            // scene.add(startButton);
-            setButtons();
         }, function ( xhr ) {
       
     });
@@ -223,8 +227,10 @@ export const load = () => {
             music.setLoop(true);
             music.setVolume(0.5);
             music.play();
+            init();
+            setButtons();
         }, function ( xhr ) {
-      		console.log(xhr);
+      		// console.log(xhr);
     });
 }
 

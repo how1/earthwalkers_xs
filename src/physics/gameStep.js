@@ -192,10 +192,64 @@ let questionsText;
 let levelText;
 let resultText;
 let resultPointsText;
+let goalText;
+
+export const restyleHTML = (offset) => {
+    let left = offset;//window.innerHeight/57.5 + 'px';
+    // else if (App.getGameState() == "after") left = window.innerWidth/2 + 'px';
+    playerPointsText.style.position = 'absolute';
+    playerPointsText.style.width = 100;
+    playerPointsText.style.height = 100;
+    playerPointsText.style.backgroundColor = "green";
+    playerPointsText.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px';
+    playerPointsText.style.fontSize = window.innerHeight/40 + 'px';
+    playerPointsText.style.left = left;
+    questionsText.style.position = 'absolute';
+    questionsText.style.width = 100;
+    questionsText.style.height = 100;
+    questionsText.style.backgroundColor = "green";
+    questionsText.style.top = window.innerHeight / 2 - window.innerHeight / 14 + 'px';
+    questionsText.style.left = left;
+    questionsText.style.fontSize = window.innerHeight/40 + 'px';
+    levelText.style.position = 'absolute';
+    levelText.style.width = 100;
+    levelText.style.height = 100;
+    levelText.style.backgroundColor = "green";
+    levelText.style.top = window.innerHeight / 2 - window.innerHeight / 9.25 + 'px';
+    levelText.style.left = left;
+    levelText.style.fontSize = window.innerHeight/40 + 'px';
+    if (!resultText)
+        resultText = document.createElement('div');
+    resultText.style.position = 'absolute';
+    resultText.style.width = 100;
+    resultText.style.height = 100;
+    resultText.style.backgroundColor = "yellow";
+    resultText.style.top = window.innerHeight / 2 + window.innerHeight / 28 + 'px';
+    resultText.style.left = window.innerWidth / 2 + 'px';
+    resultText.style.fontSize = window.innerHeight/40 + 'px';
+    if (!goalText)
+        goalText = document.createElement('div');
+    goalText.style.position = 'absolute';
+    goalText.style.backgroundColor = "green";
+    goalText.style.top = window.innerHeight / 2 + 'px';
+    goalText.style.left = window.innerWidth / 2 + 'px';
+    goalText.style.fontSize = window.innerHeight/40 + 'px';
+    goalText.style.top = window.innerHeight / 2 + window.innerHeight / 9.25 + 'px';
+    if (!resultPointsText)
+        resultPointsText = document.createElement('div');
+    resultPointsText.style.position = 'absolute';
+    resultPointsText.style.width = 100;
+    resultPointsText.style.height = 100;
+    resultPointsText.style.backgroundColor = "yellow";
+    resultPointsText.style.top = window.innerHeight / 2 + window.innerHeight / 14 + 'px';
+    resultPointsText.style.left = window.innerWidth / 2 + 'px';
+    resultPointsText.style.fontSize = window.innerHeight/40 + 'px';
+}
 
 export const makeHTMLScoreboard = (distance) => {
+    let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';
     let left;
-    if (App.getGameState() == "during") left = 10 + 'px';
+    if (App.getGameState() == "during") left = windowOffset; //window.innerHeight/57.5 + 'px';
     else if (App.getGameState() == "after") left = innerWidth/2 + 'px';
     if (!playerPointsText){
         playerPointsText = document.createElement('div');
@@ -204,7 +258,8 @@ export const makeHTMLScoreboard = (distance) => {
         playerPointsText.style.width = 100;
         playerPointsText.style.height = 100;
         playerPointsText.style.backgroundColor = "green";
-        playerPointsText.style.top = window.innerHeight / 2 - 20 + 'px';
+        playerPointsText.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px';
+        playerPointsText.style.fontSize = window.innerHeight/40 + 'px';
         playerPointsText.style.left = left;
         document.body.appendChild(playerPointsText);
     }
@@ -217,8 +272,9 @@ export const makeHTMLScoreboard = (distance) => {
         questionsText.style.width = 100;
         questionsText.style.height = 100;
         questionsText.style.backgroundColor = "green";
-        questionsText.style.top = window.innerHeight / 2 - 40 + 'px';
+        questionsText.style.top = window.innerHeight / 2 - window.innerHeight / 14 + 'px';
         questionsText.style.left = left;
+        questionsText.style.fontSize = window.innerHeight/40 + 'px';
         document.body.appendChild(questionsText);
     }
     questionsText.innerHTML = "Question: " + currentQuestion + "/" + questions[level];
@@ -230,8 +286,9 @@ export const makeHTMLScoreboard = (distance) => {
         levelText.style.width = 100;
         levelText.style.height = 100;
         levelText.style.backgroundColor = "green";
-        levelText.style.top = window.innerHeight / 2 - 60 + 'px';
+        levelText.style.top = window.innerHeight / 2 - window.innerHeight / 9.25 + 'px';
         levelText.style.left = left;
+        levelText.style.fontSize = window.innerHeight/40 + 'px';
         document.body.appendChild(levelText);
     }
     levelText.innerHTML = "Level: " + (level + 1);
@@ -244,12 +301,13 @@ export const makeHTMLScoreboard = (distance) => {
             resultText.style.width = 100;
             resultText.style.height = 100;
             resultText.style.backgroundColor = "yellow";
-            resultText.style.top = window.innerHeight / 2 + 20 + 'px';
+            resultText.style.top = window.innerHeight / 2 + window.innerHeight / 28 + 'px';
             resultText.style.left = left;
+            resultText.style.fontSize = window.innerHeight/40 + 'px';
             document.body.appendChild(resultText);
         }
         resultText.style.display = "inline-block";
-        if (distanceFromPoint == 1000000) resultText.innerHTML = "Result: N/A mi.";
+        if (distanceFromPoint > 100000) resultText.innerHTML = "Result: N/A mi.";
         else resultText.innerHTML = "Result: " + distanceFromPoint + " mi.";
     } else if (resultText) resultText.style.display = "none";
     
@@ -261,13 +319,29 @@ export const makeHTMLScoreboard = (distance) => {
             resultPointsText.style.width = 100;
             resultPointsText.style.height = 100;
             resultPointsText.style.backgroundColor = "yellow";
-            resultPointsText.style.top = window.innerHeight / 2 + 40 + 'px';
+            resultPointsText.style.top = window.innerHeight / 2 + window.innerHeight / 14 + 'px';
             resultPointsText.style.left = left;
+            resultPointsText.style.fontSize = window.innerHeight/40 + 'px';
             document.body.appendChild(resultPointsText);
         }
         resultPointsText.style.display = "inline-block";
         resultPointsText.innerHTML = "Points: " + resultPoints;
     } else if (resultPointsText) resultPointsText.style.display = "none";
+
+    if (App.getGameState() == 'after'){
+        if (!goalText){
+            goalText = document.createElement('div');
+            goalText.style.position = 'absolute';
+            goalText.style.backgroundColor = "green";
+            goalText.style.top = window.innerHeight / 2 + 'px';
+            goalText.style.left = innerWidth / 2 + 'px';
+            goalText.style.fontSize = window.innerHeight/40 + 'px';
+            goalText.style.top = window.innerHeight / 2 + window.innerHeight / 9.25 + 'px';
+            document.body.appendChild(goalText);
+        }
+        goalText.style.display = "inline-block";
+        goalText.innerHTML = "Progress: " + playerPoints + "/" + levels[level] + ", " + currentQuestion + "/" + questions[level] + " questions";
+    } else if (goalText) goalText.style.display = "none";
 }
 
 const calculateScore = (lat1, lon1, lat2, lon2) => {
