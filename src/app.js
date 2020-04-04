@@ -82,6 +82,7 @@ const update = () => {
 	if (getGameState() == 'loading') {
 		updateLoaderBar();
 		if (textureLoadingProgress >= 16) {
+			console.log(textureLoadingProgress);
 			removeLoaderBar();
 			setGameState('loading done');
 			init();
