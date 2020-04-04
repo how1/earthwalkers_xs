@@ -1,10 +1,10 @@
 import * as THREE from 'three';
-import { init, load, scene, renderer, camera} from "./physics/Initialize.js";
-import {makeHTMLScoreboard, showScore, updateCircleRadius} from "./physics/gameStep.js";
+import { init, load, scene, renderer, camera, updateLoaderBar, textureLoadingProgress, startButton} from "./physics/Initialize.js";
+import {makeHTMLScoreboard, showScore, updateCircleRadius, setButtons} from "./physics/gameStep.js";
 import 'normalize.css';
 import './styles/styles.scss';
 
-let gameState = "during";
+let gameState = "loading";
 export const getGameState = () => {
 	return gameState;
 }
@@ -14,7 +14,6 @@ export const setGameState = (s) => {
 }
 
 load();
-makeHTMLScoreboard();
 
 // let renderer = Initialize.renderer;
 // let scene = Initialize.scene;
@@ -80,7 +79,17 @@ const update = () => {
 	//rect.style.width
 	//rect.style.height
 	//rect.style.bgcolor
-	if (!loading){
+	if (getGameState() == 'loading') {
+		console.log(getGameState());
+		updateLoaderBar();
+		if (textureLoadingProgress >= 15) {
+			setGameState('loading done');
+			init();
+			setButtons();
+			scene.add(startButton);
+		}
+	}
+	if (gameState != "loading" && gameState != "loading done"){
 		let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';  
 		// console.log(r, g);
 		// bar.scale.set(timeRemaining, 1, 1);

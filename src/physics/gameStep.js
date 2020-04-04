@@ -64,19 +64,23 @@ let pos = new THREE.Vector3(0,0,0);
 
 
 document.addEventListener("mouseup", function(event){
-    Initialize.click.play();
     getMouseCoords(event);
     getMousePos();
-    if (App.getGameState() == "during")
-        getMapCoords();
-    else if (App.getGameState() == "after"){
-        getButtonCoords(button);
+    if (App.getGameState() == "loading done"){
+        Initialize.click.play();
+        getStartButtonCoords();
     }
-    else if (App.getGameState() == "game over")
+    else if (App.getGameState() == "during"){
+        Initialize.click.play()
+        getMapCoords();
+    }
+    else if (App.getGameState() == "after"){
+        Initialize.click.play();
+        getButtonCoords();
+    }
+    else if (App.getGameState() == "game over"){
+        Initialize.click.play();
         getRestartCoords();
-    else if (App.getGameState() == "before"){
-        makeHTMLScoreboard();
-        getButtonCoords(startButton);
     }
 });
 
@@ -106,14 +110,27 @@ const getMapCoords = () => {
     }
 }
 
-const getButtonCoords = (b) => {
-    if (checkMapCollision(pos, b)){
+const getButtonCoords = () => {
+    if (checkMapCollision(pos, button)){
         currentQuestion++;
         clearScreen();
         App.setGameState("during");
         makeHTMLScoreboard();
         // scene.add(App.bar);
         currentCity = Locations.getRandomLocation();
+        // myTimer = window.setTimeout(showScore, time);
+        App.resetTime();
+    }
+}
+
+const getStartButtonCoords = () => {
+    if (checkMapCollision(pos, startButton)){
+        currentQuestion++;
+        clearScreen();
+        App.setGameState("during");
+        // scene.add(App.bar);
+        currentCity = Locations.getRandomLocation();
+        makeHTMLScoreboard();
         // myTimer = window.setTimeout(showScore, time);
         App.resetTime();
     }
@@ -459,7 +476,7 @@ let portland = Locations.newLocation("Portland", "Maine", "United States", 43.65
 Locations.locations.push(portland);
 let locations = Locations.locations;
 Locations.getLocations();
-let currentCity = Locations.getRandomLocation();
+export let currentCity;// = Locations.getRandomLocation();
 
 const getMouseCoords = (event) => {
     mouse.clientX = event.clientX;

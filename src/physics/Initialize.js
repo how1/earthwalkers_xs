@@ -97,8 +97,8 @@ export const init = () => {
  		startButton = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({map: startTex, side: THREE.FrontSide}));
  		startButton.material.transparent = true;
  		startButton.material.opacity = .7;
- 		startButton.position.y = -950;
-    	startButton.position.x = 1900;
+ 		startButton.position.y = window.innerHeight/2 - 100;
+    	startButton.position.x = 0;
     	startButton.position.z = 2;
  	}
  	 if (!winButton){
@@ -112,7 +112,7 @@ export const init = () => {
 	// scene.add(backgroundSquare);
 }
 
-const getBackgroundMesh = (tex, zPos, yPos, geom, repeat) => {
+const getBackgroundMesh = (tex, zPos, yPos, geom, repeat, index) => {
 	tex.wrapS = THREE.RepeatWrapping;
 	tex.repeat.set( repeat , 1 );
 	let mat = new THREE.MeshBasicMaterial({map: tex, side: THREE.FrontSide });
@@ -128,8 +128,13 @@ const getBackgroundMesh = (tex, zPos, yPos, geom, repeat) => {
 	return mesh;
 }
 
-const getTexture = (path, func) => {
-	let tex = new THREE.TextureLoader().load(path.toString());
+export let textureLoadingProgress = 0;
+let arrProgress = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+const getTexture = (path, index) => {
+	let tex = new THREE.TextureLoader().load(path.toString(), function(){
+		arrProgress[index] = 1;
+	});
 	tex.generateMipmaps = false;
 	return tex;
 }
@@ -147,30 +152,63 @@ export let bigCheer;
 export let music;
 export let click;
 
-export const load = () => {
+let htmlLoadingBar;
+let htmlLoadingText;
 
-	buttonTex = getTexture(require('../pics/button.png'));
-	gameoverButtonTex = getTexture(require('../pics/gameover.png'));
-	restartButtonTex = getTexture(require('../pics/restart.png'));
-	startTex = getTexture(require('../pics/start.png'));
-	winButtonTex = getTexture(require('../pics/win.png'));
+export const updateLoaderBar = () => {
+	let sum = 0
+	for (var i = arrProgress.length - 1; i >= 0; i--) {
+		sum += arrProgress[i];
+	}
+	textureLoadingProgress = sum;
+	console.log(textureLoadingProgress/arrProgress.length);
+	htmlLoadingBar.style.width = 125 + 'px';
+	htmlLoadingBar.style.height = window.innerHeight/20 + 'px';
+	htmlLoadingBar.style.backgroundColor = "#0f0";
+	htmlLoadingBar.style.top = window.innerHeight / 2 + window.innerHeight/14 + 'px'; //+40
+	htmlLoadingBar.style.width = (window.innerHeight/2) * (textureLoadingProgress/arrProgress.length) + 'px';
+	htmlLoadingBar.style.left = window.innerWidth/2.5 + 'px';
+}
+
+export const load = () => {
+	htmlLoadingBar = document.createElement('div');
+	htmlLoadingBar.id = 'loading-bar';
+	htmlLoadingBar.style.position = 'absolute';
+	htmlLoadingText = document.createElement('div');
+	htmlLoadingText.style.position = 'absolute';
+	htmlLoadingText.innerHTML = 'Loading';
+	htmlLoadingBar.style.fontSize = window.innerHeight/40 + 'px';
+	htmlLoadingText.style.width = 125 + 'px';
+	// htmlloadingtext.style.height = window.innerHeight/20 + 'px';
+	htmlLoadingText.style.color = "#0f0";
+	htmlLoadingText.style.top = window.innerHeight / 2 + 'px'; //+40
+	// htmlloadingtext.style.width = (window.innerHeight/2) * (textureLoadingProgress/arrProgress.length) + 'px';
+	htmlLoadingText.style.left = window.innerWidth/2.5 + 'px';
+	document.body.appendChild(htmlLoadingBar);
+	document.body.appendChild(htmlLoadingText);
+	updateLoaderBar();
+
+	buttonTex = getTexture(require('../pics/button.png'), 0);
+	gameoverButtonTex = getTexture(require('../pics/gameover.png'), 1);
+	restartButtonTex = getTexture(require('../pics/restart.png'), 2);
+	startTex = getTexture(require('../pics/start.png'), 3);
+	winButtonTex = getTexture(require('../pics/win.png'), 4);
 	buttonTex.generateMipmaps = true;
 	gameoverButtonTex.generateMipmaps = true;
 	restartButtonTex.generateMipmaps = true;
 	startTex.generateMipmaps= true;
 	winButtonTex.generateMipmaps = true;
-	bordersTex = getTexture(require('../pics/with_borders.png'));
-	blankTex = getTexture(require('../pics/World_map_blank_without_borders.png'));
-	physicalTex = getTexture(require('../pics/physical.png'));
-	secondaryTex = getTexture(require('../pics/secondary.png'));
+	bordersTex = getTexture(require('../pics/with_borders.png'), 5);
+	blankTex = getTexture(require('../pics/World_map_blank_without_borders.png'), 6);
+	physicalTex = getTexture(require('../pics/physical.png'), 7);
+	secondaryTex = getTexture(require('../pics/secondary.png'), 8);
 	let geom = new THREE.PlaneGeometry(4378, 2435,32);
 	maps.push(getBackgroundMesh(secondaryTex , 0, 0, geom, 1));
 	maps.push(getBackgroundMesh(bordersTex , 0, 0, geom, 1));
 	maps.push(getBackgroundMesh(physicalTex , 0, 0, geom, 1));
 	maps.push(getBackgroundMesh(blankTex , 0, 0, geom, 1));
 	bgTex = new THREE.TextureLoader().load(require('../pics/secondary.png'), function () {
-		console.log("done");
-		// init();
+		arrProgress[9] = 1;
 	});
 	listener = new THREE.AudioListener();
     camera.add( listener );
@@ -182,7 +220,7 @@ export const load = () => {
             smallCheer.setLoop(false);
             smallCheer.setVolume(0.4);
         }, function ( xhr ) {
-      
+      		arrProgress[10] = xhr.loaded / xhr.total;
     });
     mediumCheer = new THREE.Audio(listener);
     let medCheerLoader = new THREE.AudioLoader();
@@ -192,7 +230,7 @@ export const load = () => {
             mediumCheer.setLoop(false);
             mediumCheer.setVolume(0.4);
         }, function ( xhr ) {
-      
+      		arrProgress[11] = xhr.loaded / xhr.total;
     });
     bigCheer = new THREE.Audio(listener);
     let bigCheerLoader = new THREE.AudioLoader();
@@ -202,7 +240,7 @@ export const load = () => {
             bigCheer.setLoop(false);
             bigCheer.setVolume(0.4);
         }, function ( xhr ) {
-      
+      		arrProgress[12] = xhr.loaded / xhr.total;
     });
     click = new THREE.Audio(listener);
     let clickLoader = new THREE.AudioLoader();
@@ -211,13 +249,8 @@ export const load = () => {
             click.setBuffer( buffer );
             click.setLoop(false);
             click.setVolume(0.4);
-            // setTimeout(init, 3000);
-            // scene.add(startButton);
-            setTimeout(App.resetTime, 2000);
-            setTimeout(App.setLoading, 2000);
-            setButtons();
         }, function ( xhr ) {
- 
+ 			arrProgress[13] = xhr.loaded / xhr.total;
     });
     music = new THREE.Audio(listener);
     let musicLoader = new THREE.AudioLoader();
@@ -227,10 +260,8 @@ export const load = () => {
             music.setLoop(true);
             music.setVolume(0.5);
             music.play();
-            init();
-            setButtons();
         }, function ( xhr ) {
-      		// console.log(xhr);
+      		arrProgress[14] = xhr.loaded / xhr.total;
     });
 }
 
