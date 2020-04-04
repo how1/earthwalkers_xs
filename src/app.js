@@ -81,8 +81,8 @@ const update = () => {
 	//rect.style.bgcolor
 	if (getGameState() == 'loading') {
 		updateLoaderBar();
+		console.log(textureLoadingProgress);
 		if (textureLoadingProgress >= 16) {
-			console.log(textureLoadingProgress);
 			removeLoaderBar();
 			setGameState('loading done');
 			init();
