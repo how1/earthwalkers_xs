@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { init, load, scene, renderer, camera, updateLoaderBar, textureLoadingProgress, startButton} from "./physics/Initialize.js";
+import { init, load, scene, renderer, camera, updateLoaderBar, textureLoadingProgress, startButton, removeLoaderBar} from "./physics/Initialize.js";
 import {makeHTMLScoreboard, showScore, updateCircleRadius, setButtons} from "./physics/gameStep.js";
 import 'normalize.css';
 import './styles/styles.scss';
@@ -80,9 +80,9 @@ const update = () => {
 	//rect.style.height
 	//rect.style.bgcolor
 	if (getGameState() == 'loading') {
-		console.log(getGameState());
 		updateLoaderBar();
 		if (textureLoadingProgress >= 15) {
+			removeLoaderBar();
 			setGameState('loading done');
 			init();
 			setButtons();

@@ -29,6 +29,7 @@ window.addEventListener('resize', () => {
 	restyleHTML(windowOffset);
 	App.restyleHTMLApp(windowOffset);
 	Loc.restyleHTML(windowOffset);
+	updateLoaderBar();
 });
 
 camera.position.z = 1400;
@@ -161,13 +162,21 @@ export const updateLoaderBar = () => {
 		sum += arrProgress[i];
 	}
 	textureLoadingProgress = sum;
-	console.log(textureLoadingProgress/arrProgress.length);
 	htmlLoadingBar.style.width = 125 + 'px';
 	htmlLoadingBar.style.height = window.innerHeight/20 + 'px';
 	htmlLoadingBar.style.backgroundColor = "#0f0";
-	htmlLoadingBar.style.top = window.innerHeight / 2 + window.innerHeight/14 + 'px'; //+40
+	htmlLoadingBar.style.top = window.innerHeight / 2 - window.innerHeight/9 + 'px'; //+40
 	htmlLoadingBar.style.width = (window.innerHeight/2) * (textureLoadingProgress/arrProgress.length) + 'px';
 	htmlLoadingBar.style.left = window.innerWidth/2.5 + 'px';
+	htmlLoadingText.style.fontSize = window.innerHeight/40 + 'px';
+	htmlLoadingText.style.color = "#0f0";
+	htmlLoadingText.style.top = window.innerHeight / 2 - window.innerHeight/6 + 'px'; //+40
+	htmlLoadingText.style.left = window.innerWidth/2.5 + 'px';
+}
+
+export const removeLoaderBar = () => {
+	htmlLoadingBar.style.display = 'none';
+	htmlLoadingText.style.display = 'none';
 }
 
 export const load = () => {
@@ -177,12 +186,9 @@ export const load = () => {
 	htmlLoadingText = document.createElement('div');
 	htmlLoadingText.style.position = 'absolute';
 	htmlLoadingText.innerHTML = 'Loading';
-	htmlLoadingBar.style.fontSize = window.innerHeight/40 + 'px';
-	htmlLoadingText.style.width = 125 + 'px';
-	// htmlloadingtext.style.height = window.innerHeight/20 + 'px';
+	htmlLoadingText.style.fontSize = window.innerHeight/40 + 'px';
 	htmlLoadingText.style.color = "#0f0";
-	htmlLoadingText.style.top = window.innerHeight / 2 + 'px'; //+40
-	// htmlloadingtext.style.width = (window.innerHeight/2) * (textureLoadingProgress/arrProgress.length) + 'px';
+	htmlLoadingText.style.top = window.innerHeight / 2 - window.innerHeight/6 + 'px'; //+40
 	htmlLoadingText.style.left = window.innerWidth/2.5 + 'px';
 	document.body.appendChild(htmlLoadingBar);
 	document.body.appendChild(htmlLoadingText);
