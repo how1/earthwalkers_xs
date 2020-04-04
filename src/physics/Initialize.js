@@ -41,12 +41,14 @@ export let gameoverButton;
 export let restartButton;
 export let startButton;
 export let winButton;
+export let title;
 
 export let bgTex;
 let physicalTex;
 let bordersTex;
 let secondaryTex;
 let blankTex;
+let titleTex;
 export let maps = [];
 let buttonTex;
 let startTex;
@@ -131,7 +133,7 @@ const getBackgroundMesh = (tex, zPos, yPos, geom, repeat, index) => {
 }
 
 export let textureLoadingProgress = 0;
-let arrProgress = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+let arrProgress = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
 const getTexture = (path, index) => {
 	let tex = new THREE.TextureLoader().load(path.toString(), function(){
@@ -195,6 +197,10 @@ export const load = () => {
 	document.body.appendChild(htmlLoadingText);
 	updateLoaderBar();
 
+	titleTex = getTexture(require('../pics/title.png'), 15);
+	titleTex.generateMipmaps = true;
+	titleTex.anisotropy = renderer.getMaxAnisotropy();
+	title = new THREE.Mesh(new THREE.PlaneGeometry(2000,400,32), new THREE.MeshBasicMaterial({map:titleTex, side:THREE.FrontSide}));
 	buttonTex = getTexture(require('../pics/button.png'), 0);
 	gameoverButtonTex = getTexture(require('../pics/gameover.png'), 1);
 	restartButtonTex = getTexture(require('../pics/restart.png'), 2);

@@ -55,7 +55,7 @@ export const getLocations = () => {
 
 let text2;
 
-export const restyleHTMLloc = (offset) => {
+export const restyleHTMLLoc = (offset) => {
 	text2.style.position = 'absolute';
 	//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
 	text2.style.width = 100;

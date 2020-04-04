@@ -125,13 +125,10 @@ const getButtonCoords = () => {
 
 const getStartButtonCoords = () => {
     if (checkMapCollision(pos, startButton)){
-        currentQuestion++;
         clearScreen();
         App.setGameState("during");
-        // scene.add(App.bar);
         currentCity = Locations.getRandomLocation();
         makeHTMLScoreboard();
-        // myTimer = window.setTimeout(showScore, time);
         App.resetTime();
     }
 }
@@ -147,9 +144,7 @@ const getRestartCoords = () => {
         currentQuestion = 1;
         makeHTMLScoreboard();
         App.resetTime();
-        // questions = 5;
         currentCity = Locations.getRandomLocation();
-        // myTimer = window.setTimeout(showScore, time);
     }
 }
 
@@ -160,13 +155,13 @@ export const showScore = (distance, distanceMi) => {
     if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
     if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
     if (Initialize.bigCheer.isPlaying) Initialize.bigCheer.stop();
-    if (distance < 15){
+    if (distance < 10){
         if (Initialize.bigCheer.isPlaying) Initialize.bigCheer.stop();
         Initialize.bigCheer.play();
-    } else if (distance < 75) {
+    } else if (distance < 30) {
         if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
         Initialize.mediumCheer.play();
-    } else if (distance < 200) {
+    } else if (distance < 75) {
         if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
         Initialize.smallCheer.play();
     }
@@ -179,6 +174,7 @@ export const showScore = (distance, distanceMi) => {
     resultPoints = Math.round(points * x);
     if (resultPoints < 0) resultPoints = 0;
     playerPoints += resultPoints;
+    App.setGameState("after");// = "after";
     makeHTMLScoreboard();
     if (currentQuestion == questions[level]) {
         if (levels[level] <= playerPoints){
@@ -198,21 +194,73 @@ export const showScore = (distance, distanceMi) => {
             return;
         }
     }
-    App.setGameState("after");// = "after";
-    makeHTMLScoreboard();
     if (!button) button = Initialize.button;
     scene.add(button);
 }
 
-let playerPointsText;
-let questionsText;
-let levelText;
+let left = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';
+let playerPointsText = document.createElement('div');
+playerPointsText.style.position = 'absolute';
+playerPointsText.style.display = 'none';
+playerPointsText.style.width = 100;
+playerPointsText.style.height = 100;
+playerPointsText.style.backgroundColor = "green";
+playerPointsText.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px';
+playerPointsText.style.fontSize = window.innerHeight/40 + 'px';
+playerPointsText.style.left = left;
+document.body.appendChild(playerPointsText);
+let questionsText = document.createElement('div');
+questionsText.style.position = 'absolute';
+questionsText.style.display = 'none';
+questionsText.style.width = 100;
+questionsText.style.height = 100;
+questionsText.style.backgroundColor = "green";
+questionsText.style.top = window.innerHeight / 2 - window.innerHeight / 14 + 'px';
+questionsText.style.left = left;
+questionsText.style.fontSize = window.innerHeight/40 + 'px';
+document.body.appendChild(questionsText);
+let levelText = document.createElement('div');
+levelText.style.position = 'absolute';
+levelText.style.position = 'none';
+levelText.style.width = 100;
+levelText.style.height = 100;
+levelText.style.backgroundColor = "green";
+levelText.style.top = window.innerHeight / 2 - window.innerHeight / 9.25 + 'px';
+levelText.style.left = left;
+levelText.style.fontSize = window.innerHeight/40 + 'px';
+document.body.appendChild(levelText);
 let resultText;
-let resultPointsText;
-let goalText;
+resultText = document.createElement('div');
+resultText.style.position = 'absolute';
+resultText.style.display = 'none';
+resultText.style.width = 100;
+resultText.style.height = 100;
+resultText.style.backgroundColor = "yellow";
+resultText.style.top = window.innerHeight / 2 + window.innerHeight / 28 + 'px';
+resultText.style.left = innerWidth / 2 + 'px';
+resultText.style.fontSize = window.innerHeight/40 + 'px';
+document.body.appendChild(resultText);
+let resultPointsText = document.createElement('div');
+resultPointsText.style.position = 'absolute';
+resultPointsText.style.display = 'none';
+resultPointsText.style.width = 100;
+resultPointsText.style.height = 100;
+resultPointsText.style.backgroundColor = "yellow";
+resultPointsText.style.top = window.innerHeight / 2 + window.innerHeight / 14 + 'px';
+resultPointsText.style.left = innerWidth / 2 + 'px';
+resultPointsText.style.fontSize = window.innerHeight/40 + 'px';
+document.body.appendChild(resultPointsText);
+let goalText = document.createElement('div');
+goalText.style.position = 'absolute';
+goalText.style.display = 'none';
+goalText.style.backgroundColor = "green";
+goalText.style.top = window.innerHeight / 2 + 'px';
+goalText.style.left = innerWidth / 2 + 'px';
+goalText.style.fontSize = window.innerHeight/40 + 'px';
+goalText.style.top = window.innerHeight / 2 + window.innerHeight / 9.25 + 'px';
+document.body.appendChild(goalText);
 
 export const restyleHTML = (offset) => {
-    console.log("asdf");
     let left = offset;//window.innerHeight/57.5 + 'px';
     // else if (App.getGameState() == "after") left = window.innerWidth/2 + 'px';
     playerPointsText.style.position = 'absolute';
@@ -269,94 +317,33 @@ export const makeHTMLScoreboard = (distance) => {
     let left;
     if (App.getGameState() == "during") left = windowOffset; //window.innerHeight/57.5 + 'px';
     else if (App.getGameState() == "after") left = innerWidth/2 + 'px';
-    if (!playerPointsText){
-        playerPointsText = document.createElement('div');
-        playerPointsText.style.position = 'absolute';
-        //playerPointsText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-        playerPointsText.style.width = 100;
-        playerPointsText.style.height = 100;
-        playerPointsText.style.backgroundColor = "green";
-        playerPointsText.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px';
-        playerPointsText.style.fontSize = window.innerHeight/40 + 'px';
-        playerPointsText.style.left = left;
-        document.body.appendChild(playerPointsText);
+    if (playerPointsText.style.display == 'none'){
+        playerPointsText.style.display = 'inline-block';
     }
     playerPointsText.innerHTML = "Points: " + playerPoints + "/" + levels[level];
 
-    if (!questionsText){
-        questionsText = document.createElement('div');
-        questionsText.style.position = 'absolute';
-        //questionsText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-        questionsText.style.width = 100;
-        questionsText.style.height = 100;
-        questionsText.style.backgroundColor = "green";
-        questionsText.style.top = window.innerHeight / 2 - window.innerHeight / 14 + 'px';
-        questionsText.style.left = left;
-        questionsText.style.fontSize = window.innerHeight/40 + 'px';
-        document.body.appendChild(questionsText);
+    if (questionsText.style.display == 'none'){
+        questionsText.style.display = 'inline-block';
     }
     questionsText.innerHTML = "Question: " + currentQuestion + "/" + questions[level];
 
-    if (!levelText){
-        levelText = document.createElement('div');
-        levelText.style.position = 'absolute';
-        //levelText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-        levelText.style.width = 100;
-        levelText.style.height = 100;
-        levelText.style.backgroundColor = "green";
-        levelText.style.top = window.innerHeight / 2 - window.innerHeight / 9.25 + 'px';
-        levelText.style.left = left;
-        levelText.style.fontSize = window.innerHeight/40 + 'px';
-        document.body.appendChild(levelText);
+    if (levelText.style.display = 'none'){
+        levelText.style.display = 'inline-block';
     }
     levelText.innerHTML = "Level: " + (level + 1);
 
     if (App.getGameState() == 'after'){
-        if (!resultText){
-            resultText = document.createElement('div');
-            resultText.style.position = 'absolute';
-            //levelText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-            resultText.style.width = 100;
-            resultText.style.height = 100;
-            resultText.style.backgroundColor = "yellow";
-            resultText.style.top = window.innerHeight / 2 + window.innerHeight / 28 + 'px';
-            resultText.style.left = left;
-            resultText.style.fontSize = window.innerHeight/40 + 'px';
-            document.body.appendChild(resultText);
-        }
         resultText.style.display = "inline-block";
         if (distanceFromPoint > 100000) resultText.innerHTML = "Result: N/A mi.";
         else resultText.innerHTML = "Result: " + distanceFromPoint + " mi.";
     } else if (resultText) resultText.style.display = "none";
     
     if (App.getGameState() == 'after'){
-        if (!resultPointsText){
-            resultPointsText = document.createElement('div');
-            resultPointsText.style.position = 'absolute';
-            //levelText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-            resultPointsText.style.width = 100;
-            resultPointsText.style.height = 100;
-            resultPointsText.style.backgroundColor = "yellow";
-            resultPointsText.style.top = window.innerHeight / 2 + window.innerHeight / 14 + 'px';
-            resultPointsText.style.left = left;
-            resultPointsText.style.fontSize = window.innerHeight/40 + 'px';
-            document.body.appendChild(resultPointsText);
-        }
         resultPointsText.style.display = "inline-block";
         resultPointsText.innerHTML = "Points: " + resultPoints;
     } else if (resultPointsText) resultPointsText.style.display = "none";
 
     if (App.getGameState() == 'after'){
-        if (!goalText){
-            goalText = document.createElement('div');
-            goalText.style.position = 'absolute';
-            goalText.style.backgroundColor = "green";
-            goalText.style.top = window.innerHeight / 2 + 'px';
-            goalText.style.left = innerWidth / 2 + 'px';
-            goalText.style.fontSize = window.innerHeight/40 + 'px';
-            goalText.style.top = window.innerHeight / 2 + window.innerHeight / 9.25 + 'px';
-            document.body.appendChild(goalText);
-        }
         goalText.style.display = "inline-block";
         goalText.innerHTML = "Progress: " + playerPoints + "/" + levels[level] + ", " + currentQuestion + "/" + questions[level] + " questions";
     } else if (goalText) goalText.style.display = "none";
