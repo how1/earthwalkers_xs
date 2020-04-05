@@ -15,11 +15,6 @@ export const setGameState = (s) => {
 
 load();
 
-// let renderer = Initialize.renderer;
-// let scene = Initialize.scene;
-// let camera = Initialize.camera;
-
-// init();
 let date = new Date();
 let startTime = date.getTime();
 export const resetTime = () => {
@@ -74,11 +69,6 @@ export const restyleHTMLApp = (offset) => {
 }
 
 const update = () => {
-	//use html/css rectangle instaed of text
-	//rect = div
-	//rect.style.width
-	//rect.style.height
-	//rect.style.bgcolor
 	if (getGameState() == 'loading') {
 		updateLoaderBar();
 		console.log(textureLoadingProgress);
@@ -95,12 +85,10 @@ const update = () => {
 	}
 	if (gameState != "loading" && gameState != "loading done"){
 		let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';  
-		// console.log(r, g);
-		// bar.scale.set(timeRemaining, 1, 1);
+
 	    if (!timerBar){
 	        timerBar = document.createElement('div');
 	        timerBar.style.position = 'absolute';
-	        // levelText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
 	        timerBar.style.width = 100;
 	        timerBar.style.height = 100;
 	        timerBar.style.backgroundColor = "red";
@@ -113,7 +101,6 @@ const update = () => {
 	 	if (!timerBarBar){
 	    	timerBarBar = document.createElement('div');
 	        timerBarBar.style.position = 'absolute';
-	        // levelText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
 	        timerBarBar.style.width = 125 + "px";
 	        timerBarBar.style.height = window.innerHeight/40 + "px";
 	        timerBarBar.style.backgroundColor = "#f00";
@@ -123,7 +110,6 @@ const update = () => {
 	    }
 	    if (getGameState() == "during"){
 	    	currentTime = new Date().getTime();
-			// console.log(currentTime);
 			timeRemaining = ((1 - (currentTime/(startTime+totalTime)))*1000000000);
 			if (timeRemaining < 0) timeRemaining = 0;
 			let timeRemainingDec = timeRemaining / 10;
@@ -150,9 +136,6 @@ const update = () => {
 	   		timerBar.style.display = "inline-block";
 	   		timerBar.innerHTML = "Time Remaining: " + timeRemaining.toFixed(1);
 	    }
-	// } else if (timerBar) timerBar.style.display = "none";
-	// if (getGameState() == 'after'){
-	// 	if (timerBarBar) timerBarBar.style.display = "none";
 	}
 
 	if (gameState == "animation"){

@@ -186,7 +186,7 @@ export const showScore = (distance, distanceMi) => {
                 return;
                 level = 0;
             }
-            currentQuestion = 1;
+            currentQuestion = 0;
             playerPoints = 0;
             Initialize.setBackground(mapIndex[level]);
         } else {
@@ -198,7 +198,7 @@ export const showScore = (distance, distanceMi) => {
     if (!button) button = Initialize.button;
     scene.add(button);
 }
-
+//28 14 9.25 
 let left = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';
 let playerPointsText = document.createElement('div');
 playerPointsText.style.position = 'absolute';
@@ -206,7 +206,7 @@ playerPointsText.style.display = 'none';
 playerPointsText.style.width = 100;
 playerPointsText.style.height = 100;
 playerPointsText.style.backgroundColor = "green";
-playerPointsText.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px';
+playerPointsText.style.top = window.innerHeight / 2 - window.innerHeight/14 + 'px';
 playerPointsText.style.fontSize = window.innerHeight/40 + 'px';
 playerPointsText.style.left = left;
 document.body.appendChild(playerPointsText);
@@ -216,7 +216,7 @@ questionsText.style.display = 'none';
 questionsText.style.width = 100;
 questionsText.style.height = 100;
 questionsText.style.backgroundColor = "green";
-questionsText.style.top = window.innerHeight / 2 - window.innerHeight / 14 + 'px';
+questionsText.style.top = window.innerHeight / 2 - window.innerHeight / 9.25 + 'px';
 questionsText.style.left = left;
 questionsText.style.fontSize = window.innerHeight/40 + 'px';
 document.body.appendChild(questionsText);
@@ -226,7 +226,7 @@ levelText.style.position = 'none';
 levelText.style.width = 100;
 levelText.style.height = 100;
 levelText.style.backgroundColor = "green";
-levelText.style.top = window.innerHeight / 2 - window.innerHeight / 9.25 + 'px';
+levelText.style.top = window.innerHeight / 2 - window.innerHeight / 7 + 'px';
 levelText.style.left = left;
 levelText.style.fontSize = window.innerHeight/40 + 'px';
 document.body.appendChild(levelText);
@@ -260,6 +260,24 @@ goalText.style.left = innerWidth / 2 + 'px';
 goalText.style.fontSize = window.innerHeight/40 + 'px';
 goalText.style.top = window.innerHeight / 2 + window.innerHeight / 9.25 + 'px';
 document.body.appendChild(goalText);
+let progressBar = document.createElement('div');
+progressBar.style.display = 'none';
+progressBar.style.position = 'absolute';
+progressBar.style.height = window.innerHeight/40 + "px";
+progressBar.style.backgroundColor = "green";
+progressBar.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px'; //+40
+progressBar.style.left = left;//window.innerHeight/57.5 + 'px';
+progressBar.style.width = (window.innerHeight/4.25) * (playerPoints/levels[level]) + "px";
+document.body.appendChild(progressBar);
+let progressBarBorder = document.createElement('div');
+progressBarBorder.style.display = 'none';
+progressBarBorder.style.position = 'absolute';
+progressBarBorder.style.height = window.innerHeight/40 + "px";
+progressBarBorder.style.border = 'solid green 0.1px';
+progressBarBorder.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px'; //+40
+progressBarBorder.style.left = left;//window.innerHeight/57.5 + 'px';
+progressBarBorder.style.width = (window.innerHeight/4.5) + "px";
+document.body.appendChild(progressBarBorder);
 
 export const restyleHTML = (offset) => {
     let left = offset;//window.innerHeight/57.5 + 'px';
@@ -268,23 +286,31 @@ export const restyleHTML = (offset) => {
     playerPointsText.style.width = 100;
     playerPointsText.style.height = 100;
     playerPointsText.style.backgroundColor = "green";
-    playerPointsText.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px';
+    playerPointsText.style.top = window.innerHeight / 2 - window.innerHeight/14 + 'px';
     playerPointsText.style.fontSize = window.innerHeight/40 + 'px';
     playerPointsText.style.left = left;
     questionsText.style.position = 'absolute';
     questionsText.style.width = 100;
     questionsText.style.height = 100;
     questionsText.style.backgroundColor = "green";
-    questionsText.style.top = window.innerHeight / 2 - window.innerHeight / 14 + 'px';
+    questionsText.style.top = window.innerHeight / 2 - window.innerHeight / 9.25 + 'px';
     questionsText.style.left = left;
     questionsText.style.fontSize = window.innerHeight/40 + 'px';
     levelText.style.position = 'absolute';
     levelText.style.width = 100;
     levelText.style.height = 100;
     levelText.style.backgroundColor = "green";
-    levelText.style.top = window.innerHeight / 2 - window.innerHeight / 9.25 + 'px';
+    levelText.style.top = window.innerHeight / 2 - window.innerHeight / 7 + 'px';
     levelText.style.left = left;
     levelText.style.fontSize = window.innerHeight/40 + 'px';
+    progressBar.style.height = window.innerHeight/40 + "px";
+    progressBar.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px'; //+40
+    progressBar.style.left = left;//window.innerHeight/57.5 + 'px';
+    progressBar.style.width = (window.innerHeight/4.25) * (playerPoints/levels[level]) + "px";
+    progressBarBorder.style.height = window.innerHeight/40 + "px";
+    progressBarBorder.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px'; //+40
+    progressBarBorder.style.left = left;//window.innerHeight/57.5 + 'px';
+    progressBarBorder.style.width = (window.innerHeight/4.5) + "px";
     if (!resultText)
         resultText = document.createElement('div');
     resultText.style.position = 'absolute';
@@ -292,14 +318,20 @@ export const restyleHTML = (offset) => {
     resultText.style.height = 100;
     resultText.style.backgroundColor = "yellow";
     resultText.style.top = window.innerHeight / 2 + window.innerHeight / 28 + 'px';
-    resultText.style.left = window.innerWidth / 2 + 'px';
+    if (App.getGameState() == 'game over')
+        resultText.style.left = window.innerWidth / 2 + window.innerWidth/4 + 'px';
+    else
+        resultText.style.left = window.innerWidth / 2 + 'px';
     resultText.style.fontSize = window.innerHeight/40 + 'px';
     if (!goalText)
         goalText = document.createElement('div');
     goalText.style.position = 'absolute';
     goalText.style.backgroundColor = "green";
     goalText.style.top = window.innerHeight / 2 + 'px';
-    goalText.style.left = window.innerWidth / 2 + 'px';
+    if (App.getGameState() == 'game over')
+        goalText.style.left = window.innerWidth / 2 + window.innerWidth/4 + 'px';
+    else
+        goalText.style.left = window.innerWidth / 2 + 'px';
     goalText.style.fontSize = window.innerHeight/40 + 'px';
     goalText.style.top = window.innerHeight / 2 + window.innerHeight / 9.25 + 'px';
     if (!resultPointsText)
@@ -309,7 +341,10 @@ export const restyleHTML = (offset) => {
     resultPointsText.style.height = 100;
     resultPointsText.style.backgroundColor = "yellow";
     resultPointsText.style.top = window.innerHeight / 2 + window.innerHeight / 14 + 'px';
-    resultPointsText.style.left = window.innerWidth / 2 + 'px';
+    if (App.getGameState() == "game over")
+        resultPointsText.style.left = window.innerWidth / 2 + 'px';
+    else
+        resultPointsText.style.left = window.innerWidth / 2 + 'px';
     resultPointsText.style.fontSize = window.innerHeight/40 + 'px';
 }
 
@@ -321,7 +356,9 @@ export const makeHTMLScoreboard = (distance) => {
     if (playerPointsText.style.display == 'none'){
         playerPointsText.style.display = 'inline-block';
     }
-    playerPointsText.innerHTML = "Points: " + playerPoints + "/" + levels[level];
+    let pp = playerPoints;
+    if (pp >= levels[level]) pp = levels[level];
+    playerPointsText.innerHTML = "Points: " + pp + "/" + levels[level];
 
     if (questionsText.style.display == 'none'){
         questionsText.style.display = 'inline-block';
@@ -332,6 +369,14 @@ export const makeHTMLScoreboard = (distance) => {
         levelText.style.display = 'inline-block';
     }
     levelText.innerHTML = "Level: " + (level + 1);
+
+    if (progressBar.style.display = 'none'){
+        progressBarBorder.style.display = 'inline-block';
+        progressBar.style.display = 'inline-block';
+    }
+    let progressPercentage = playerPoints/levels[level];
+    if (progressPercentage > 1) progressPercentage = 1;
+    progressBar.style.width = window.innerHeight/4.25 * progressPercentage + 'px';
 
     if (App.getGameState() == 'after'){
         resultText.style.display = "inline-block";
@@ -346,7 +391,10 @@ export const makeHTMLScoreboard = (distance) => {
 
     if (App.getGameState() == 'after'){
         goalText.style.display = "inline-block";
-        goalText.innerHTML = "Progress: " + playerPoints + "/" + levels[level] + ", " + currentQuestion + "/" + questions[level] + " questions";
+        if (playerPoints >= levels[level])
+            goalText.innerHTML = "Progress: Completed, " + currentQuestion + "/" + questions[level] + " questions";
+        else
+            goalText.innerHTML = "Progress: " + playerPoints + "/" + levels[level] + ", " + currentQuestion + "/" + questions[level] + " questions";
     } else if (goalText) goalText.style.display = "none";
 }
 
@@ -373,6 +421,9 @@ const toRadians = (degrees) => {
 
 const showGameOver = (result) => {
     // window.clearTimeout(myTimer);
+    goalText.style.left = window.innerWidth / 2 + window.innerWidth/14 + 'px';
+    resultPointsText.style.left = window.innerWidth / 2 + window.innerWidth/14 + 'px';
+    resultText.style.left = window.innerWidth / 2 + window.innerWidth/14 + 'px';
     if (result == "win") {
         if (!winButton) winButton = Initialize.winButton;
         Initialize.scene.add(winButton);

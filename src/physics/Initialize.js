@@ -57,7 +57,6 @@ let restartButtonTex;
 let winButtonTex;
 
 let bar = App.bar;
-// const setGameState = 
 
 export const setBackground = (tex) => {
 	background = maps[tex];
