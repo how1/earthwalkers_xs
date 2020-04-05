@@ -200,7 +200,7 @@ export const load = () => {
 	titleTex = getTexture(require('../pics/title.png'), 15);
 	titleTex.generateMipmaps = true;
 	titleTex.anisotropy = renderer.getMaxAnisotropy();
-	title = new THREE.Mesh(new THREE.PlaneGeometry(2000,400,32), new THREE.MeshBasicMaterial({map:titleTex, side:THREE.FrontSide}));
+	title = new THREE.Mesh(new THREE.PlaneGeometry(2000,400,32), new THREE.MeshBasicMaterial({map:titleTex, side:THREE.FrontSide, transparent:true}));
 	buttonTex = getTexture(require('../pics/button.png'), 0);
 	gameoverButtonTex = getTexture(require('../pics/gameover.png'), 1);
 	restartButtonTex = getTexture(require('../pics/restart.png'), 2);
