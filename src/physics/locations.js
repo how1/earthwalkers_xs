@@ -66,10 +66,10 @@ export const restyleHTMLLoc = (offset) => {
 	text2.style.left = offset;//window.innerHeight/57.5 + 'px';
 }
 
-export const getRandomLocation = () => {
+export const getRandomLocation = (num) => {
 	let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';
 	// let index = Math.floor(Math.random() * locations.length);  
-	let index = Math.floor(Math.random() * 1000);  
+	let index = Math.floor(Math.random() * num);  
 	let loc = locations[index];
 	if (!text2){
 		text2 = document.createElement('div');

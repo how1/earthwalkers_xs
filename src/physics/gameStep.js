@@ -14,6 +14,7 @@ let resultPoints = 0;
 export let myTimer;
 
 let levels = [100, 150, 200, 230, 260, 290, 325, 375, 450, 550];
+let numLocs = [50, 100, 200, 300, 400, 500, 1000, 2000, 5000, 10000];
 let points = 100;
 let questions = [3, 4, 5, 5, 5, 6, 6 , 6, 7, 8];
 let mapIndex = [0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 3 ,3 , 3];
@@ -117,7 +118,7 @@ const getButtonCoords = () => {
         App.setGameState("during");
         makeHTMLScoreboard();
         // scene.add(App.bar);
-        currentCity = Locations.getRandomLocation();
+        currentCity = Locations.getRandomLocation(numLocs[level]);
         // myTimer = window.setTimeout(showScore, time);
         App.resetTime();
     }
@@ -127,7 +128,7 @@ const getStartButtonCoords = () => {
     if (checkMapCollision(pos, startButton)){
         clearScreen();
         App.setGameState("during");
-        currentCity = Locations.getRandomLocation();
+        currentCity = Locations.getRandomLocation(numLocs[level]);
         makeHTMLScoreboard();
         App.resetTime();
     }
@@ -144,7 +145,7 @@ const getRestartCoords = () => {
         currentQuestion = 1;
         makeHTMLScoreboard();
         App.resetTime();
-        currentCity = Locations.getRandomLocation();
+        currentCity = Locations.getRandomLocation(numLocs[level]);
     }
 }
 

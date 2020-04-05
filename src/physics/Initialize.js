@@ -213,7 +213,7 @@ export const load = () => {
 	startTex.generateMipmaps= true;
 	winButtonTex.generateMipmaps = true;
 	bordersTex = getTexture(require('../pics/with_borders.png'), 5);
-	blankTex = getTexture(require('../pics/World_map_blank_without_borders.png'), 6);
+	blankTex = getTexture(require('../pics/red.png'), 6);
 	physicalTex = getTexture(require('../pics/physical.png'), 7);
 	secondaryTex = getTexture(require('../pics/secondary.png'), 8);
 	let geom = new THREE.PlaneGeometry(4378, 2435,32);
