@@ -197,7 +197,7 @@ export const load = () => {
 	document.body.appendChild(htmlLoadingText);
 	updateLoaderBar();
 
-	titleTex = getTexture(require('../pics/title.png'), 15);
+	titleTex = getTexture(require('../pics/title2.png'), 15);
 	titleTex.generateMipmaps = true;
 	titleTex.anisotropy = renderer.getMaxAnisotropy();
 	title = new THREE.Mesh(new THREE.PlaneGeometry(2000,400,32), new THREE.MeshBasicMaterial({map:titleTex, side:THREE.FrontSide, transparent:true}));
