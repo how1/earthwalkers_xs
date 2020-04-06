@@ -9,7 +9,7 @@ export let renderer = new THREE.WebGLRenderer();
 setThreeJSElements();
 
 
-(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()
+//(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()
 
 let height = window.innerHeight-4;
 let width = window.innerWidth-4;
@@ -42,6 +42,9 @@ export let restartButton;
 export let startButton;
 export let winButton;
 export let title;
+export let submitButton;
+export let menuButton;
+export let highscoresButton;
 
 export let bgTex;
 let physicalTex;
@@ -55,6 +58,9 @@ let startTex;
 let gameoverButtonTex;
 let restartButtonTex;
 let winButtonTex;
+let submitTex;
+let menuTex;
+let highscoresTex;
 
 let bar = App.bar;
 
@@ -106,10 +112,35 @@ export const init = () => {
  	}
  	 if (!winButton){
  		winButton = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({map: winButtonTex, side: THREE.FrontSide}));
- 		winButton.material.transparent = false;
+ 		winButton.material.transparent = true;
+ 		winButton.material.opacity = .7;
  		winButton.position.y = window.innerHeight/2 - 100;
     	winButton.position.x = 0;
     	winButton.position.z = 2;
+ 	}
+ 	 if (!submitButton){
+ 		submitButton = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({map: submitTex, side: THREE.FrontSide}));
+ 		submitButton.material.transparent = true;
+ 		submitButton.material.opacity = .7;
+ 		submitButton.position.y = window.innerHeight/2 + 350;
+    	submitButton.position.x = 0;
+    	submitButton.position.z = 2;
+ 	}
+ 	if (!menuButton){
+ 		menuButton = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({map: menuTex, side: THREE.FrontSide}));
+ 		menuButton.material.transparent = true;
+ 		menuButton.material.opacity = .7;
+ 		menuButton.position.y = window.innerHeight/2 - 800;
+    	menuButton.position.x = 0;
+    	menuButton.position.z = 2;
+ 	}
+ 	if (!highscoresButton){
+ 		highscoresButton = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({map: highscoresTex, side: THREE.FrontSide}));
+ 		highscoresButton.material.transparent = true;
+ 		highscoresButton.material.opacity = .7;
+ 		highscoresButton.position.y = window.innerHeight/2 - 450;
+    	highscoresButton.position.x = 0;
+    	highscoresButton.position.z = 2;
  	}
 	scene.add(background);
 	// scene.add(backgroundSquare);
@@ -132,7 +163,7 @@ const getBackgroundMesh = (tex, zPos, yPos, geom, repeat, index) => {
 }
 
 export let textureLoadingProgress = 0;
-let arrProgress = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+let arrProgress = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
 const getTexture = (path, index) => {
 	let tex = new THREE.TextureLoader().load(path.toString(), function(){
@@ -202,11 +233,17 @@ export const load = () => {
 	titleTex.anisotropy = renderer.getMaxAnisotropy();
 	title = new THREE.Mesh(new THREE.PlaneGeometry(2000,400,32), new THREE.MeshBasicMaterial({map:titleTex, side:THREE.FrontSide, transparent:true}));
 	buttonTex = getTexture(require('../pics/button.png'), 0);
+	submitTex = getTexture(require('../pics/submit.png'), 16);
+	menuTex = getTexture(require('../pics/menu.png'), 17);
+	highscoresTex = getTexture(require('../pics/highscores.png'), 18);
 	gameoverButtonTex = getTexture(require('../pics/gameover.png'), 1);
 	restartButtonTex = getTexture(require('../pics/restart.png'), 2);
 	startTex = getTexture(require('../pics/start.png'), 3);
 	winButtonTex = getTexture(require('../pics/win.png'), 4);
 	buttonTex.generateMipmaps = true;
+	submitTex.generateMipmaps = true;
+	menuTex.generateMipmaps = true;
+	highscoresTex.generateMipmaps = true;
 	gameoverButtonTex.generateMipmaps = true;
 	restartButtonTex.generateMipmaps = true;
 	startTex.generateMipmaps= true;

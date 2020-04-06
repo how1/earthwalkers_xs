@@ -8,16 +8,18 @@ let level = 0;
 let time = 10000;
 let timer = 0;
 let playerPoints = 0;
+let totalPoints = 0;
 let distanceFromPoint = 10000000;
 let resultPoints = 0;
 
 export let myTimer;
 
-let levels = [100, 150, 200, 230, 260, 290, 325, 375, 450, 550];
-let numLocs = [50, 100, 200, 300, 400, 500, 1000, 2000, 5000, 10000];
+let levels = [125, 200, 275, 300, 325, 415, 415, 415, 500, 580];
+let numLocs = [50, 100, 200, 500, 750, 1000, 5000, 5000, 10000, 15000];
 let points = 100;
 let questions = [3, 4, 5, 5, 5, 6, 6 , 6, 7, 8];
-let mapIndex = [0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 3 ,3 , 3];
+console.log(levels[0]/questions[0], levels[1]/questions[1], levels[2]/questions[2], levels[3]/questions[3], levels[4]/questions[4], levels[5]/questions[5], levels[6]/questions[6], levels[7]/questions[7], levels[8]/questions[8], levels[9]/questions[9]);
+let mapIndex = [0, 0, 1, 1, 2, 2, 2, 3, 3, 3];
 let maps = []
 let currentQuestion = 1;
 
@@ -33,6 +35,9 @@ let gameOverButton = Initialize.gameoverButton;
 let restartButton = Initialize.restartButton;
 let startButton = Initialize.startButton;
 let winButton = Initialize.winButton;
+let menuButton = Initialize.menuButton;
+let highscoresButton = Initialize.highscoresButton;
+let submitButton = Initialize.submitButton;
 
 export const setButtons = () => {
     bg = Initialize.background;
@@ -70,6 +75,8 @@ document.addEventListener("mouseup", function(event){
     if (App.getGameState() == "loading done"){
         Initialize.click.play();
         getStartButtonCoords();
+        getHighscoresButtonCoords();
+        getMenuCoords();
     }
     else if (App.getGameState() == "during"){
         Initialize.click.play()
@@ -82,10 +89,104 @@ document.addEventListener("mouseup", function(event){
     else if (App.getGameState() == "game over"){
         Initialize.click.play();
         getRestartCoords();
+        getMenuCoords();
+        getSubmitCoords();
     }
 });
 
 let distances = [];
+
+const getMenuCoords = () => {
+    console.log('5454');
+    if (checkMapCollision(pos, Initialize.menuButton)){
+        console.log('vcvc');
+        App.scoreboard.style.display = 'none';
+        if (Locations.text2)
+            Locations.text2.style.display = 'none';
+        App.setGameState("loading done");
+        if (!highscoresButton) highscoresButton = highscoresButton;
+        clearScreen();
+        scene.add(Initialize.highscoresButton);
+        Initialize.scene.add(Initialize.title);
+        hideHTMLScoreboard();
+        scene.add(Initialize.startButton);
+    }
+}
+
+const getHighscoresButtonCoords = () => {
+    if (checkMapCollision(pos, Initialize.highscoresButton)){
+        App.setGameState("loading done");
+        clearScreen();
+        scene.add(Initialize.menuButton);
+        console.log(Initialize.menuButton.position);
+        App.getScores();
+        Initialize.menuButton.position.y = -900;
+        console.log(Initialize.menuButton.position);
+    }
+}
+
+let newHighscore;
+let inputBar;
+let submitButton2;
+let header;
+
+const getSubmitCoords = () => {
+    if (checkMapCollision(pos, submitButton)){
+        // if (newHighscore)
+            // document.body.removeChild(document.getElementById('highscoreDiv'));
+        let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 1.5) / 2 + 'px';
+        newHighscore = document.createElement('div');
+        inputBar = document.createElement('input');
+        submitButton2 = document.createElement('button');
+        header = document.createElement('h3');
+        inputBar.type = 'text';
+        inputBar.name = 'submit';
+        inputBar.id = 'nameInput';
+        header.id = 'header';
+        header.style.textAlign = 'center';
+        inputBar.placeholder = 'Name';
+        inputBar.align = 'right';
+        inputBar.maxLength = 15;
+        submitButton2.innerHTML = 'Submit';
+        submitButton2.id = 'submitButton';
+        submitButton2.style.align = 'center';
+        submitButton2.style.width = window.innerHeight / 2.5 + 'px';
+        submitButton2.style.marginTop = 5 + 'px';
+        newHighscore.id = 'highscoreDiv';
+        newHighscore.style.position = 'absolute';
+        newHighscore.style.textAlign = 'center';
+        newHighscore.style.paddingBottom = '10px';
+        //newHighscore.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+        newHighscore.style.width = window.innerHeight/25 + '%';
+        document.body.appendChild(newHighscore);
+        let width = document.getElementById('highscoreDiv').clientWidth;
+        newHighscore.style.backgroundColor = 'rgba(255,255,0)';
+        newHighscore.style.borderRadius = window.innerHeight/20 + 'px';
+        newHighscore.style.paddingLeft = window.innerHeight/78 + 'px';
+        newHighscore.style.paddingRight = window.innerHeight/78 + 'px';
+        header.innerHTML = "Score: " + totalPoints;
+        newHighscore.style.top = 2 + 'px';
+        console.log(window.innerWidth/2 - width/2);
+        newHighscore.style.left = window.innerWidth/2 - width/2 + 'px';
+        newHighscore.appendChild(header);
+        newHighscore.appendChild(inputBar);
+        newHighscore.appendChild(submitButton2);
+        submitButton2.addEventListener('click', function(){
+            let name = encodeHTML(document.getElementById('nameInput').value);
+            if (name.length > 0){
+                App.submitScore(name, totalPoints);
+                submitButton2.style.display = 'none';
+                inputBar.style.display = 'none';
+                // header.style.margin: 'auto';
+                let header2 = document.createElement('h4');
+                header2.id = 'submittedMessage';
+                header2.innerHTML = "Submitted";
+                newHighscore.appendChild(header2);
+            } else alert('Name must be more than 0 characters');
+            // alert('Thank you! Your highscore has been submitted');
+        });
+    }
+}
 
 const getMapCoords = () => {
     if (!bg) bg = Initialize.background;
@@ -96,7 +197,7 @@ const getMapCoords = () => {
     if (checkMapCollision(pos, bg)){
         let tmp = new THREE.Vector3();
         tmp.set(pos.x, pos.y, pos.z);
-        tmp.sub(mapPos);
+        tmp.sub(mapPos);   
         convertToLatLong(tmp);
         distanceFromPoint = calculateScore(tmp.x, tmp.y, currentCity.latLong.x, currentCity.latLong.y);
         (pos, tmp, convertLatLongToWorldCoords(tmp));
@@ -127,7 +228,12 @@ const getButtonCoords = () => {
 const getStartButtonCoords = () => {
     if (checkMapCollision(pos, startButton)){
         clearScreen();
+        level = 0;
+        playerPoints = 0;
+        totalPoints = 0;
+        currentQuestion = 1;
         App.setGameState("during");
+        highScore.innerHTML = "Highscore: " + App.checkCookie();
         currentCity = Locations.getRandomLocation(numLocs[level]);
         makeHTMLScoreboard();
         App.resetTime();
@@ -142,6 +248,7 @@ const getRestartCoords = () => {
         clearScreen();
         App.setGameState("during");
         playerPoints = 0;
+        totalPoints = 0;
         currentQuestion = 1;
         makeHTMLScoreboard();
         App.resetTime();
@@ -175,6 +282,7 @@ export const showScore = (distance, distanceMi) => {
     resultPoints = Math.round(points * x);
     if (resultPoints < 0) resultPoints = 0;
     playerPoints += resultPoints;
+    totalPoints += resultPoints;
     App.setGameState("after");// = "after";
     makeHTMLScoreboard();
     if (currentQuestion == questions[level]) {
@@ -183,6 +291,8 @@ export const showScore = (distance, distanceMi) => {
             if (level == 10) {
                 App.setGameState("game over");// = "game over";
                 showGameOver("win");
+                if (App.checkCookie() < totalPoints) App.setCookie("data", totalPoints, 365);
+                makeHTMLScoreboard();
                 return;
                 level = 0;
             }
@@ -191,6 +301,8 @@ export const showScore = (distance, distanceMi) => {
             Initialize.setBackground(mapIndex[level]);
         } else {
             App.setGameState("game over");// = "game over";
+            if (App.checkCookie() < totalPoints) App.setCookie("data", totalPoints, 365);
+            makeHTMLScoreboard();
             showGameOver("lose");
             return;
         }
@@ -198,6 +310,11 @@ export const showScore = (distance, distanceMi) => {
     if (!button) button = Initialize.button;
     scene.add(button);
 }
+
+function encodeHTML(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+}
+
 //28 14 9.25 
 let left = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';
 let playerPointsText = document.createElement('div');
@@ -278,6 +395,25 @@ progressBarBorder.style.top = window.innerHeight / 2 - window.innerHeight/28 + '
 progressBarBorder.style.left = left;//window.innerHeight/57.5 + 'px';
 progressBarBorder.style.width = (window.innerHeight/4.5) + "px";
 document.body.appendChild(progressBarBorder);
+let highScore = document.createElement('div');
+highScore.style.display = 'none';
+highScore.style.position = 'absolute';
+highScore.style.backgroundColor = "yellow";
+highScore.style.top = 0 + 'px';
+highScore.style.left = left;
+highScore.style.fontSize = window.innerHeight/40 + 'px';
+document.body.appendChild(highScore);
+
+const hideHTMLScoreboard = () => {
+    playerPointsText.style.display = 'none';
+    questionsText.style.display = 'none';
+    levelText.style.display = 'none';
+    resultText.style.display = 'none';
+    goalText.style.display = 'none';
+    progressBar.style.display = 'none';
+    progressBarBorder.style.display = 'none';
+    highScore.style.display = 'none';
+}
 
 export const restyleHTML = (offset) => {
     let left = offset;//window.innerHeight/57.5 + 'px';
@@ -311,6 +447,11 @@ export const restyleHTML = (offset) => {
     progressBarBorder.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px'; //+40
     progressBarBorder.style.left = left;//window.innerHeight/57.5 + 'px';
     progressBarBorder.style.width = (window.innerHeight/4.5) + "px";
+    highScore.style.position = 'absolute';
+    highScore.style.backgroundColor = "yellow";
+    highScore.style.top = 0 + 'px';
+    highScore.style.left = left;
+    highScore.style.fontSize = window.innerHeight/40 + 'px';
     if (!resultText)
         resultText = document.createElement('div');
     resultText.style.position = 'absolute';
@@ -368,7 +509,7 @@ export const makeHTMLScoreboard = (distance) => {
     if (levelText.style.display = 'none'){
         levelText.style.display = 'inline-block';
     }
-    levelText.innerHTML = "Level: " + (level + 1);
+    levelText.innerHTML = "Level " + (level + 1) + ": Top " + numLocs[level] + " Cities";
 
     if (progressBar.style.display = 'none'){
         progressBarBorder.style.display = 'inline-block';
@@ -396,6 +537,10 @@ export const makeHTMLScoreboard = (distance) => {
         else
             goalText.innerHTML = "Progress: " + playerPoints + "/" + levels[level] + ", " + currentQuestion + "/" + questions[level] + " questions";
     } else if (goalText) goalText.style.display = "none";
+    if (App.getGameState() == 'during' || App.getGameState() == 'after'){
+        highScore.style.display = 'inline-block';
+    }
+    highScore.innerHTML = "Highscore: " + App.checkCookie();
 }
 
 const calculateScore = (lat1, lon1, lat2, lon2) => {
@@ -434,6 +579,12 @@ const showGameOver = (result) => {
     }
     if (!restartButton) restartButton = Initialize.restartButton;
     Initialize.scene.add(restartButton);
+    if (!menuButton) menuButton = Initialize.menuButton;
+    menuButton.position.y = window.innerHeight/2 - 800;
+    Initialize.scene.add(menuButton);
+    if (!submitButton) submitButton = Initialize.submitButton;
+    if (App.checkCookie() == totalPoints)
+        Initialize.scene.add(submitButton);
 }
 
 const clearScreen = () => {

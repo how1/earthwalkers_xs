@@ -53,7 +53,7 @@ export const getLocations = () => {
 	}
 }
 
-let text2;
+export let text2;
 
 export const restyleHTMLLoc = (offset) => {
 	text2.style.position = 'absolute';
@@ -83,6 +83,7 @@ export const getRandomLocation = (num) => {
 	    text2.style.left = windowOffset;// window.innerHeight/57.5 + 'px';
 		document.body.appendChild(text2);
 	}
+	text2.style.display = 'inline-block';
 	if (loc.city == loc.secondary || loc.secondary.length == 0){
 		text2.innerHTML = "Target: " + loc.city + ", " + loc.country;
 	} else {
