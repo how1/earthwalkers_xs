@@ -182,6 +182,7 @@ const getSubmitCoords = () => {
                 header2.id = 'submittedMessage';
                 header2.innerHTML = "Submitted";
                 newHighscore.appendChild(header2);
+                newHighscore.style.display= 'none';
             } else alert('Name must be more than 0 characters');
             // alert('Thank you! Your highscore has been submitted');
         });
