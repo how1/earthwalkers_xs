@@ -178,6 +178,8 @@ let smallCheerFile = require("../sfx/smallCheer.mp3");
 let mediumCheerFile = require("../sfx/mediumCheer.mp3");
 let xtraBigCheerFile = require("../sfx/xtraBigCheer.mp3");
 let musicFile = require("../sfx/lofi.mp3");
+let music2File = require('../sfx/perroLoco.mp3');
+let music3File = require('../sfx/20s.mp3');
 let clickFile = require("../sfx/click.mp3");
 
 export let smallCheer;

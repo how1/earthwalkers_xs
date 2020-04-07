@@ -82,9 +82,9 @@ checkCookie();
 
 export const submitScore = (name, score) => {
     if (name.length > 0){
-        let date = new Date();
-        date.getTime();
-        let now = date.toUTCString();
+        let date = new Date().getTime();
+        let now = new Date().getDate() + "/" + (new Date().getMonth() + 1) + "/" + new Date().getFullYear();
+        // let now = date.toUTCString();
         let firebaseRef = database.ref('scores/');
         firebaseRef.push().set({
             name, 
@@ -93,6 +93,7 @@ export const submitScore = (name, score) => {
         });
     }
 }
+
 
 export let scoreboard;
 let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';  
@@ -164,6 +165,10 @@ export const getScores = () => {
         scoreRow.appendChild(score);
         scoreRow.appendChild(date);
     }
+
+}
+
+const fadeAudio = () => {
 
 }
 
