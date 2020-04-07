@@ -83,7 +83,7 @@ checkCookie();
 export const submitScore = (name, score) => {
     if (name.length > 0){
         let date = new Date().getTime();
-        let now = new Date().getDate() + "/" + (new Date().getMonth() + 1) + "/" + new Date().getFullYear();
+        let now = (new Date().getMonth() + 1) + "/" + new Date().getDate() + "/" + new Date().getFullYear();
         // let now = date.toUTCString();
         let firebaseRef = database.ref('scores/');
         firebaseRef.push().set({
