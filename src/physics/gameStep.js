@@ -108,6 +108,11 @@ const getMenuCoords = () => {
         clearScreen();
         scene.add(Initialize.highscoresButton);
         Initialize.scene.add(Initialize.title);
+        if (newHighscore) {
+            if (document.body.contains(newHighscore))
+                document.body.removeChild(newHighscore);
+            newHighscore = null;
+        }
         hideHTMLScoreboard();
         scene.add(Initialize.startButton);
     }
@@ -132,60 +137,63 @@ let header;
 
 const getSubmitCoords = () => {
     if (checkMapCollision(pos, submitButton)){
-        // if (newHighscore)
-            // document.body.removeChild(document.getElementById('highscoreDiv'));
-        let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 1.5) / 2 + 'px';
-        newHighscore = document.createElement('div');
-        inputBar = document.createElement('input');
-        submitButton2 = document.createElement('button');
-        header = document.createElement('h3');
-        inputBar.type = 'text';
-        inputBar.name = 'submit';
-        inputBar.id = 'nameInput';
-        header.id = 'header';
-        header.style.textAlign = 'center';
-        inputBar.placeholder = 'Name';
-        inputBar.align = 'right';
-        inputBar.maxLength = 15;
-        submitButton2.innerHTML = 'Submit';
-        submitButton2.id = 'submitButton';
-        submitButton2.style.align = 'center';
-        submitButton2.style.width = window.innerHeight / 2.5 + 'px';
-        submitButton2.style.marginTop = 5 + 'px';
-        newHighscore.id = 'highscoreDiv';
-        newHighscore.style.position = 'absolute';
-        newHighscore.style.textAlign = 'center';
-        newHighscore.style.paddingBottom = '10px';
-        //newHighscore.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-        newHighscore.style.width = window.innerHeight/25 + '%';
-        document.body.appendChild(newHighscore);
-        let width = document.getElementById('highscoreDiv').clientWidth;
-        newHighscore.style.backgroundColor = 'rgba(255,255,0)';
-        newHighscore.style.borderRadius = window.innerHeight/20 + 'px';
-        newHighscore.style.paddingLeft = window.innerHeight/78 + 'px';
-        newHighscore.style.paddingRight = window.innerHeight/78 + 'px';
-        header.innerHTML = "Score: " + totalPoints;
-        newHighscore.style.top = 2 + 'px';
-        console.log(window.innerWidth/2 - width/2);
-        newHighscore.style.left = window.innerWidth/2 - width/2 + 'px';
-        newHighscore.appendChild(header);
-        newHighscore.appendChild(inputBar);
-        newHighscore.appendChild(submitButton2);
-        submitButton2.addEventListener('click', function(){
-            let name = encodeHTML(document.getElementById('nameInput').value);
-            if (name.length > 0){
-                App.submitScore(name, totalPoints);
-                submitButton2.style.display = 'none';
-                inputBar.style.display = 'none';
-                // header.style.margin: 'auto';
-                let header2 = document.createElement('h4');
-                header2.id = 'submittedMessage';
-                header2.innerHTML = "Submitted";
-                newHighscore.appendChild(header2);
-                newHighscore.style.display= 'none';
-            } else alert('Name must be more than 0 characters');
-            // alert('Thank you! Your highscore has been submitted');
-        });
+        if (!newHighscore){
+            // if (newHighscore)
+                // document.body.removeChild(document.getElementById('highscoreDiv'));
+            let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 1.5) / 2 + 'px';
+            newHighscore = document.createElement('div');
+            inputBar = document.createElement('input');
+            submitButton2 = document.createElement('button');
+            header = document.createElement('h3');
+            inputBar.type = 'text';
+            inputBar.name = 'submit';
+            inputBar.id = 'nameInput';
+            header.id = 'header';
+            header.style.textAlign = 'center';
+            inputBar.placeholder = 'Name';
+            inputBar.align = 'right';
+            inputBar.maxLength = 15;
+            submitButton2.innerHTML = 'Submit';
+            submitButton2.id = 'submitButton';
+            submitButton2.style.align = 'center';
+            submitButton2.style.width = window.innerHeight / 2.5 + 'px';
+            submitButton2.style.marginTop = 5 + 'px';
+            newHighscore.id = 'highscoreDiv';
+            newHighscore.style.position = 'absolute';
+            newHighscore.style.textAlign = 'center';
+            newHighscore.style.paddingBottom = '10px';
+            //newHighscore.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+            newHighscore.style.width = window.innerHeight/25 + '%';
+            document.body.appendChild(newHighscore);
+            let width = document.getElementById('highscoreDiv').clientWidth;
+            newHighscore.style.backgroundColor = 'rgba(255,255,0)';
+            newHighscore.style.borderRadius = window.innerHeight/20 + 'px';
+            newHighscore.style.paddingLeft = window.innerHeight/78 + 'px';
+            newHighscore.style.paddingRight = window.innerHeight/78 + 'px';
+            header.innerHTML = "Score: " + totalPoints;
+            newHighscore.style.top = 2 + 'px';
+            console.log(window.innerWidth/2 - width/2);
+            newHighscore.style.left = window.innerWidth/2 - width/2 + 'px';
+            newHighscore.appendChild(header);
+            newHighscore.appendChild(inputBar);
+            newHighscore.appendChild(submitButton2);
+            submitButton2.addEventListener('click', function(){
+                let name = encodeHTML(document.getElementById('nameInput').value);
+                if (name.length > 0){
+                    App.submitScore(name, totalPoints);
+                    submitButton2.style.display = 'none';
+                    inputBar.style.display = 'none';
+                    // header.style.margin: 'auto';
+                    let header2 = document.createElement('h4');
+                    header2.id = 'submittedMessage';
+                    header2.innerHTML = "Submitted";
+                    newHighscore.appendChild(header2);
+                    newHighscore.style.display= 'none';
+                    // document.body.removeChild(newHighscore);
+                } else alert('Name must be more than 0 characters');
+                // alert('Thank you! Your highscore has been submitted');
+            });
+        }
     }
 }
 
@@ -251,6 +259,11 @@ const getRestartCoords = () => {
         playerPoints = 0;
         totalPoints = 0;
         currentQuestion = 1;
+        if (newHighscore) {
+            if (document.body.contains(newHighscore))
+                document.body.removeChild(newHighscore);
+            newHighscore = null;
+        }
         makeHTMLScoreboard();
         App.resetTime();
         currentCity = Locations.getRandomLocation(numLocs[level]);
@@ -291,11 +304,11 @@ export const showScore = (distance, distanceMi) => {
             level++;
             if (level == 10) {
                 App.setGameState("game over");// = "game over";
-                showGameOver("win");
                 if (App.checkCookie() < totalPoints) App.setCookie("data", totalPoints, 365);
                 makeHTMLScoreboard();
-                return;
                 level = 0;
+                showGameOver("win");
+                return;
             }
             currentQuestion = 0;
             playerPoints = 0;
@@ -584,8 +597,7 @@ const showGameOver = (result) => {
     menuButton.position.y = window.innerHeight/2 - 800;
     Initialize.scene.add(menuButton);
     if (!submitButton) submitButton = Initialize.submitButton;
-    if (App.checkCookie() == totalPoints)
-        Initialize.scene.add(submitButton);
+    if (App.checkCookie() == totalPoints) Initialize.scene.add(submitButton);
 }
 
 const clearScreen = () => {
