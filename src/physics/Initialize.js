@@ -65,14 +65,13 @@ let highscoresTex;
 let bar = App.bar;
 
 export const setBackground = (tex) => {
+	console.log(tex);
 	background = maps[tex];
 }
 
 export const init = () => {
  	let geom = new THREE.PlaneGeometry(4378, 2435,32);
  	let mat = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.FrontSide});
- 	let backgroundSquare = new THREE.Mesh(geom, mat);
-	backgroundSquare.position.x;
 	if (!background){
 		background = getBackgroundMesh( bgTex , 0, 0, geom, 1 );
 	}
@@ -163,7 +162,7 @@ const getBackgroundMesh = (tex, zPos, yPos, geom, repeat, index) => {
 }
 
 export let textureLoadingProgress = 0;
-let arrProgress = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+let arrProgress = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
 const getTexture = (path, index) => {
 	let tex = new THREE.TextureLoader().load(path.toString(), function(){
@@ -171,6 +170,14 @@ const getTexture = (path, index) => {
 	});
 	tex.generateMipmaps = false;
 	return tex;
+}
+
+export const setMusic = (i) => {
+	console.log(songs);
+	if (song)
+		song.stop();
+	song = songs[i];
+	song.play();
 }
 
 let listener;
@@ -186,7 +193,17 @@ export let smallCheer;
 export let mediumCheer;
 export let bigCheer;
 export let music;
+export let music2;
+export let music3;
 export let click;
+
+let songs;
+let song;
+export const setSongs = () => {
+	songs = [music, music2, music3];
+	song = music3;
+}
+
 
 let htmlLoadingBar;
 let htmlLoadingText;
@@ -259,7 +276,7 @@ export const load = () => {
 	maps.push(getBackgroundMesh(bordersTex , 0, 0, geom, 1));
 	maps.push(getBackgroundMesh(physicalTex , 0, 0, geom, 1));
 	maps.push(getBackgroundMesh(blankTex , 0, 0, geom, 1));
-	bgTex = new THREE.TextureLoader().load(require('../pics/secondary.png'), function () {
+	bgTex = new THREE.TextureLoader().load(require('../pics/physical.png'), function () {
 		arrProgress[9] = 1;
 	});
 	listener = new THREE.AudioListener();
@@ -315,6 +332,28 @@ export const load = () => {
         }, function ( xhr ) {
       		arrProgress[14] = xhr.loaded / xhr.total;
     });
+    // music2 = new THREE.Audio(listener);
+    // let music2Loader = new THREE.AudioLoader();
+    // music2Loader.load(music2File, 
+    //     function(buffer){
+    //         music2.setBuffer( buffer );
+    //         music2.setLoop(true);
+    //         music2.setVolume(0.5);
+    //         // music2.play();
+    //     }, function ( xhr ) {
+    //   		arrProgress[19] = xhr.loaded / xhr.total;
+    // });
+    // music3 = new THREE.Audio(listener);
+    // let music3Loader = new THREE.AudioLoader();
+    // music3Loader.load(music3File, 
+    //     function(buffer){
+    //         music3.setBuffer( buffer );
+    //         music3.setLoop(true);
+    //         music3.setVolume(0.5);
+    //         music3.play();
+    //     }, function ( xhr ) {
+    //   		arrProgress[20] = xhr.loaded / xhr.total;
+    // });
 }
 
 
