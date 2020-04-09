@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { init, load, scene, renderer, camera, updateLoaderBar, textureLoadingProgress, startButton, 
-	removeLoaderBar, title, titleTex, highscoresButton} from "./physics/Initialize.js";
+	removeLoaderBar, title, titleTex, highscoresButton, setSongs} from "./physics/Initialize.js";
 import {makeHTMLScoreboard, showScore, updateCircleRadius, setButtons} from "./physics/gameStep.js";
 import 'normalize.css';
 import './styles/styles.scss';
@@ -258,6 +258,7 @@ const update = () => {
 			removeLoaderBar();
 			setGameState('loading done');
 			init();
+			setSongs();
 			setButtons();
 			scene.add(startButton);
 			scene.add(highscoresButton);

@@ -16,6 +16,7 @@ export let myTimer;
 
 let levels = [125, 200, 275, 300, 325, 415, 415, 415, 500, 580];
 let numLocs = [50, 100, 200, 500, 750, 1000, 5000, 5000, 10000, 15000];
+let musicIndex = [0, 0, 1, 1, 0, 0, 0, 2, 2, 2];
 let points = 100;
 let questions = [3, 4, 5, 5, 5, 6, 6 , 6, 7, 8];
 console.log(levels[0]/questions[0], levels[1]/questions[1], levels[2]/questions[2], levels[3]/questions[3], levels[4]/questions[4], levels[5]/questions[5], levels[6]/questions[6], levels[7]/questions[7], levels[8]/questions[8], levels[9]/questions[9]);
@@ -97,14 +98,14 @@ document.addEventListener("mouseup", function(event){
 let distances = [];
 
 const getMenuCoords = () => {
-    console.log('5454');
     if (checkMapCollision(pos, Initialize.menuButton)){
-        console.log('vcvc');
         App.scoreboard.style.display = 'none';
         if (Locations.text2)
             Locations.text2.style.display = 'none';
         App.setGameState("loading done");
         if (!highscoresButton) highscoresButton = highscoresButton;
+        Initialize.setBackground(2);
+        // Initialize.setMusic(0);
         clearScreen();
         scene.add(Initialize.highscoresButton);
         Initialize.scene.add(Initialize.title);
@@ -225,19 +226,20 @@ const getButtonCoords = () => {
     if (checkMapCollision(pos, button)){
         currentQuestion++;
         clearScreen();
+        distanceFromPoint = 1000000;
         App.setGameState("during");
         makeHTMLScoreboard();
-        // scene.add(App.bar);
         currentCity = Locations.getRandomLocation(numLocs[level]);
-        // myTimer = window.setTimeout(showScore, time);
         App.resetTime();
     }
 }
 
 const getStartButtonCoords = () => {
     if (checkMapCollision(pos, startButton)){
-        clearScreen();
         level = 0;
+        Initialize.setBackground(mapIndex[level]);
+        // Initialize.setMusic(musicIndex[level]);
+        clearScreen();
         playerPoints = 0;
         totalPoints = 0;
         currentQuestion = 1;
@@ -253,6 +255,7 @@ const getStartButtonCoords = () => {
 const getRestartCoords = () => {
     if (checkMapCollision(pos, restartButton)){
         level = 0;
+        console.log(mapIndex[level]);
         Initialize.setBackground(mapIndex[level]);
         clearScreen();
         App.setGameState("during");
@@ -302,6 +305,7 @@ export const showScore = (distance, distanceMi) => {
     if (currentQuestion == questions[level]) {
         if (levels[level] <= playerPoints){
             level++;
+            // Initialize.setMusic(musicIndex[level]);
             if (level == 10) {
                 App.setGameState("game over");// = "game over";
                 if (App.checkCookie() < totalPoints) App.setCookie("data", totalPoints, 365);
@@ -535,7 +539,7 @@ export const makeHTMLScoreboard = (distance) => {
 
     if (App.getGameState() == 'after'){
         resultText.style.display = "inline-block";
-        if (distanceFromPoint > 100000) resultText.innerHTML = "Result: N/A mi.";
+        if (distanceFromPoint >= 100000) resultText.innerHTML = "Result: Out of Time";
         else resultText.innerHTML = "Result: " + distanceFromPoint + " mi.";
     } else if (resultText) resultText.style.display = "none";
     
