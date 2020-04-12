@@ -644,7 +644,10 @@ const makeCircle = (distance, position) => {
     circle.position.set(tmp.x, tmp.y, 1);
     scene.add( circle );
     geometry = new THREE.CircleGeometry( 6, 8 );
-    material = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.FrontSide } );
+    if (mapIndex[level] == 3)
+        material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.FrontSide } );
+    else
+        material = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.FrontSide } );
     var circle2 = new THREE.Mesh( geometry, material );
     circle2.position.set(tmp.x, tmp.y, 1);
     scene.add( circle2 );
