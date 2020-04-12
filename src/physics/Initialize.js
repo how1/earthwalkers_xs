@@ -71,7 +71,11 @@ export const setBackground = (tex) => {
 
 export const init = () => {
  	let geom = new THREE.PlaneGeometry(4378, 2435,32);
+ 	let geom2 = new THREE.PlaneGeometry(10000, 5000,32);
  	let mat = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.FrontSide});
+ 	let bgPlate = new THREE.Mesh (geom2, mat);
+ 	bgPlate.position.z = -1;
+ 	scene.add(bgPlate);
 	if (!background){
 		background = getBackgroundMesh( bgTex , 0, 0, geom, 1 );
 	}
