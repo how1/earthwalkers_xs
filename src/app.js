@@ -95,28 +95,34 @@ export const submitScore = (name, score) => {
 }
 
 
-export let scoreboard;
+export let scoreboardDiv;
 let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';  
 
 export const getScores = () => {
+    let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';  
     let scores = [];
     let ref = database.ref("scores");
-    ref.orderByChild("score").limitToLast(10).on("child_added", function(snapshot) {
+    ref.orderByChild("score").limitToLast(100).on("child_added", function(snapshot) {
         scores.push(snapshot);
     });
     scores = sortByScore(scores);
-    if (scoreboard) document.body.removeChild(document.getElementById('scoreboard'));
-    scoreboard = document.createElement('table');
-    scoreboard.style.position = 'absolute';
-    scoreboard.style.overflow = 'hidden';
+    if (scoreboardDiv) document.body.removeChild(document.getElementById('scoreboardDiv'));
+    scoreboardDiv = document.createElement('div');
+    let scoreboard = document.createElement('table');
+    scoreboardDiv.style.position = 'absolute';
+    scoreboardDiv.style.overflow = 'auto';
+    scoreboardDiv.style.top = window.innerHeight / 25 + 'px';
+    scoreboardDiv.style.maxHeight = window.innerHeight * 0.8 + 'px';
+    scoreboard.style.width = (window.innerHeight - 4) * 1.5 + 'px';
+    scoreboardDiv.style.left = windowOffset;
+    // scoreboard.style.position = 'absolute';
+    scoreboard.style.overflow = 'auto';
     scoreboard.style.color = '#fff';
     scoreboard.style.backgroundColor = '#111';
-    scoreboard.style.top = window.innerHeight / 25 + 'px';
-    scoreboard.style.height = window.innerHeight * 0.65 + 'px';
-    scoreboard.style.width = (window.innerHeight - 4) * 1.5 + 'px';
-    scoreboard.style.left = windowOffset;
-    scoreboard.id = 'scoreboard';
-    document.body.appendChild(scoreboard);
+    scoreboard.style.fontSize = window.innerHeight / 30 + 'px';
+    scoreboardDiv.id = 'scoreboardDiv';
+    document.body.appendChild(scoreboardDiv);
+    scoreboardDiv.appendChild(scoreboard);
     let header = document.createElement('caption');
     header.id = 'scoreHeader';
     header.style.backgroundColor = '#111';
@@ -151,6 +157,10 @@ export const getScores = () => {
         let name = document.createElement('td');
         let score = document.createElement('td');
         let date = document.createElement('td');
+        rank.style.padding = window.innerHeight / 80 + 'px';
+        name.style.padding = window.innerHeight / 80 + 'px';
+        score.style.padding = window.innerHeight / 80 + 'px';
+        date.style.padding = window.innerHeight / 80 + 'px';
         rank.className = 'scoreItem';
         name.className = 'scoreItem';
         score.className = 'scoreItem';
@@ -173,7 +183,7 @@ const fadeAudio = () => {
 }
 
 const hideScores = () => {
-    scoreboard.style.display = 'none';
+    scoreboardDiv.style.display = 'none';
 }
 
 getScores();
@@ -250,6 +260,13 @@ export const restyleHTMLApp = (offset) => {
 	timerBarBar.style.width = (window.innerHeight/4.25) * (timeRemaining/10) + "px";
 }
 
+export const restyleHighScoreboard = () => {
+    if (scoreboardDiv.style.display != 'none') {
+        console.log('asdf');
+        getScores();
+    }
+}
+
 const update = () => {
 	if (getGameState() == 'loading') {
 		updateLoaderBar();
@@ -275,6 +292,7 @@ const update = () => {
 	        timerBar.style.position = 'absolute';
 	        timerBar.style.width = 100;
 	        timerBar.style.height = 100;
+            // timerBar.style.color = 'white';
 	        timerBar.style.backgroundColor = "red";
 	        timerBar.style.top = window.innerHeight / 2 + window.innerHeight/28 + 'px'; //+20
 	        timerBar.style.left = windowOffset;//window.innerHeight/57.5 + 'px';
