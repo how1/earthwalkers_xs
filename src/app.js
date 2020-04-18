@@ -125,7 +125,7 @@ export const getScores = () => {
     scoreboardDiv.appendChild(scoreboard);
     let header = document.createElement('caption');
     header.id = 'scoreHeader';
-    header.style.color = '#111';
+    header.style.backgroundColor = '#111';
     header.style.textAlign = 'left';
     header.innerHTML = "Highscores";
     header.style.fontSize = window.innerHeight / 15 + 'px';
