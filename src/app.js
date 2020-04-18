@@ -118,7 +118,7 @@ export const getScores = () => {
     // scoreboard.style.position = 'absolute';
     scoreboard.style.overflow = 'auto';
     scoreboard.style.color = '#fff';
-    scoreboard.style.color = '#111';
+    scoreboard.style.backgroundColor = '#111';
     scoreboard.style.fontSize = window.innerHeight / 30 + 'px';
     scoreboardDiv.id = 'scoreboardDiv';
     document.body.appendChild(scoreboardDiv);
