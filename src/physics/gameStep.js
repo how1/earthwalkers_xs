@@ -99,7 +99,7 @@ let distances = [];
 
 const getMenuCoords = () => {
     if (checkMapCollision(pos, Initialize.menuButton)){
-        App.scoreboard.style.display = 'none';
+        App.scoreboardDiv.style.display = 'none';
         if (Locations.text2)
             Locations.text2.style.display = 'none';
         App.setGameState("loading done");
@@ -371,6 +371,7 @@ resultText.style.position = 'absolute';
 resultText.style.display = 'none';
 resultText.style.width = 100;
 resultText.style.height = 100;
+resultText.style.color = 'black';
 resultText.style.backgroundColor = "yellow";
 resultText.style.top = window.innerHeight / 2 + window.innerHeight / 28 + 'px';
 resultText.style.left = innerWidth / 2 + 'px';
@@ -381,6 +382,7 @@ resultPointsText.style.position = 'absolute';
 resultPointsText.style.display = 'none';
 resultPointsText.style.width = 100;
 resultPointsText.style.height = 100;
+resultPointsText.style.color = 'black';
 resultPointsText.style.backgroundColor = "yellow";
 resultPointsText.style.top = window.innerHeight / 2 + window.innerHeight / 14 + 'px';
 resultPointsText.style.left = innerWidth / 2 + 'px';
