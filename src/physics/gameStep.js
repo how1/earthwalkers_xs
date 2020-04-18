@@ -167,7 +167,7 @@ const getSubmitCoords = () => {
             newHighscore.style.width = window.innerHeight/25 + '%';
             document.body.appendChild(newHighscore);
             let width = document.getElementById('highscoreDiv').clientWidth;
-            newHighscore.style.backgroundColor = 'rgba(255,255,0)';
+            newHighscore.style.color = 'rgba(255,255,0)';
             newHighscore.style.borderRadius = window.innerHeight/20 + 'px';
             newHighscore.style.paddingLeft = window.innerHeight/78 + 'px';
             newHighscore.style.paddingRight = window.innerHeight/78 + 'px';
@@ -341,6 +341,7 @@ playerPointsText.style.display = 'none';
 playerPointsText.style.width = 100;
 playerPointsText.style.height = 100;
 playerPointsText.style.backgroundColor = "green";
+// playerPointsText.style.backgroundColor = "rgb(f,f,f,.3)";
 playerPointsText.style.top = window.innerHeight / 2 - window.innerHeight/14 + 'px';
 playerPointsText.style.fontSize = window.innerHeight/40 + 'px';
 playerPointsText.style.left = left;
@@ -351,6 +352,7 @@ questionsText.style.display = 'none';
 questionsText.style.width = 100;
 questionsText.style.height = 100;
 questionsText.style.backgroundColor = "green";
+// questionsText.style.backgroundColor = "rgb(f,f,f,.3)";
 questionsText.style.top = window.innerHeight / 2 - window.innerHeight / 9.25 + 'px';
 questionsText.style.left = left;
 questionsText.style.fontSize = window.innerHeight/40 + 'px';
@@ -361,6 +363,7 @@ levelText.style.position = 'none';
 levelText.style.width = 100;
 levelText.style.height = 100;
 levelText.style.backgroundColor = "green";
+// levelText.style.backgroundColor = "rgb(f,f,f,.3)";
 levelText.style.top = window.innerHeight / 2 - window.innerHeight / 7 + 'px';
 levelText.style.left = left;
 levelText.style.fontSize = window.innerHeight/40 + 'px';
@@ -392,6 +395,7 @@ let goalText = document.createElement('div');
 goalText.style.position = 'absolute';
 goalText.style.display = 'none';
 goalText.style.backgroundColor = "green";
+// goalText.style.backgroundColor = "rgb(f,f,f,.3)";
 goalText.style.top = window.innerHeight / 2 + 'px';
 goalText.style.left = innerWidth / 2 + 'px';
 goalText.style.fontSize = window.innerHeight/40 + 'px';
@@ -402,6 +406,7 @@ progressBar.style.display = 'none';
 progressBar.style.position = 'absolute';
 progressBar.style.height = window.innerHeight/40 + "px";
 progressBar.style.backgroundColor = "green";
+// progressBar.style.backgroundColor = "rgb(f,f,f,.3)";
 progressBar.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px'; //+40
 progressBar.style.left = left;//window.innerHeight/57.5 + 'px';
 progressBar.style.width = (window.innerHeight/4.25) * (playerPoints/levels[level]) + "px";
@@ -442,6 +447,7 @@ export const restyleHTML = (offset) => {
     playerPointsText.style.width = 100;
     playerPointsText.style.height = 100;
     playerPointsText.style.backgroundColor = "green";
+    // playerPointsText.style.backgroundColor = "rgb(f,f,f,.3)";
     playerPointsText.style.top = window.innerHeight / 2 - window.innerHeight/14 + 'px';
     playerPointsText.style.fontSize = window.innerHeight/40 + 'px';
     playerPointsText.style.left = left;
@@ -449,6 +455,7 @@ export const restyleHTML = (offset) => {
     questionsText.style.width = 100;
     questionsText.style.height = 100;
     questionsText.style.backgroundColor = "green";
+    // questionsText.style.backgroundColor = "rgb(f,f,f,.3)";
     questionsText.style.top = window.innerHeight / 2 - window.innerHeight / 9.25 + 'px';
     questionsText.style.left = left;
     questionsText.style.fontSize = window.innerHeight/40 + 'px';
@@ -456,6 +463,7 @@ export const restyleHTML = (offset) => {
     levelText.style.width = 100;
     levelText.style.height = 100;
     levelText.style.backgroundColor = "green";
+    // levelText.style.backgroundColor = "rgb(f,f,f,.3)";
     levelText.style.top = window.innerHeight / 2 - window.innerHeight / 7 + 'px';
     levelText.style.left = left;
     levelText.style.fontSize = window.innerHeight/40 + 'px';
@@ -487,7 +495,7 @@ export const restyleHTML = (offset) => {
     if (!goalText)
         goalText = document.createElement('div');
     goalText.style.position = 'absolute';
-    goalText.style.backgroundColor = "green";
+    goalText.style.color = "green";
     goalText.style.top = window.innerHeight / 2 + 'px';
     if (App.getGameState() == 'game over')
         goalText.style.left = window.innerWidth / 2 + window.innerWidth/4 + 'px';
@@ -500,7 +508,7 @@ export const restyleHTML = (offset) => {
     resultPointsText.style.position = 'absolute';
     resultPointsText.style.width = 100;
     resultPointsText.style.height = 100;
-    resultPointsText.style.backgroundColor = "yellow";
+    resultPointsText.style.background = "yellow";
     resultPointsText.style.top = window.innerHeight / 2 + window.innerHeight / 14 + 'px';
     if (App.getGameState() == "game over")
         resultPointsText.style.left = window.innerWidth / 2 + 'px';
