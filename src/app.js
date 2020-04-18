@@ -118,14 +118,14 @@ export const getScores = () => {
     // scoreboard.style.position = 'absolute';
     scoreboard.style.overflow = 'auto';
     scoreboard.style.color = '#fff';
-    scoreboard.style.backgroundColor = '#111';
+    scoreboard.style.color = '#111';
     scoreboard.style.fontSize = window.innerHeight / 30 + 'px';
     scoreboardDiv.id = 'scoreboardDiv';
     document.body.appendChild(scoreboardDiv);
     scoreboardDiv.appendChild(scoreboard);
     let header = document.createElement('caption');
     header.id = 'scoreHeader';
-    header.style.backgroundColor = '#111';
+    header.style.color = '#111';
     header.style.textAlign = 'left';
     header.innerHTML = "Highscores";
     header.style.fontSize = window.innerHeight / 15 + 'px';
@@ -246,7 +246,7 @@ export const restyleHTMLApp = (offset) => {
 	// levelText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
 	timerBar.style.width = 100;
 	timerBar.style.height = 100;
-	timerBar.style.backgroundColor = "red";
+	timerBar.style.color = "red";
 	timerBar.style.top = window.innerHeight / 2 + window.innerHeight/28 + 'px'; //+20
 	timerBar.style.left = offset;//window.innerHeight/57.5 + 'px';
 	timerBar.style.fontSize = window.innerHeight/40 + 'px';
@@ -254,7 +254,7 @@ export const restyleHTMLApp = (offset) => {
 	// levelText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
 	timerBarBar.style.width = 125 + "px";
 	timerBarBar.style.height = window.innerHeight/40 + "px";
-	timerBarBar.style.backgroundColor = "#f00";
+	timerBarBar.style.color = "#f00";
 	timerBarBar.style.top = window.innerHeight / 2 + window.innerHeight/14 + 'px'; //+40
 	timerBarBar.style.left = offset;//window.innerHeight/57.5 + 'px';
 	timerBarBar.style.width = (window.innerHeight/4.25) * (timeRemaining/10) + "px";
@@ -262,7 +262,6 @@ export const restyleHTMLApp = (offset) => {
 
 export const restyleHighScoreboard = () => {
     if (scoreboardDiv.style.display != 'none') {
-        console.log('asdf');
         getScores();
     }
 }
@@ -294,6 +293,7 @@ const update = () => {
 	        timerBar.style.height = 100;
             // timerBar.style.color = 'white';
 	        timerBar.style.backgroundColor = "red";
+            // timerBar.style.backgroundColor = "rgb(f,f,f,0.3)";
 	        timerBar.style.top = window.innerHeight / 2 + window.innerHeight/28 + 'px'; //+20
 	        timerBar.style.left = windowOffset;//window.innerHeight/57.5 + 'px';
 	        timerBar.style.fontSize = window.innerHeight/40 + 'px';
@@ -339,7 +339,7 @@ const update = () => {
 				showScore();
 			}
 
-	    	timerBarBar.style.backgroundColor = "rgb(" + r + "," + g + ",0)";
+	    	timerBarBar.style.color = "rgb(" + r + "," + g + ",0)";
 	    	timerBarBar.style.display = "inline-block";
 	   		timerBarBar.style.width = (window.innerHeight/4.25) * (timeRemaining/10) + "px";
 	   		timerBar.style.display = "inline-block";
