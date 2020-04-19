@@ -33,8 +33,6 @@ firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error
   // ...
 });
 
-console.log(firebase);
-
 function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
@@ -110,6 +108,7 @@ export const incrementUniqueUserCount = () => {
     uniqueCount.once("value", function(snapshot) {
         count = snapshot.val();
         count++;
+        console.log("unique count: ", count);
         ref.update({uniqueCount: count});
     }, function (errorObject) {
         console.log("The read failed: " + errorObject.code);
@@ -123,6 +122,7 @@ export const incrementPlayCount = () => {
     uniqueCount.once("value", function(snapshot) {
         count = snapshot.val();
         count++;
+        console.log("count: ", count);
         ref.update({count: count});
     }, function (errorObject) {
         console.log("The read failed: " + errorObject.code);
