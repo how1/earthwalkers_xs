@@ -67,15 +67,10 @@ export function checkCookie() {
     let hs = getCookie("data");
     if (!hs) {
       setCookie("data", 0, 365);
-<<<<<<< HEAD
       incrementUniqueUserCount();
       return 0;
     } else {
         incrementPlayCount();
-=======
-      return 0;
-    } else {
->>>>>>> 7dd430d86d758a60392f3bfee2c65f6c0f3f1236
         let decrypted = crypto.AES.decrypt(hs, key).toString(crypto.enc.Utf8);
         highscore = decrypted;
         return highscore;
@@ -83,11 +78,6 @@ export function checkCookie() {
 
 }
 
-<<<<<<< HEAD
-=======
-checkCookie();
-
->>>>>>> 7dd430d86d758a60392f3bfee2c65f6c0f3f1236
 export const submitScore = (name, score) => {
     if (name.length > 0){
         let date = new Date().getTime();
