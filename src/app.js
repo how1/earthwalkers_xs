@@ -105,6 +105,20 @@ export const incrementUniqueUserCount = () => {
     });
 }
 
+const getUniqueCount = () => {
+    let count;
+    let ref = database.ref("counts");
+    let uniqueCount = ref.child("uniqueCount");
+    uniqueCount.once("value", function(snapshot) {
+        count = snapshot.val();
+        console.log("unique count: ", count);
+    }, function (errorObject) {
+        console.log("The read failed: " + errorObject.code);
+    });
+}
+
+getUniqueCount();
+
 export const incrementPlayCount = () => {
     let count;
     let ref = database.ref("counts");
