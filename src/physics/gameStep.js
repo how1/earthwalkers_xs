@@ -24,7 +24,7 @@ let mapIndex = [0, 0, 1, 1, 2, 2, 2, 3, 3, 3];
 let maps = []
 let currentQuestion = 1;
 
-export let windowOffset = 125;
+export let windowOffset = 110; //was 125
 export let windowOffsetY = -20;
 
 // let portland = 43.6591;
@@ -527,7 +527,7 @@ export const makeHTMLScoreboard = (distance) => {
     }
     let pp = playerPoints;
     if (pp >= levels[level]) pp = levels[level];
-    playerPointsText.innerHTML = "Points: " + pp + "/" + levels[level];
+    playerPointsText.innerHTML = "Goal: " + pp + "/" + levels[level];
 
     if (questionsText.style.display == 'none'){
         questionsText.style.display = 'inline-block';
