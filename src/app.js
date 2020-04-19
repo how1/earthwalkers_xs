@@ -69,16 +69,16 @@ export function checkCookie() {
     let hs = getCookie("data");
     if (!hs) {
       setCookie("data", 0, 365);
+      incrementUniqueUserCount();
       return 0;
     } else {
+        incrementPlayCount();
         let decrypted = crypto.AES.decrypt(hs, key).toString(crypto.enc.Utf8);
         highscore = decrypted;
         return highscore;
     } 
 
 }
-
-checkCookie();
 
 export const submitScore = (name, score) => {
     if (name.length > 0){
@@ -94,6 +94,33 @@ export const submitScore = (name, score) => {
     }
 }
 
+export const incrementUniqueUserCount = () => {
+    let count;
+    let ref = database.ref("counts");
+    let uniqueCount = ref.child("uniqueCount");
+    uniqueCount.once("value", function(snapshot) {
+        count = snapshot.val();
+        count++;
+        ref.update({uniqueCount: count});
+    }, function (errorObject) {
+        console.log("The read failed: " + errorObject.code);
+    });
+}
+
+export const incrementPlayCount = () => {
+    let count;
+    let ref = database.ref("counts");
+    let uniqueCount = ref.child("count");
+    uniqueCount.once("value", function(snapshot) {
+        count = snapshot.val();
+        count++;
+        ref.update({count: count});
+    }, function (errorObject) {
+        console.log("The read failed: " + errorObject.code);
+    });
+}
+
+checkCookie();
 
 export let scoreboardDiv;
 let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';  
