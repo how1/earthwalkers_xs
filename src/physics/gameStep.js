@@ -305,10 +305,10 @@ export const showScore = (distance, distanceMi) => {
     if (currentQuestion == questions[level]) {
         console.log("level over");
         if (levels[level] <= playerPoints){
-            if (level < 9)
-                level++;
+            let levelWin = false;
+            if (level == 9) levelWin = true 
             // Initialize.setMusic(musicIndex[level]);
-            if (level == 9) {
+            if (levelWin) {
                 console.log("here");
                 App.setGameState("game over");// = "game over";
                 if (App.checkCookie() < totalPoints) App.setCookie("data", totalPoints, 365);
