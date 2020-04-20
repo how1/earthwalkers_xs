@@ -293,7 +293,7 @@ export const restyleHTMLApp = (offset) => {
 	// levelText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
 	timerBarBar.style.width = 125 + "px";
 	timerBarBar.style.height = window.innerHeight/40 + "px";
-	timerBarBar.style.color = "#f00";
+	// timerBarBar.style.backgroundColor = "#f00";
 	timerBarBar.style.top = window.innerHeight / 2 + window.innerHeight/14 + 'px'; //+40
 	timerBarBar.style.left = offset;//window.innerHeight/57.5 + 'px';
 	timerBarBar.style.width = (window.innerHeight/4.25) * (timeRemaining/10) + "px";
@@ -378,7 +378,7 @@ const update = () => {
 				showScore();
 			}
 
-	    	timerBarBar.style.color = "rgb(" + r + "," + g + ",0)";
+	    	timerBarBar.style.backgroundColor = "rgb(" + r + "," + g + ",0)";
 	    	timerBarBar.style.display = "inline-block";
 	   		timerBarBar.style.width = (window.innerHeight/4.25) * (timeRemaining/10) + "px";
 	   		timerBar.style.display = "inline-block";
