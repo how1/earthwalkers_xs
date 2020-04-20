@@ -240,6 +240,7 @@ export const removeLoaderBar = () => {
 }
 
 export const load = () => {
+    App.incrementPlayCount();
 	htmlLoadingBar = document.createElement('div');
 	htmlLoadingBar.id = 'loading-bar';
 	htmlLoadingBar.style.position = 'absolute';

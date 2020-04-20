@@ -70,7 +70,6 @@ export function checkCookie() {
       incrementUniqueUserCount();
       return 0;
     } else {
-        incrementPlayCount();
         let decrypted = crypto.AES.decrypt(hs, key).toString(crypto.enc.Utf8);
         highscore = decrypted;
         return highscore;
