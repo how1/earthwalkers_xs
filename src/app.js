@@ -330,7 +330,7 @@ const update = () => {
 	        timerBar.style.position = 'absolute';
 	        timerBar.style.width = 100;
 	        timerBar.style.height = 100;
-            // timerBar.style.color = 'white';
+            timerBar.style.color = 'black';
 	        timerBar.style.backgroundColor = "red";
             // timerBar.style.backgroundColor = "rgb(f,f,f,0.3)";
 	        timerBar.style.top = window.innerHeight / 2 + window.innerHeight/28 + 'px'; //+20
@@ -349,7 +349,7 @@ const update = () => {
 	        timerBarBar.style.left = windowOffset;// window.innerHeight/57.5 + 'px';
 	        document.body.appendChild(timerBarBar);
 	    }
-	    if (getGameState() == 'during' || getGameState() == 'after'){
+	    if (getGameState() == 'during' || getGameState() == 'after' || getGameState() == 'animation'){
 	        timerBar.style.display = 'inline-block';
 	    	timerBarBar.style.display = 'inline-block';
 	    } else {

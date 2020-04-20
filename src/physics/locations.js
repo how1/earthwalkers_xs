@@ -78,8 +78,8 @@ export const getRandomLocation = (num) => {
 		text2.style.width = 100;
 		text2.style.height = 100;
 		// text2.style.color = 'black';
+		text2.style.color = "black";
 		text2.style.backgroundColor = "blue";
-		// text2.style.backgroundColor = "rgb(f,f,f,.3)";
 		text2.style.top = window.innerHeight / 2 + 'px';
 		text2.style.fontSize = window.innerHeight/40 + 'px';
 	    text2.style.left = windowOffset;// window.innerHeight/57.5 + 'px';

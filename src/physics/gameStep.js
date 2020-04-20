@@ -14,7 +14,7 @@ let resultPoints = 0;
 
 export let myTimer;
 
-let levels = [125, 200, 275, 300, 325, 415, 415, 415, 500, 580];
+let levels = [125, 200, 275, 300, 325, 415, 415, 415, 500, 580]; //580
 let numLocs = [50, 100, 200, 500, 750, 1000, 5000, 5000, 10000, 15000];
 let musicIndex = [0, 0, 1, 1, 0, 0, 0, 2, 2, 2];
 let points = 100;
@@ -167,7 +167,7 @@ const getSubmitCoords = () => {
             newHighscore.style.width = window.innerHeight/25 + '%';
             document.body.appendChild(newHighscore);
             let width = document.getElementById('highscoreDiv').clientWidth;
-            newHighscore.style.color = 'rgba(255,255,0)';
+            newHighscore.style.backgroundColor = 'rgba(255,255,0)';
             newHighscore.style.borderRadius = window.innerHeight/20 + 'px';
             newHighscore.style.paddingLeft = window.innerHeight/78 + 'px';
             newHighscore.style.paddingRight = window.innerHeight/78 + 'px';
@@ -244,7 +244,7 @@ const getStartButtonCoords = () => {
         totalPoints = 0;
         currentQuestion = 1;
         App.setGameState("during");
-        highScore.innerHTML = "Highscore: " + App.checkCookie();
+        highScore.innerHTML = "Highscore: " + App.checkCookie() + " Current: " + totalPoints;
         currentCity = Locations.getRandomLocation(numLocs[level]);
         makeHTMLScoreboard();
         App.resetTime();
@@ -303,10 +303,13 @@ export const showScore = (distance, distanceMi) => {
     App.setGameState("after");// = "after";
     makeHTMLScoreboard();
     if (currentQuestion == questions[level]) {
+        console.log("level over");
         if (levels[level] <= playerPoints){
-            level++;
+            if (level < 9)
+                level++;
             // Initialize.setMusic(musicIndex[level]);
-            if (level == 10) {
+            if (level == 9) {
+                console.log("here");
                 App.setGameState("game over");// = "game over";
                 if (App.checkCookie() < totalPoints) App.setCookie("data", totalPoints, 365);
                 makeHTMLScoreboard();
@@ -340,6 +343,7 @@ playerPointsText.style.position = 'absolute';
 playerPointsText.style.display = 'none';
 playerPointsText.style.width = 100;
 playerPointsText.style.height = 100;
+playerPointsText.style.color = 'black';
 playerPointsText.style.backgroundColor = "green";
 // playerPointsText.style.backgroundColor = "rgb(f,f,f,.3)";
 playerPointsText.style.top = window.innerHeight / 2 - window.innerHeight/14 + 'px';
@@ -351,6 +355,7 @@ questionsText.style.position = 'absolute';
 questionsText.style.display = 'none';
 questionsText.style.width = 100;
 questionsText.style.height = 100;
+questionsText.style.color = "black";
 questionsText.style.backgroundColor = "green";
 // questionsText.style.backgroundColor = "rgb(f,f,f,.3)";
 questionsText.style.top = window.innerHeight / 2 - window.innerHeight / 9.25 + 'px';
@@ -362,6 +367,7 @@ levelText.style.position = 'absolute';
 levelText.style.position = 'none';
 levelText.style.width = 100;
 levelText.style.height = 100;
+levelText.style.color = 'black';
 levelText.style.backgroundColor = "green";
 // levelText.style.backgroundColor = "rgb(f,f,f,.3)";
 levelText.style.top = window.innerHeight / 2 - window.innerHeight / 7 + 'px';
@@ -400,7 +406,7 @@ goalText.style.top = window.innerHeight / 2 + 'px';
 goalText.style.left = innerWidth / 2 + 'px';
 goalText.style.fontSize = window.innerHeight/40 + 'px';
 goalText.style.top = window.innerHeight / 2 + window.innerHeight / 9.25 + 'px';
-document.body.appendChild(goalText);
+// document.body.appendChild(goalText);
 let progressBar = document.createElement('div');
 progressBar.style.display = 'none';
 progressBar.style.position = 'absolute';
@@ -568,7 +574,7 @@ export const makeHTMLScoreboard = (distance) => {
     if (App.getGameState() == 'during' || App.getGameState() == 'after'){
         highScore.style.display = 'inline-block';
     }
-    highScore.innerHTML = "Highscore: " + App.checkCookie();
+    highScore.innerHTML = "Highscore: " + App.checkCookie() + " Current: " + totalPoints;
 }
 
 const calculateScore = (lat1, lon1, lat2, lon2) => {
@@ -593,6 +599,7 @@ const toRadians = (degrees) => {
 }
 
 const showGameOver = (result) => {
+    console.log(result);
     // window.clearTimeout(myTimer);
     goalText.style.left = window.innerWidth / 2 + window.innerWidth/14 + 'px';
     resultPointsText.style.left = window.innerWidth / 2 + window.innerWidth/14 + 'px';
