@@ -307,6 +307,7 @@ export const showScore = (distance, distanceMi) => {
         if (levels[level] <= playerPoints){
             let levelWin = false;
             if (level == 9) levelWin = true 
+            else level++;
             // Initialize.setMusic(musicIndex[level]);
             if (levelWin) {
                 console.log("here");
