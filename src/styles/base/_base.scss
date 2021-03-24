@@ -16,3 +16,119 @@ button {
 button:disabled {
 	cursor: default;
 }
+
+
+
+.scoreboard {
+
+}
+
+
+
+/*
+#playerPointsText {
+	position : 'absolute';
+	display : 'none';
+	width : 100;
+	height : 100;
+	color : 'black';
+	background-color : "green";
+	top : screen.height / 2 - screen.height/14 + 'px';
+	fontSize : screen.height/40 + 'px';
+	left : left;
+}
+
+#questionsText {
+		questionsText.position : 'absolute';
+questionsText.style.display : 'none';
+questionsText.style.width : 100;
+questionsText.style.height : 100;
+questionsText.style.color : "black";
+questionsText.style.backgroundColor : "green";
+// questionsText.style.backgroundColor : "rgb(f,f,f,.3)";
+questionsText.style.top : window.innerHeight / 2 - window.innerHeight / 9.25 + 'px';
+questionsText.style.left : left;
+questionsText.style.fontSize : window.innerHeight/40 + 'px';
+}
+
+#levelText {
+	levelText.style.position : 'absolute';
+levelText.style.position : 'none';
+levelText.style.width : 100;
+levelText.style.height : 100;
+levelText.style.color : 'black';
+levelText.style.backgroundColor : "green";
+// levelText.style.backgroundColor : "rgb(f,f,f,.3)";
+levelText.style.top : window.innerHeight / 2 - window.innerHeight / 7 + 'px';
+levelText.style.left : left;
+levelText.style.fontSize : window.innerHeight/40 + 'px';
+}
+
+#resultText {
+resultText.style.position : 'absolute';
+resultText.style.display : 'none';
+resultText.style.width : 100;
+resultText.style.height : 100;
+resultText.style.color : 'black';
+resultText.style.backgroundColor : "yellow";
+resultText.style.top : window.innerHeight / 2 + window.innerHeight / 28 + 'px';
+resultText.style.left : innerWidth / 2 + 'px';
+resultText.style.fontSize : window.innerHeight/40 + 'px';
+}
+
+
+#resultPointsText {
+resultPointsText.style.position : 'absolute';
+resultPointsText.style.display : 'none';
+resultPointsText.style.width : 100;
+resultPointsText.style.height : 100;
+resultPointsText.style.color : 'black';
+resultPointsText.style.backgroundColor : "yellow";
+resultPointsText.style.top : window.innerHeight / 2 + window.innerHeight / 14 + 'px';
+resultPointsText.style.left : innerWidth / 2 + 'px';
+resultPointsText.style.fontSize : window.innerHeight/40 + 'px';
+}
+
+#goalText {
+	goalText.style.position : 'absolute';
+goalText.style.display : 'none';
+goalText.style.backgroundColor : "green";
+// goalText.style.backgroundColor : "rgb(f,f,f,.3)";
+goalText.style.top : window.innerHeight / 2 + 'px';
+goalText.style.left : innerWidth / 2 + 'px';
+goalText.style.fontSize : window.innerHeight/40 + 'px';
+goalText.style.top : window.innerHeight / 2 + window.innerHeight / 9.25 + 'px';
+}
+
+#progressBar {
+	progressBar.style.display : 'none';
+progressBar.style.position : 'absolute';
+progressBar.style.height : window.innerHeight/40 + "px";
+progressBar.style.backgroundColor : "green";
+// progressBar.style.backgroundColor : "rgb(f,f,f,.3)";
+progressBar.style.top : window.innerHeight / 2 - window.innerHeight/28 + 'px'; //+40
+progressBar.style.left : left;//window.innerHeight/57.5 + 'px';
+progressBar.style.width : (window.innerHeight/4.25) * (playerPoints/levels[level]) + "px";
+}
+
+
+#progressBarBorder {
+	progressBarBorder.style.display : 'none';
+progressBarBorder.style.position : 'absolute';
+progressBarBorder.style.height : window.innerHeight/40 + "px";
+progressBarBorder.style.border : 'solid green 0.1px';
+progressBarBorder.style.top : window.innerHeight / 2 - window.innerHeight/28 + 'px'; //+40
+progressBarBorder.style.left : left;//window.innerHeight/57.5 + 'px';
+progressBarBorder.style.width : (window.innerHeight/4.5) + "px";
+}
+
+
+#highScore {
+	highScore.style.display : 'none';
+highScore.style.position : 'absolute';
+highScore.style.backgroundColor : "yellow";
+highScore.style.top : 0 + 'px';
+highScore.style.left : left;
+highScore.style.fontSize : window.innerHeight/40 + 'px';
+}
+*/

@@ -6,23 +6,59 @@ import * as Loc from './locations.js';
 export let scene = new THREE.Scene();
 export let camera = new THREE.PerspectiveCamera(75, (window.innerWidth-4) / (window.innerHeight-4), 0.1, 10001);
 export let renderer = new THREE.WebGLRenderer();
+// renderer.sortObjects = false;
 setThreeJSElements();
 
+let canvasParent = document.createElement('div');
 
-//(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()
-
+renderer.domElement.id = 'canvas';
+camera.position.z = 1400;
 let height = window.innerHeight-4;
 let width = window.innerWidth-4;
+console.log('ratio', height/width);
+if (height/width > .55) {
+	camera.position.z = 2075;
+	console.log('qwerty');
+	height = width * .75;
+	// renderer.domElement.style.width = width + 'px';
+	// renderer.domElement.style.height = height + 'px';
+	renderer.domElement.style.position= 'fixed';
+	renderer.domElement.style.top = 50 + '%';
+	renderer.domElement.style.left = 50 + '%';
+	renderer.domElement.style.transform =  'translate(-50%, -50%)';
+}
+renderer.setSize(width, height);
 
-renderer.setSize( width, height );
+camera.aspect = width/height;
+camera.updateProjectionMatrix();
+
 document.body.appendChild( renderer.domElement );	
 
 let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';
+export let fontSize = window.innerHeight/40 + 'px';
+if (window.innerHeight/window.innerWidth > .55){
+	fontSize = (window.innerWidth * .55)/40 + 'px';
+}
+
 
 window.addEventListener('resize', () => {
+	fontSize = window.innerHeight/40 + 'px';
+	if (window.innerHeight/window.innerWidth > .55){
+	fontSize = (window.innerWidth * .55)/40 + 'px';
+	}
 	windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';
 	height = window.innerHeight-4;
 	width = window.innerWidth-4;
+	if (height/width > .55) {
+		camera.position.z = 2075;
+		height = width * .75;
+		// renderer.domElement.style.width = width + 'px';
+		// renderer.domElement.style.height = height + 'px';
+		renderer.domElement.style.position= 'fixed';
+		renderer.domElement.style.top = 50 + '%';
+		renderer.domElement.style.left = 50 + '%';
+		renderer.domElement.style.transform =  'translate(-50%, -50%)';
+	} 
 	renderer.setSize(width, height);
 	camera.aspect = width/height;
 	camera.updateProjectionMatrix();
@@ -35,8 +71,6 @@ window.addEventListener('resize', () => {
 		updateLoaderBar();
 	}
 });
-
-camera.position.z = 1400;
 
 export let background;
 export let button;
@@ -79,6 +113,8 @@ export const init = () => {
  	let bgPlate = new THREE.Mesh (geom2, mat);
  	bgPlate.position.z = -1;
  	scene.add(bgPlate);
+ 	let middleHeight = 200;
+ 	let lowerHeight = -200;
 	if (!background){
 		background = getBackgroundMesh( bgTex , 0, 0, geom, 1 );
 	}
@@ -88,7 +124,7 @@ export const init = () => {
  		button = new THREE.Mesh(geom, mat);
  		button.material.transparent = true;
  		button.material.opacity = .7;
- 		button.position.y = window.innerHeight/2- 100;
+ 		button.position.y = middleHeight;//window.innerHeight/2- 100;
     	button.position.x = 0;
     	button.position.z = 2;
  	}
@@ -96,7 +132,7 @@ export const init = () => {
  		gameoverButton = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({map: gameoverButtonTex, side: THREE.FrontSide}));
  		gameoverButton.material.transparent = true;
  		gameoverButton.material.opacity = .7;
- 		gameoverButton.position.y = window.innerHeight/2 - 100;
+ 		gameoverButton.position.y = middleHeight;//window.innerHeight/2 - 100;
     	gameoverButton.position.x = 0;
     	gameoverButton.position.z = 2;
  	}
@@ -104,7 +140,7 @@ export const init = () => {
  		restartButton = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({map: restartButtonTex, side: THREE.FrontSide}));
  		restartButton.material.transparent = true;
  		restartButton.material.opacity = .7;
- 		restartButton.position.y = window.innerHeight/2 - 450;
+ 		restartButton.position.y = lowerHeight;//window.innerHeight/2 - 450;
     	restartButton.position.x = 0;
     	restartButton.position.z = 2;
  	}
@@ -112,7 +148,7 @@ export const init = () => {
  		startButton = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({map: startTex, side: THREE.FrontSide}));
  		startButton.material.transparent = true;
  		startButton.material.opacity = .7;
- 		startButton.position.y = window.innerHeight/2 - 100;
+ 		startButton.position.y = middleHeight;//window.innerHeight/2 - 100;
     	startButton.position.x = 0;
     	startButton.position.z = 2;
  	}
@@ -120,7 +156,7 @@ export const init = () => {
  		winButton = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({map: winButtonTex, side: THREE.FrontSide}));
  		winButton.material.transparent = true;
  		winButton.material.opacity = .7;
- 		winButton.position.y = window.innerHeight/2 - 100;
+ 		winButton.position.y = middleHeight;//window.innerHeight/2 - 100;
     	winButton.position.x = 0;
     	winButton.position.z = 2;
  	}
@@ -128,7 +164,7 @@ export const init = () => {
  		submitButton = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({map: submitTex, side: THREE.FrontSide}));
  		submitButton.material.transparent = true;
  		submitButton.material.opacity = .7;
- 		submitButton.position.y = window.innerHeight/2 + 350;
+ 		submitButton.position.y = 600;//window.innerHeight/2 + 350;
     	submitButton.position.x = 0;
     	submitButton.position.z = 2;
  	}
@@ -136,7 +172,7 @@ export const init = () => {
  		menuButton = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({map: menuTex, side: THREE.FrontSide}));
  		menuButton.material.transparent = true;
  		menuButton.material.opacity = .7;
- 		menuButton.position.y = window.innerHeight/2 - 800;
+ 		menuButton.position.y = -400;//window.innerHeight/2 - 800;
     	menuButton.position.x = 0;
     	menuButton.position.z = 2;
  	}
@@ -144,11 +180,14 @@ export const init = () => {
  		highscoresButton = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({map: highscoresTex, side: THREE.FrontSide}));
  		highscoresButton.material.transparent = true;
  		highscoresButton.material.opacity = .7;
- 		highscoresButton.position.y = window.innerHeight/2 - 450;
+ 		highscoresButton.position.y = -100;//window.innerHeight/2 - 450;
     	highscoresButton.position.x = 0;
     	highscoresButton.position.z = 2;
  	}
+ 	// background.material.depthTest = false;
+ 	// background.renderOrder = 1;
 	scene.add(background);
+	background.position.x = 75;
 	// scene.add(backgroundSquare);
 }
 
@@ -222,16 +261,34 @@ export const updateLoaderBar = () => {
 	}
 	textureLoadingProgress = sum;
 	htmlLoadingBar.style.width = 125 + 'px';
-	htmlLoadingBar.style.height = window.innerHeight/20 + 'px';
+
 	htmlLoadingBar.style.backgroundColor = "#0f0";
-	htmlLoadingBar.style.top = window.innerHeight / 2 - window.innerHeight/9 + 'px'; //+40
-	htmlLoadingBar.style.width = (window.innerHeight/2) * (textureLoadingProgress/arrProgress.length) + 'px';
-	htmlLoadingBar.style.left = window.innerWidth/2.5 + 'px';
-	htmlLoadingText.style.fontSize = window.innerHeight/40 + 'px';
-	htmlLoadingText.style.color = "#0f0";
-	htmlLoadingText.style.top = window.innerHeight / 2 - window.innerHeight/6 + 'px'; //+40
-	htmlLoadingText.style.left = window.innerWidth/2.5 + 'px';
-	htmlLoadingText.innerHTML = "Loading " + (textureLoadingProgress/arrProgress.length * 100).toFixed(2) + "%";
+	if (window.innerHeight/window.innerWidth > .55) {
+		htmlLoadingBar.style.height = (window.innerWidth*.55)/20 + 'px';
+		htmlLoadingBar.style.top = (window.innerWidth*.55) / 2 - (window.innerWidth*.55)/9 + 'px'; //+40
+		htmlLoadingBar.style.width = ((window.innerWidth*.55)/2) * (textureLoadingProgress/arrProgress.length) + 'px';
+		htmlLoadingBar.style.left = window.innerWidth/2.5 + 'px';
+		// htmlLoadingBar.style.position= 'fixed';
+		htmlLoadingBar.style.top = 50 + '%';
+		htmlLoadingBar.style.left = 40 + '%';
+		htmlLoadingText.style.fontSize = fontSize;
+		htmlLoadingText.style.color = "#0f0";
+		htmlLoadingText.style.top = (window.innerWidth*.55) / 2 - (window.innerWidth*.55)/6 + 'px'; //+40
+		htmlLoadingText.style.left = window.innerWidth/2.5 + 'px';
+		htmlLoadingText.innerHTML = "Loading " + (textureLoadingProgress/arrProgress.length * 100).toFixed(2) + "%";
+		htmlLoadingText.style.top = 47 + '%';
+		htmlLoadingText.style.left = 40 + '%';
+	} else {
+		htmlLoadingBar.style.height = window.innerHeight/20 + 'px';
+		htmlLoadingBar.style.top = window.innerHeight / 2 - window.innerHeight/9 + 'px'; //+40
+		htmlLoadingBar.style.width = (window.innerHeight/2) * (textureLoadingProgress/arrProgress.length) + 'px';
+		htmlLoadingBar.style.left = window.innerWidth/2.5 + 'px';
+		htmlLoadingText.style.fontSize = fontSize;
+		htmlLoadingText.style.color = "#0f0";
+		htmlLoadingText.style.top = window.innerHeight / 2 - window.innerHeight/6 + 'px'; //+40
+		htmlLoadingText.style.left = window.innerWidth/2.5 + 'px';
+		htmlLoadingText.innerHTML = "Loading " + (textureLoadingProgress/arrProgress.length * 100).toFixed(2) + "%";
+	}
 }
 
 export const removeLoaderBar = () => {
@@ -247,7 +304,7 @@ export const load = () => {
 	htmlLoadingText = document.createElement('div');
 	htmlLoadingText.style.position = 'absolute';
 	htmlLoadingText.innerHTML = 'Loading';
-	htmlLoadingText.style.fontSize = window.innerHeight/40 + 'px';
+	htmlLoadingText.style.fontSize = fontSize;
 	htmlLoadingText.style.color = "#0f0";
 	htmlLoadingText.style.top = window.innerHeight / 2 - window.innerHeight/6 + 'px'; //+40
 	htmlLoadingText.style.left = window.innerWidth/2.5 + 'px';

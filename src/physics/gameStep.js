@@ -3,6 +3,9 @@ import * as Initialize from './Initialize.js';
 import * as CollisionDetection from './CollisionDetection.js';
 import * as Locations from './locations.js';
 import * as App from '../app.js';
+// var createGeometry = require('three-bmfont-text')
+// var loadFont = require('load-bmfont')
+
 
 let level = 0;
 let time = 10000;
@@ -228,7 +231,11 @@ const getButtonCoords = () => {
         clearScreen();
         distanceFromPoint = 1000000;
         App.setGameState("during");
-        makeHTMLScoreboard();
+        // if (window.innerHeight/window.innerWidth > .55) {
+            // makeHTMLScoreboard();
+        // } else {
+            makeMeshScoreboard();
+        // }
         currentCity = Locations.getRandomLocation(numLocs[level]);
         App.resetTime();
     }
@@ -246,7 +253,11 @@ const getStartButtonCoords = () => {
         App.setGameState("during");
         highScore.innerHTML = "Highscore: " + App.checkCookie() + " Current: " + totalPoints;
         currentCity = Locations.getRandomLocation(numLocs[level]);
-        makeHTMLScoreboard();
+        // if (window.innerHeight/window.innerWidth > .55) {
+        //     makeHTMLScoreboard();
+        // } else {
+            makeMeshScoreboard();
+        // }
         App.resetTime();
     }
 }
@@ -267,9 +278,13 @@ const getRestartCoords = () => {
                 document.body.removeChild(newHighscore);
             newHighscore = null;
         }
-        makeHTMLScoreboard();
-        App.resetTime();
         currentCity = Locations.getRandomLocation(numLocs[level]);
+        // if (window.innerHeight/window.innerWidth > .55) {
+            makeMeshScoreboard();
+        // } else {
+        //     // makeHTMLScoreboard();
+        // }
+        App.resetTime();
     }
 }
 
@@ -287,6 +302,8 @@ export const showScore = (distance, distanceMi) => {
         if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
         Initialize.mediumCheer.play();
     } else if (distance < 75) {
+        //Do nothing
+    } else {
         if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
         Initialize.smallCheer.play();
     }
@@ -301,7 +318,8 @@ export const showScore = (distance, distanceMi) => {
     playerPoints += resultPoints;
     totalPoints += resultPoints;
     App.setGameState("after");// = "after";
-    makeHTMLScoreboard();
+    // makeHTMLScoreboard();
+    makeMeshScoreboard();
     if (currentQuestion == questions[level]) {
         console.log("level over");
         if (levels[level] <= playerPoints){
@@ -313,7 +331,8 @@ export const showScore = (distance, distanceMi) => {
                 console.log("here");
                 App.setGameState("game over");// = "game over";
                 if (App.checkCookie() < totalPoints) App.setCookie("data", totalPoints, 365);
-                makeHTMLScoreboard();
+                makeMeshScoreboard();
+                // makeHTMLScoreboard();
                 level = 0;
                 showGameOver("win");
                 return;
@@ -324,7 +343,8 @@ export const showScore = (distance, distanceMi) => {
         } else {
             App.setGameState("game over");// = "game over";
             if (App.checkCookie() < totalPoints) App.setCookie("data", totalPoints, 365);
-            makeHTMLScoreboard();
+            makeMeshScoreboard();
+            // makeHTMLScoreboard();
             showGameOver("lose");
             return;
         }
@@ -337,9 +357,48 @@ function encodeHTML(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 }
 
+const getLeft = (num) => {
+    if (window.innerHeight/window.innerWidth > .55){
+        return '0px';
+    }
+    return ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';
+}
+
+export const getTop = (num, msg) => {
+    console.log(num, msg);
+    if (window.innerHeight/window.innerWidth > .55) {
+        // let w = window.innerWidth * .55;
+        // console.log('top', num);
+        // let top = null;
+        // if (num == 14) { //timer bar bar
+        //     top = w-(w * .27);
+        // } else if (num == 7) { //level text
+        //     top = w-(w * .31);
+        // } else if (num == -28) { //goal text
+        //     top = w-(w * .3);
+        // } else if (num == -14) { //results points text?
+        //     top = w-(w * .9);
+        // } else if (num == 9.25) { //questions text
+        //     top = w-(w * .29);
+        // } else if (num == 28) { //timer bar
+        //     top = w-(w * .35);
+        // } else if (num == 0) { // location
+        //     top = w-(w * .37); 
+        // }
+        // return top + 'px';
+        if (num == 0) return (window.innerWidth * .55) / 2 + 'px';
+        else if (num < 0) return (window.innerWidth * .55) / 2 - (window.innerWidth * .55)/num + 'px';
+        return (window.innerWidth * .55) / 2 + (window.innerWidth * .55)/num + 'px';
+    }
+    console.log('top2', num);
+    return window.innerHeight / 2 - window.innerHeight/num + 'px'; //+40
+}
+
 //28 14 9.25 
 let left = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';
 let playerPointsText = document.createElement('div');
+playerPointsText.className = 'hover';
+playerPointsText.style.id = 'playerPointsText';
 playerPointsText.style.position = 'absolute';
 playerPointsText.style.display = 'none';
 playerPointsText.style.width = 100;
@@ -347,11 +406,16 @@ playerPointsText.style.height = 100;
 playerPointsText.style.color = 'black';
 playerPointsText.style.backgroundColor = "green";
 // playerPointsText.style.backgroundColor = "rgb(f,f,f,.3)";
-playerPointsText.style.top = window.innerHeight / 2 - window.innerHeight/14 + 'px';
-playerPointsText.style.fontSize = window.innerHeight/40 + 'px';
-playerPointsText.style.left = left;
+if (window.innerHeight/window.innerWidth > .55) {
+    playerPointsText.style.top = getTop(3.5, 'weird bug e');
+} else {
+    playerPointsText.style.top = getTop(14, 'casm');
+}
+playerPointsText.style.fontSize = Initialize.fontSize;
+playerPointsText.style.left = getLeft();
 document.body.appendChild(playerPointsText);
 let questionsText = document.createElement('div');
+questionsText.className = 'hover';
 questionsText.style.position = 'absolute';
 questionsText.style.display = 'none';
 questionsText.style.width = 100;
@@ -359,11 +423,18 @@ questionsText.style.height = 100;
 questionsText.style.color = "black";
 questionsText.style.backgroundColor = "green";
 // questionsText.style.backgroundColor = "rgb(f,f,f,.3)";
-questionsText.style.top = window.innerHeight / 2 - window.innerHeight / 9.25 + 'px';
-questionsText.style.left = left;
-questionsText.style.fontSize = window.innerHeight/40 + 'px';
+if (window.innerHeight/window.innerWidth > .55) {
+    questionsText.style.top = getTop(7, "nbnbnb");
+} else {
+    questionsText.style.top = getTop(9.25);
+}
+
+
+questionsText.style.left = getLeft();
+questionsText.style.fontSize = Initialize.fontSize;
 document.body.appendChild(questionsText);
 let levelText = document.createElement('div');
+levelText.className = 'hover';
 levelText.style.position = 'absolute';
 levelText.style.position = 'none';
 levelText.style.width = 100;
@@ -371,69 +442,93 @@ levelText.style.height = 100;
 levelText.style.color = 'black';
 levelText.style.backgroundColor = "green";
 // levelText.style.backgroundColor = "rgb(f,f,f,.3)";
-levelText.style.top = window.innerHeight / 2 - window.innerHeight / 7 + 'px';
-levelText.style.left = left;
-levelText.style.fontSize = window.innerHeight/40 + 'px';
+if (window.innerHeight/window.innerWidth > .55) {
+    levelText.style.top = getTop(9.25, "00");
+} else {
+    levelText.style.top = getTop(7);
+}
+// if (window.innerWidth-4/window.innerHeight-4 > .55) {
+//     levelText.style.left = 10 + 'px';
+// } else 
+levelText.style.left = getLeft();
+levelText.style.fontSize = Initialize.fontSize;
 document.body.appendChild(levelText);
 let resultText;
 resultText = document.createElement('div');
+resultText.className = 'hover';
 resultText.style.position = 'absolute';
 resultText.style.display = 'none';
 resultText.style.width = 100;
 resultText.style.height = 100;
 resultText.style.color = 'black';
 resultText.style.backgroundColor = "yellow";
-resultText.style.top = window.innerHeight / 2 + window.innerHeight / 28 + 'px';
+resultText.style.top = getTop(-28);
 resultText.style.left = innerWidth / 2 + 'px';
-resultText.style.fontSize = window.innerHeight/40 + 'px';
+resultText.style.fontSize = Initialize.fontSize;
 document.body.appendChild(resultText);
 let resultPointsText = document.createElement('div');
+resultPointsText.className = 'hover';
 resultPointsText.style.position = 'absolute';
 resultPointsText.style.display = 'none';
 resultPointsText.style.width = 100;
 resultPointsText.style.height = 100;
 resultPointsText.style.color = 'black';
 resultPointsText.style.backgroundColor = "yellow";
-resultPointsText.style.top = window.innerHeight / 2 + window.innerHeight / 14 + 'px';
+resultPointsText.style.top = getTop(-14);
 resultPointsText.style.left = innerWidth / 2 + 'px';
-resultPointsText.style.fontSize = window.innerHeight/40 + 'px';
+resultPointsText.style.fontSize = Initialize.fontSize;
 document.body.appendChild(resultPointsText);
 let goalText = document.createElement('div');
+goalText.className = 'hover';
 goalText.style.position = 'absolute';
 goalText.style.display = 'none';
 goalText.style.backgroundColor = "green";
 // goalText.style.backgroundColor = "rgb(f,f,f,.3)";
 goalText.style.top = window.innerHeight / 2 + 'px';
 goalText.style.left = innerWidth / 2 + 'px';
-goalText.style.fontSize = window.innerHeight/40 + 'px';
-goalText.style.top = window.innerHeight / 2 + window.innerHeight / 9.25 + 'px';
+goalText.style.fontSize = Initialize.fontSize;
+goalText.style.top = getTop(9.25);
 // document.body.appendChild(goalText);
 let progressBar = document.createElement('div');
+progressBar.className = 'hover';
 progressBar.style.display = 'none';
 progressBar.style.position = 'absolute';
-progressBar.style.height = window.innerHeight/40 + "px";
+let progressBarBorder = document.createElement('div');
+let highScore = document.createElement('div');
+if (window.innerHeight/window.innerWidth > .55){
+    progressBar.style.height = (window.innerWidth*.55)/40 + "px";
+    progressBar.style.top = (window.innerWidth*.55) / 2 - (window.innerWidth*.55)/28 + 'px'; //+40
+    progressBar.style.width = ((window.innerWidth*.55)/4.25) * (playerPoints/levels[level]) + "px";
+    progressBarBorder.style.height = (window.innerWidth*.55)/40 + "px";
+    progressBarBorder.style.width = ((window.innerWidth*.55)/4.5) + "px";
+    highScore.style.top = (window.innerWidth - (window.innerWidth * .62)) + 'px';
+} else {
+    progressBar.style.height = window.innerHeight/40 + "px";
+    progressBar.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px'; //+40
+    progressBar.style.width = (window.innerHeight/4.25) * (playerPoints/levels[level]) + "px";
+    progressBarBorder.style.height = window.innerHeight/40 + "px";
+    progressBarBorder.style.width = (window.innerHeight/4.5) + "px";
+    highScore.style.top = 0 + 'px';
+}
 progressBar.style.backgroundColor = "green";
 // progressBar.style.backgroundColor = "rgb(f,f,f,.3)";
-progressBar.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px'; //+40
-progressBar.style.left = left;//window.innerHeight/57.5 + 'px';
-progressBar.style.width = (window.innerHeight/4.25) * (playerPoints/levels[level]) + "px";
-document.body.appendChild(progressBar);
-let progressBarBorder = document.createElement('div');
+progressBar.style.left = getLeft();//window.innerHeight/57.5 + 'px';
+
 progressBarBorder.style.display = 'none';
 progressBarBorder.style.position = 'absolute';
-progressBarBorder.style.height = window.innerHeight/40 + "px";
 progressBarBorder.style.border = 'solid green 0.1px';
-progressBarBorder.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px'; //+40
-progressBarBorder.style.left = left;//window.innerHeight/57.5 + 'px';
-progressBarBorder.style.width = (window.innerHeight/4.5) + "px";
+progressBarBorder.style.top = getTop(28); //+40
+progressBarBorder.style.left = getLeft();//window.innerHeight/57.5 + 'px';
 document.body.appendChild(progressBarBorder);
-let highScore = document.createElement('div');
+document.body.appendChild(progressBar);
+
+highScore.className = 'hover';
 highScore.style.display = 'none';
 highScore.style.position = 'absolute';
 highScore.style.backgroundColor = "yellow";
-highScore.style.top = 0 + 'px';
-highScore.style.left = left;
-highScore.style.fontSize = window.innerHeight/40 + 'px';
+
+highScore.style.left = getLeft();
+highScore.style.fontSize = Initialize.fontSize;
 document.body.appendChild(highScore);
 
 const hideHTMLScoreboard = () => {
@@ -455,38 +550,42 @@ export const restyleHTML = (offset) => {
     playerPointsText.style.height = 100;
     playerPointsText.style.backgroundColor = "green";
     // playerPointsText.style.backgroundColor = "rgb(f,f,f,.3)";
-    playerPointsText.style.top = window.innerHeight / 2 - window.innerHeight/14 + 'px';
-    playerPointsText.style.fontSize = window.innerHeight/40 + 'px';
-    playerPointsText.style.left = left;
+    playerPointsText.style.top = getTop(9.25);//window.innerHeight / 2 - window.innerHeight/14 + 'px';
+    playerPointsText.style.fontSize = Initialize.fontSize;
+    playerPointsText.style.left = getLeft();
     questionsText.style.position = 'absolute';
     questionsText.style.width = 100;
     questionsText.style.height = 100;
     questionsText.style.backgroundColor = "green";
     // questionsText.style.backgroundColor = "rgb(f,f,f,.3)";
-    questionsText.style.top = window.innerHeight / 2 - window.innerHeight / 9.25 + 'px';
-    questionsText.style.left = left;
-    questionsText.style.fontSize = window.innerHeight/40 + 'px';
+    questionsText.style.top = getTop(7);//window.innerHeight / 2 - window.innerHeight / 9.25 + 'px';
+    questionsText.style.left = getLeft();
+    questionsText.style.fontSize = Initialize.fontSize;
     levelText.style.position = 'absolute';
     levelText.style.width = 100;
     levelText.style.height = 100;
     levelText.style.backgroundColor = "green";
     // levelText.style.backgroundColor = "rgb(f,f,f,.3)";
-    levelText.style.top = window.innerHeight / 2 - window.innerHeight / 7 + 'px';
-    levelText.style.left = left;
-    levelText.style.fontSize = window.innerHeight/40 + 'px';
+    if (window.innerHeight/window.innerWidth > .55) {
+        levelText.style.top = getTop(5);
+    } else {
+        levelText.style.top = window.innerHeight / 2 - window.innerHeight / 7 + 'px';
+    }
+    levelText.style.left = getLeft();
+    levelText.style.fontSize = Initialize.fontSize;
     progressBar.style.height = window.innerHeight/40 + "px";
     progressBar.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px'; //+40
-    progressBar.style.left = left;//window.innerHeight/57.5 + 'px';
+    progressBar.style.left = getLeft();//window.innerHeight/57.5 + 'px';
     progressBar.style.width = (window.innerHeight/4.25) * (playerPoints/levels[level]) + "px";
     progressBarBorder.style.height = window.innerHeight/40 + "px";
     progressBarBorder.style.top = window.innerHeight / 2 - window.innerHeight/28 + 'px'; //+40
-    progressBarBorder.style.left = left;//window.innerHeight/57.5 + 'px';
+    progressBarBorder.style.left = getLeft();//window.innerHeight/57.5 + 'px';
     progressBarBorder.style.width = (window.innerHeight/4.5) + "px";
     highScore.style.position = 'absolute';
     highScore.style.backgroundColor = "yellow";
     highScore.style.top = 0 + 'px';
-    highScore.style.left = left;
-    highScore.style.fontSize = window.innerHeight/40 + 'px';
+    highScore.style.left = getLeft();
+    highScore.style.fontSize = Initialize.fontSize;
     if (!resultText)
         resultText = document.createElement('div');
     resultText.style.position = 'absolute';
@@ -498,7 +597,7 @@ export const restyleHTML = (offset) => {
         resultText.style.left = window.innerWidth / 2 + window.innerWidth/4 + 'px';
     else
         resultText.style.left = window.innerWidth / 2 + 'px';
-    resultText.style.fontSize = window.innerHeight/40 + 'px';
+    resultText.style.fontSize = Initialize.fontSize;
     if (!goalText)
         goalText = document.createElement('div');
     goalText.style.position = 'absolute';
@@ -508,7 +607,7 @@ export const restyleHTML = (offset) => {
         goalText.style.left = window.innerWidth / 2 + window.innerWidth/4 + 'px';
     else
         goalText.style.left = window.innerWidth / 2 + 'px';
-    goalText.style.fontSize = window.innerHeight/40 + 'px';
+    goalText.style.fontSize = Initialize.fontSize;
     goalText.style.top = window.innerHeight / 2 + window.innerHeight / 9.25 + 'px';
     if (!resultPointsText)
         resultPointsText = document.createElement('div');
@@ -516,15 +615,84 @@ export const restyleHTML = (offset) => {
     resultPointsText.style.width = 100;
     resultPointsText.style.height = 100;
     resultPointsText.style.background = "yellow";
-    resultPointsText.style.top = window.innerHeight / 2 + window.innerHeight / 14 + 'px';
+    resultPointsText.style.top = getTop(14);
     if (App.getGameState() == "game over")
         resultPointsText.style.left = window.innerWidth / 2 + 'px';
     else
         resultPointsText.style.left = window.innerWidth / 2 + 'px';
-    resultPointsText.style.fontSize = window.innerHeight/40 + 'px';
+    resultPointsText.style.fontSize = Initialize.fontSize;
+}
+
+let questionsText2 = null;
+let levelText2 = null;
+let resultText2 = null;
+let resultPointsText2 = null;
+let goalText2 = null;
+let highScore2 = null;
+let locationText2 = null;
+let locationText3 = null;
+
+export const makeMeshScoreboard = (distance) => {
+    if (questionsText2 != null) {
+        scene.remove(questionsText2);
+        scene.remove(levelText2);
+        scene.remove(resultText2);
+        scene.remove(goalText2);
+        scene.remove(highScore2);
+    }
+    const fontJson = require( '../fonts/Arial_regular.json' );
+    const font = new THREE.Font( fontJson );
+    let fontInfo = {
+        font: font,
+        size: 70,
+        height: 0,
+        curveSegments: 2,
+        bevelThickness: 1,
+        bevelSize: 1,
+        bevelEnabled: false
+    };
+
+    questionsText2 = new THREE.TextGeometry( "Question: " + currentQuestion + "/" + questions[level], fontInfo);
+    levelText2 = new THREE.TextGeometry( "Level " + (level + 1) + ": Top " + numLocs[level] + " Cities", fontInfo);
+    if (distanceFromPoint >= 100000) {
+        resultText2 = new THREE.TextGeometry( "Result: Out of Time", fontInfo );
+    } else {
+        resultText2 = new THREE.TextGeometry( "Result: " + distanceFromPoint + " mi." , fontInfo);
+    }
+    resultPointsText2 = new THREE.TextGeometry(  "Points: " + resultPoints, fontInfo);
+    goalText2 = new THREE.TextGeometry( "Question: " + currentQuestion + "/" + questions[level], fontInfo);
+    highScore2 = new THREE.TextGeometry( "Highscore: " + App.checkCookie() + " Current: " + totalPoints, fontInfo);
+    // currentCity = Locations.getLocationText(numLocs[level]);
+    if (currentCity.secondary.length == 0) {
+        locationText2 = new THREE.TextGeometry( currentCity.city, fontInfo);
+        locationText3 = new THREE.TextGeometry( currentCity.secondary, fontInfo);
+    } else {
+        locationText2 = new THREE.TextGeometry( currentCity.city + ", " + currentCity.secondary, fontInfo);
+        locationText3 = new THREE.TextGeometry( currentCity.country, fontInfo);
+    }
+    // var textGeometry = new THREE.TextGeometry( );
+    // let meshes = [questionsText2, levelText2, resultText2, goalText2, highScore2];
+
+    var textMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, specular: 0xffffff });
+    getTextMesh(-2000, 100, questionsText2, new THREE.MeshBasicMaterial({ color: 0x009900, specular: 0xffffff }));
+    getTextMesh(-2000, -100, resultText2, new THREE.MeshBasicMaterial({ color: 0xffff00, specular: 0xffffff }));
+    getTextMesh(-2000, 0, levelText2, new THREE.MeshBasicMaterial({ color: 0x009900, specular: 0xffffff }));
+    getTextMesh(0, 0, resultPointsText2, new THREE.MeshBasicMaterial({ color: 0xffff00, specular: 0xffffff }));
+    getTextMesh(-2000, 1000, highScore2, new THREE.MeshBasicMaterial({ color: 0xffff00, specular: 0xffffff }));
+    getTextMesh(-2000, 300, locationText2, new THREE.MeshBasicMaterial({ color: 0x0000ff, specular: 0xffffff }));
+    getTextMesh(-2000, 200, locationText3, new THREE.MeshBasicMaterial({ color: 0x0000ff, specular: 0xffffff }));
+}
+
+const getTextMesh = (x, y, mesh, tm) => {
+    mesh = new THREE.Mesh( mesh, tm );
+    scene.add( mesh );
+    mesh.position.x = x;
+    mesh.position.y = y;
+    mesh.position.z = 4;
 }
 
 export const makeHTMLScoreboard = (distance) => {
+
     let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';
     let left;
     if (App.getGameState() == "during") left = windowOffset; //window.innerHeight/57.5 + 'px';
@@ -710,6 +878,10 @@ export let currentCity;// = Locations.getRandomLocation();
 const getMouseCoords = (event) => {
     mouse.clientX = event.clientX;
     mouse.clientY = event.clientY;
+    if (window.innerHeight/window.innerWidth > .55) {
+        mouse.clientY += (renderer.domElement.height - window.innerHeight) / 2;
+        console.log(mouse.clientY, event.clientY);
+    }
     // mouse.clientX -= windowOffset;
     // mouse.clientY -= windowOffsetY;
 }

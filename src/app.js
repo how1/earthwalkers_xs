@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { init, load, scene, renderer, camera, updateLoaderBar, textureLoadingProgress, startButton, 
 	removeLoaderBar, title, titleTex, highscoresButton, setSongs} from "./physics/Initialize.js";
-import {makeHTMLScoreboard, showScore, updateCircleRadius, setButtons} from "./physics/gameStep.js";
+import {makeHTMLScoreboard, showScore, updateCircleRadius, setButtons, getTop} from "./physics/gameStep.js";
 import 'normalize.css';
 import './styles/styles.scss';
 import * as crypto from 'crypto-js';
@@ -138,7 +138,13 @@ export let scoreboardDiv;
 let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';  
 
 export const getScores = () => {
-    let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';  
+    let fontSize = '2vmin';
+    let windowOffset;
+    if (window.innerHeight/window.innerWidth > .55){
+        windowOffset = ((window.innerWidth) - ((window.innerWidth * .55) - 4) * 2) / 2 + 'px';  
+    } else {
+        windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';  
+    }
     let scores = [];
     let ref = database.ref("scores");
     ref.orderByChild("score").limitToLast(100).on("child_added", function(snapshot) {
@@ -150,15 +156,32 @@ export const getScores = () => {
     let scoreboard = document.createElement('table');
     scoreboardDiv.style.position = 'absolute';
     scoreboardDiv.style.overflow = 'auto';
-    scoreboardDiv.style.top = window.innerHeight / 25 + 'px';
-    scoreboardDiv.style.maxHeight = window.innerHeight * 0.8 + 'px';
-    scoreboard.style.width = (window.innerHeight - 4) * 1.5 + 'px';
-    scoreboardDiv.style.left = windowOffset;
+    if (window.innerHeight/window.innerWidth > .55){
+        console.log(window.innerHeight, window.innerWidth, window.innerHeight/window.innerWidth);
+        scoreboardDiv.style.top = (window.innerWidth * .55) / 25 + 'px';
+        scoreboardDiv.style.maxHeight = (window.innerWidth * .55) * 0.8 + 'px';
+        scoreboard.style.width = ((window.innerWidth * .55) - 4) * 1.5 + 'px';
+        scoreboardDiv.style.left = windowOffset;
+        scoreboardDiv.style.position= 'fixed';
+        scoreboardDiv.style.top = 45 + '%';
+        scoreboardDiv.style.left = 50 + '%';
+        scoreboardDiv.style.transform =  'translate(-50%, -50%)';
+    } else {
+        console.log('asdf');
+        // scoreboardDiv.style.top = window.innerHeight / 25 + 'px';
+        scoreboardDiv.style.maxHeight = window.innerHeight * 0.8 + 'px';
+        scoreboard.style.width = (window.innerHeight - 4) * 1.5 + 'px';
+        // scoreboardDiv.style.left = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + window.innerHeight/40 + 'px';
+        scoreboardDiv.style.top = 45 + '%';
+        scoreboardDiv.style.left = 50 + '%';
+        scoreboardDiv.style.transform =  'translate(-50%, -50%)';
+    }
+
     // scoreboard.style.position = 'absolute';
     scoreboard.style.overflow = 'auto';
     scoreboard.style.color = '#fff';
     scoreboard.style.backgroundColor = '#111';
-    scoreboard.style.fontSize = window.innerHeight / 30 + 'px';
+    scoreboard.style.fontSize = fontSize;//window.innerHeight / 30 + 'px';
     scoreboardDiv.id = 'scoreboardDiv';
     document.body.appendChild(scoreboardDiv);
     scoreboardDiv.appendChild(scoreboard);
@@ -285,18 +308,34 @@ export const restyleHTMLApp = (offset) => {
 	// levelText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
 	timerBar.style.width = 100;
 	timerBar.style.height = 100;
-	timerBar.style.color = "red";
-	timerBar.style.top = window.innerHeight / 2 + window.innerHeight/28 + 'px'; //+20
-	timerBar.style.left = offset;//window.innerHeight/57.5 + 'px';
-	timerBar.style.fontSize = window.innerHeight/40 + 'px';
-	timerBarBar.style.position = 'absolute';
-	// levelText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-	timerBarBar.style.width = 125 + "px";
-	timerBarBar.style.height = window.innerHeight/40 + "px";
-	// timerBarBar.style.backgroundColor = "#f00";
-	timerBarBar.style.top = window.innerHeight / 2 + window.innerHeight/14 + 'px'; //+40
-	timerBarBar.style.left = offset;//window.innerHeight/57.5 + 'px';
-	timerBarBar.style.width = (window.innerHeight/4.25) * (timeRemaining/10) + "px";
+    timerBarBar.style.zIndex = 1;
+    timerBar.style.zIndex = 1;
+	// timerBar.style.color = "red";
+    if (window.innerHeight/window.innerWidth > .55) {
+        // timerBar.style.top = getTop(28); //(window.innerWidth * .55) / 2 + (window.innerWidth * .55)/28 + 'px'; //+20
+        // timerBar.style.left = '0px'; //offset;//window.innerHeight/57.5 + 'px';
+        // timerBar.style.fontSize = (window.innerWidth * .55)/40 + 'px';
+        // timerBarBar.style.position = 'absolute';
+        // // levelText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+        // timerBarBar.style.width = 125 + "px";
+        // timerBarBar.style.height = (window.innerWidth * .55)/40 + "px";
+        // // timerBarBar.style.backgroundColor = "#f00";
+        // timerBarBar.style.top = getTop(14); //(window.innerWidth * .55) / 2 + (window.innerWidth * .55)/14 + 'px'; //+40
+        // timerBarBar.style.left = '0px'; //offset;//window.innerHeight/57.5 + 'px';
+        // timerBarBar.style.width = ((window.innerWidth * .55)/4.25) * (timeRemaining/10) + "px";
+    } else {
+        timerBar.style.top = window.innerHeight / 2 + window.innerHeight/28 + 'px'; //+20
+        timerBar.style.left = offset;//window.innerHeight/57.5 + 'px';
+        timerBar.style.fontSize = window.innerHeight/40 + 'px';
+        timerBarBar.style.position = 'absolute';
+        // levelText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+        timerBarBar.style.width = 125 + "px";
+        timerBarBar.style.height = window.innerHeight/40 + "px";
+        // timerBarBar.style.backgroundColor = "#f00";
+        timerBarBar.style.top = window.innerHeight / 2 + window.innerHeight/14 + 'px'; //+40
+        timerBarBar.style.left = offset;//window.innerHeight/57.5 + 'px';
+        timerBarBar.style.width = (window.innerHeight/4.25) * (timeRemaining/10) + "px";
+    }
 }
 
 export const restyleHighScoreboard = () => {
@@ -327,26 +366,43 @@ const update = () => {
 
 	    if (!timerBar){
 	        timerBar = document.createElement('div');
+            timerBar.className = 'hover';
 	        timerBar.style.position = 'absolute';
+            timerBar.style.zIndex = 1;
 	        timerBar.style.width = 100;
 	        timerBar.style.height = 100;
             timerBar.style.color = 'black';
 	        timerBar.style.backgroundColor = "red";
             // timerBar.style.backgroundColor = "rgb(f,f,f,0.3)";
-	        timerBar.style.top = window.innerHeight / 2 + window.innerHeight/28 + 'px'; //+20
-	        timerBar.style.left = windowOffset;//window.innerHeight/57.5 + 'px';
-	        timerBar.style.fontSize = window.innerHeight/40 + 'px';
+            if (window.innerHeight/window.innerWidth > .55) {
+                timerBar.style.top = getTop(28); //(window.innerWidth * .55) / 2 + (window.innerWidth * .55)/28 + 'px'; //+20
+                timerBar.style.left = '0px'; //windowOffset;//window.innerHeight/57.5 + 'px';
+                timerBar.style.fontSize = (window.innerWidth * .55)/40 + 'px';
+            } else {
+                timerBar.style.top = window.innerHeight / 2 + window.innerHeight/28 + 'px'; //+20
+                timerBar.style.left = windowOffset;//window.innerHeight/57.5 + 'px';
+                timerBar.style.fontSize = window.innerHeight/40 + 'px';
+            }
 	        document.body.appendChild(timerBar);
 	    }	    
 
 	 	if (!timerBarBar){
 	    	timerBarBar = document.createElement('div');
+            timerBarBar.className = 'hover';
 	        timerBarBar.style.position = 'absolute';
-	        timerBarBar.style.width = 125 + "px";
-	        timerBarBar.style.height = window.innerHeight/40 + "px";
+            timerBarBar.style.zIndex = 1;
+	        timerBarBar.style.width = (window.innerWidth-windowOffset*2)/50 + "px";
+	       
 	        timerBarBar.style.backgroundColor = "#f00";
-	        timerBarBar.style.top = window.innerHeight / 2 + window.innerHeight/14 + 'px'; //+40
-	        timerBarBar.style.left = windowOffset;// window.innerHeight/57.5 + 'px';
+            if (window.innerHeight/window.innerWidth > .55) {
+                timerBarBar.style.height = (window.innerWidth * .55)/40 + "px";
+                timerBarBar.style.top = getTop(14);//(window.innerHeight) / 2 + (window.innerWidth * .55)/14 + 'px'; //+40
+                timerBarBar.style.left = '0px'; //window.innerWidth/50 + 'px'; ;// window.innerHeight/57.5 + 'px';
+            } else {
+                timerBarBar.style.height = window.innerHeight/40 + "px";
+                timerBarBar.style.top = window.innerHeight / 2 + window.innerHeight/14 + 'px'; //+40
+                timerBarBar.style.left = windowOffset;// window.innerHeight/57.5 + 'px';
+            }
 	        document.body.appendChild(timerBarBar);
 	    }
 	    if (getGameState() == 'during' || getGameState() == 'after' || getGameState() == 'animation'){
