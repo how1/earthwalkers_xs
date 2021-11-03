@@ -43,7 +43,7 @@
     "three": "^0.97.0",
     "three-bmfont-text": "^2.3.0",
     "url-loader": "^1.1.2",
-    "validator": "^10.5.0",
+    "validator": "^13.7.0",
     "webm-writer": "^0.2.1",
     "webpack": "^4.22.0",
     "webpack-cli": "^3.1.2",
