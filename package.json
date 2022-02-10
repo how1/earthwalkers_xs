@@ -34,7 +34,7 @@
     "html-loader": "^0.5.5",
     "live-server": "^1.2.0",
     "load-bmfont": "^1.4.0",
-    "node-sass": "^4.9.2",
+    "node-sass": "^7.0.0",
     "normalize.css": "^8.0.0",
     "package": "^1.0.1",
     "raw-loader": "^4.0.0",
