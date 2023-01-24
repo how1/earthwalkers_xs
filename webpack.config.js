@@ -29,7 +29,7 @@
 
 const path = require('path');
 const webpack = require('webpack')
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -40,7 +40,6 @@ if (process.env.NODE_ENV === 'development'){
 
 module.exports = (env) => {
 	const isProduction = env === 'production';
-	const CSSExtract = new ExtractTextPlugin('styles.css');
 
 	return ({
 		entry: ['babel-polyfill', './src/app.js'],
@@ -56,7 +55,7 @@ module.exports = (env) => {
 			}, {
 				test: /\.s?css$/,
 				use: [
-					"style-loader",
+					MiniCssExtractPlugin.loader,
 					"css-loader",
 					"sass-loader"
 				]
@@ -76,20 +75,31 @@ module.exports = (env) => {
 			}, {
 			    test: /\.mp3$/,
 			    use: {
-			    	loader: 'file-loader'
+			    	loader: 'file-loader',
+			    	 options: {
+				        esModule: false 
+				      }
 			    }
 			}]
 		},
 		plugins: [
-			CSSExtract
-		],
-		devtool: isProduction ? 'source-map' : 'cheap-module-eval-source-map',// 'inline-source-map',
+    new MiniCssExtractPlugin({
+      attributes: {
+        id: "target",
+        "data-target": "example",
+      },
+    }),
+  ],
+		devtool: isProduction ? 'source-map' : 'eval-cheap-module-source-map',// 'inline-source-map',
 		devServer: {
-			contentBase: path.join(__dirname, 'public'),
-			historyApiFallback: true
+			static: {
+      			directory: path.join(__dirname, "./")
+    		}
 		},
 		node: {
-    		fs: "empty"
+    		global: true,
+ 			__filename: true,
+ 			__dirname: true,
   		}
 	});
 }

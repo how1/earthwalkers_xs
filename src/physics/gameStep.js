@@ -199,27 +199,59 @@ const getSubmitCoords = () => {
 }
 
 const getMapCoords = () => {
-    if (!bg) bg = Initialize.background;
-    let mapPos = new THREE.Vector3();
-    mapPos.set(bg.position.x, bg.position.y, bg.position.z);
-    let width = bg.geometry.parameters.width;
-    let height = bg.geometry.parameters.height;
-    if (checkMapCollision(pos, bg)){
-        let tmp = new THREE.Vector3();
-        tmp.set(pos.x, pos.y, pos.z);
+    if (!bg) bg = Initialize.background; //bg image
+    let mapPos = new THREE.Vector3(); //blank v3
+    mapPos.set(bg.position.x, bg.position.y, bg.position.z); //store the position of the map. it may be offset from screen coords a bit
+    let width = bg.geometry.parameters.width; //help locate mouse in relation to map
+    let height = bg.geometry.parameters.height; // same
+    if (checkMapCollision(pos, bg)){ //only do stuff if mouse is over map, otherwise do nothging. so that user can click on side of screena nds tuff
+        let tmp = new THREE.Vector3(); //temporary vluae
+        tmp.set(pos.x, pos.y, pos.z); //set tmp to pos of mouse. pos is global variable that is set by getMousePos
         tmp.sub(mapPos);   
         convertToLatLong(tmp);
         distanceFromPoint = calculateScore(tmp.x, tmp.y, currentCity.latLong.x, currentCity.latLong.y);
         (pos, tmp, convertLatLongToWorldCoords(tmp));
         let cityPosition = new THREE.Vector3();
         cityPosition.set(currentCity.latLong.x, currentCity.latLong.y, 0);
-        let distance = convertLatLongToWorldCoords(cityPosition).distanceTo(pos);
+        let wrldCrds = convertLatLongToWorldCoords(cityPosition)
+        let distance = wrldCrds.distanceTo(pos);
+        let positionText = pos.x + ", " + pos.y;
+        // console.log("position of mouse: " + positionText);
+        // console.log("position of city: " + wrldCrds.x + ", " + wrldCrds.y);
+        // console.log("distance: " + distance);
         makeCircle(distance, cityPosition);
         distances = [distance, distanceFromPoint];
         App.setGameState("animation");
         // window.clearTimeout(myTimer);
         // showScore(distance, distanceFromPoint);
     }
+}
+
+export const displayMouseAndPointCoords = () => {
+    console.log('displaying mouse coords!!!');
+    if (!bg) bg = Initialize.background; //bg image
+    let mapPos = new THREE.Vector3(); //blank v3
+    mapPos.set(bg.position.x, bg.position.y, bg.position.z); //store the position of the map. it may be offset from screen coords a bit
+    let width = bg.geometry.parameters.width; //help locate mouse in relation to map
+    let height = bg.geometry.parameters.height; // same
+    getMousePos()
+    let tmp = new THREE.Vector3(); //temporary vluae
+    tmp.set(pos.x, pos.y, pos.z); //set tmp to pos of mouse. pos is global variable that is set by getMousePos
+    tmp.sub(mapPos);   
+    convertToLatLong(tmp);
+    distanceFromPoint = calculateScore(tmp.x, tmp.y, currentCity.latLong.x, currentCity.latLong.y);
+    (pos, tmp, convertLatLongToWorldCoords(tmp));
+    let cityPosition = new THREE.Vector3();
+    cityPosition.set(currentCity.latLong.x, currentCity.latLong.y, 0);
+    let wrldCrds = convertLatLongToWorldCoords(cityPosition)
+    let distance = wrldCrds.distanceTo(pos);
+    let positionText = pos.x + ", " + pos.y;
+    console.log("position of mouse: " + positionText);
+    // mouseposText.innerHTML = positionText;
+    // cityposText.innerHTML = wrldCrds.x + ", " + wrldCrds.y;
+    // distanceText.innerHTML = distance;
+        // window.clearTimeout(myTimer);
+        // showScore(distance, distanceFromPoint);
 }
 
 const getButtonCoords = () => {
@@ -277,19 +309,21 @@ const getRestartCoords = () => {
 export const showScore = (distance, distanceMi) => {
     if (!distance) distance = 10000;
     if (!distanceMi) distanceMi = 10000;
-    if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
-    if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
-    if (Initialize.bigCheer.isPlaying) Initialize.bigCheer.stop();
-    if (distance < 10){
-        if (Initialize.bigCheer.isPlaying) Initialize.bigCheer.stop();
-        Initialize.bigCheer.play();
-    } else if (distance < 30) {
-        if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
-        Initialize.mediumCheer.play();
-    } else if (distance < 75) {
-        if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
-        Initialize.smallCheer.play();
-    }
+    // if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
+    // if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
+    // if (Initialize.bigCheer.isPlaying) Initialize.bigCheer.stop();
+    // if (distance < 10){
+    //     if (Initialize.bigCheer.isPlaying) Initialize.bigCheer.stop();
+    //     Initialize.bigCheer.play();
+    // } else if (distance < 30) {
+    //     if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
+    //     Initialize.mediumCheer.play();
+    // } else if (distance < 75) {
+    //     //Do nothing
+    // } else {
+    //     if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
+    //     Initialize.smallCheer.play();
+    // }
     if (distanceMi > 2000){
         distanceMi = 2000;
     }
@@ -435,6 +469,14 @@ highScore.style.top = 0 + 'px';
 highScore.style.left = left;
 highScore.style.fontSize = window.innerHeight/40 + 'px';
 document.body.appendChild(highScore);
+// let mouseposText = document.createElement('div');
+// let cityposText = document.createElement('div');
+// let distanceText = document.createElement('div');
+// document.body.appendChild(mouseposText);
+// document.body.appendChild(cityposText);
+// document.body.appendChild(distanceText);
+
+// mouseposText.innerHTML = "new VgetMousePos";
 
 const hideHTMLScoreboard = () => {
     playerPointsText.style.display = 'none';
@@ -631,9 +673,36 @@ const clearScreen = () => {
 let circle;
 let circle3;
 let radius = 0;
+let circleStart = 0
 
 export const updateCircleRadius = () => {
-    circle.scale.set(circle.scale.x + 40, circle.scale.y + 40, 1);
+    if (circleStart == 0) { 
+        let distance = distances[0];
+        let distanceMi = distances[1];
+        if (!distance) distance = 10000;
+        if (!distanceMi) distanceMi = 10000;
+        if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
+        if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
+        if (Initialize.bigCheer.isPlaying) Initialize.bigCheer.stop();
+        if (distance < 10){
+            console.log("this is good!!!");
+            if (Initialize.bigCheer.isPlaying) Initialize.bigCheer.stop();
+            Initialize.bigCheer.play();
+        } else if (distance < 100/level) {
+            console.log("ok!!!!");
+            if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
+            Initialize.mediumCheer.play();
+        } else if (distance < 2000) {
+            console.log("bad");
+            //Do nothing
+        } else {
+            console.log("watf" + distance + " " + distanceMi);
+            if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
+            Initialize.smallCheer.play();
+        }
+    }
+    circleStart = 1;
+    circle.scale.set(circle.scale.x + 10, circle.scale.y + 10, 1);
     scene.remove(circle3);
     let geometry = new THREE.RingGeometry( circle.scale.x-7, circle.scale.x, Math.round(distances[0]) );
     var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.FrontSide } );
@@ -641,6 +710,7 @@ export const updateCircleRadius = () => {
     circle3.position.set(circle.position.x, circle.position.y, 1);
     scene.add(circle3);
     if (circle.scale.x >= distances[0]) {
+        circleStart = 0;
         circle.scale.set(distances[0], distances[0], 1);
         scene.remove(circle3);
         let geometry = new THREE.RingGeometry( circle.scale.x-7, circle.scale.x, Math.round(distances[0]) );
@@ -701,11 +771,18 @@ export const convertToPixelCoords = (vec) => {
     }
 }
 
+
+
 let portland = Locations.newLocation("Portland", "Maine", "United States", 43.6591, -70.2568);
 Locations.locations.push(portland);
 let locations = Locations.locations;
 Locations.getLocations();
 export let currentCity;// = Locations.getRandomLocation();
+
+// let portlandText = document.createElement('div');
+// document.body.appendChild(portlandText);
+// let loc = convertLatLongToWorldCoords(new THREE.Vector3(43.6591, -70.2568, 0));
+// portlandText.innerHTML = "Portland: " +loc.x + ", " + loc.y;
 
 const getMouseCoords = (event) => {
     mouse.clientX = event.clientX;
@@ -714,7 +791,7 @@ const getMouseCoords = (event) => {
     // mouse.clientY -= windowOffsetY;
 }
 
-const getMousePos = () => {
+export const getMousePos = () => {
     let targetZ = 0;
     vec.set(
     ( mouse.clientX / renderer.domElement.width ) * 2 - 1,
