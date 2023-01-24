@@ -2,13 +2,14 @@ import * as THREE from 'three';
 import { init, load, scene, renderer, camera, updateLoaderBar, textureLoadingProgress, startButton, 
 	removeLoaderBar, title, titleTex, highscoresButton, setSongs} from "./physics/Initialize.js";
 import {makeHTMLScoreboard, showScore, updateCircleRadius, setButtons, getTop} from "./physics/gameStep.js";
+
 import 'normalize.css';
 import './styles/styles.scss';
 import * as crypto from 'crypto-js';
 import {key, email, password} from './physics/key.js';
-import * as firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/database";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/database";
 
 var firebaseConfig = {
 	apiKey: "AIzaSyB-6vBUk8IjAgZVpCr1aXswyUmc8f2qOjc",
@@ -48,6 +49,27 @@ function getCookie(cname) {
     }
     return "";
 }
+
+// let timerBar2 = document.createElement('div');
+// timerBar2.style.top=window.innerHeight-75;
+// timerBar2.style.position = 'absolute';
+// timerBar2.style.left=window.innerWidth/2;
+// document.body.appendChild(timerBar2);
+// timerBar2.innerHTML = "Henry"
+
+// let timerBar22 = document.createElement('div');
+// timerBar22.style.top=window.innerHeight-75;
+// timerBar22.style.position = 'absolute';
+// timerBar22.style.left=window.innerWidth/2;
+// document.body.appendChild(timerBar22);
+// timerBar22.innerHTML = "Henry"
+
+// let timerBar222 = document.createElement('div');
+// timerBar222.style.top=window.innerHeight-100;
+// timerBar222.style.position = 'absolute';
+// timerBar222.style.left=window.innerWidth/2;
+// document.body.appendChild(timerBar222);
+// timerBar222.innerHTML = "Henry"
 
 export function setCookie(cname, cvalue, exdays) {
     let encHighScore = crypto.AES.encrypt(cvalue + "", key);
@@ -344,7 +366,55 @@ export const restyleHighScoreboard = () => {
     }
 }
 
+document.addEventListener("mousemove", function(event){
+    getMouseCoords(event);
+    getMousePos();
+});
+
+let windowOffsetx = 110; //was 125
+let windowOffsetY = -20;
+
+const convertToLatLong = (vec) => {
+    vec.x += windowOffsetx;
+    vec.y += windowOffsetY
+    vec.x /= 12;
+    vec.y /= 14.5;
+}
+
+let mouse = {
+    clientX: 0,
+    clientY:0
+}
+
+let vec = new THREE.Vector3(0,0,0);
+let pos = new THREE.Vector3(0,0,0);
+
+const getMouseCoords = (event) => {
+    mouse.clientX = event.clientX;
+    mouse.clientY = event.clientY;
+    // mouse.clientX -= windowOffset;
+    // mouse.clientY -= windowOffsetY;
+}
+
+export const getMousePos = () => {
+    let targetZ = 0;
+    vec.set(
+    ( mouse.clientX / renderer.domElement.width ) * 2 - 1,
+    - ( mouse.clientY / renderer.domElement.height ) * 2 + 1,
+    0.5 );
+    vec.unproject( camera );
+    vec.sub( camera.position ).normalize();
+    let distance = ( targetZ - camera.position.z ) / vec.z;
+    pos.copy( camera.position ).add( vec.multiplyScalar( distance ) );
+}
+
 const update = () => {
+    // let tmp = new THREE.Vector3(0,0,0);
+    // let tmp2 = new THREE.Vector3(0,0,0);
+    // tmp.copy(pos);
+    // convertToLatLong(tmp);
+    // timerBar222.innerHTML= tmp.x.toFixed(2) + ", " + tmp.y.toFixed(2);
+    // timerBar222.innerHTML= mouse.clientX.toFixed(2) + ", " + mouse.clientY.toFixed(2);
 	if (getGameState() == 'loading') {
 		updateLoaderBar();
 		console.log(textureLoadingProgress);
@@ -455,6 +525,7 @@ const GameLoop = () => {
 	requestAnimationFrame( GameLoop );
 	update();
 	render();
+    // updateCircleRadius();
 };
 
 GameLoop();
