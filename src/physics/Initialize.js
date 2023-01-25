@@ -3,7 +3,7 @@ import * as App from'../app.js';
 import {setThreeJSElements, setButtons, restyleHTML} from './gameStep.js';
 import * as Loc from './locations.js';
 
-const margin = 0;
+const margin = 4;
 
 let height = window.innerHeight-margin;
 let width = window.innerWidth-margin;
@@ -20,8 +20,6 @@ let canvasParent = document.createElement('div');
 
 renderer.domElement.id = 'canvas';
 camera.position.z = 1400;
-let height = window.innerHeight-4;
-let width = window.innerWidth-4;
 console.log('ratio', height/width);
 if (height/width > .55) {
 	camera.position.z = 2075;
@@ -41,43 +39,24 @@ camera.updateProjectionMatrix();
 
 document.body.appendChild( renderer.domElement );	
 
-let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';
-export let fontSize = window.innerHeight/40 + 'px';
-if (window.innerHeight/window.innerWidth > .55){
-	fontSize = (window.innerWidth * .55)/40 + 'px';
-}
-
-
-window.addEventListener('resize', () => {
-	fontSize = window.innerHeight/40 + 'px';
-	if (window.innerHeight/window.innerWidth > .55){
-	fontSize = (window.innerWidth * .55)/40 + 'px';
-	}
-	windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';
-	height = window.innerHeight-4;
-	width = window.innerWidth-4;
-	if (height/width > .55) {
-		camera.position.z = 2075;
-		height = width * .75;
-		// renderer.domElement.style.width = width + 'px';
-		// renderer.domElement.style.height = height + 'px';
-		renderer.domElement.style.position= 'fixed';
-		renderer.domElement.style.top = 50 + '%';
-		renderer.domElement.style.left = 50 + '%';
-		renderer.domElement.style.transform =  'translate(-50%, -50%)';
-	} 
-//(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()
-
 renderer.setSize( width, height );
 document.body.appendChild( renderer.domElement );	
 
 let windowOffset = ((window.innerWidth) - (window.innerHeight - margin) * 2) / 2 + 'px';
 
+export let fontSize = window.innerHeight/40 + 'px';
+if (window.innerHeight/window.innerWidth > .55){
+	fontSize = (window.innerWidth * .55)/40 + 'px';
+}
+
 window.addEventListener('resize', () => {
+	fontSize = window.innerHeight/40 + 'px';
+	if (window.innerHeight/window.innerWidth > .55) {
+		fontSize = (window.innerWidth * .55)/40 + 'px';
+	}
 	windowOffset = ((window.innerWidth) - (window.innerHeight - margin) * 2) / 2 + 'px';
 	height = window.innerHeight-margin;
 	width = window.innerWidth-margin;
->>>>>>> tmp
 	renderer.setSize(width, height);
 	camera.aspect = width/height;
 	camera.updateProjectionMatrix();
@@ -127,8 +106,14 @@ export const setBackground = (tex) => {
 	background = maps[tex];
 }
 
+const mapSizeX = 5000;
+const mapSizeY = 2800;
+// const mapSizeX = 1000;
+// const mapSizeY = 500;
+
 export const init = () => {
- 	let geom = new THREE.PlaneGeometry(4378, 2435,32);
+ 	// let geom = new THREE.PlaneGeometry(4378, 2435,32);
+ 	let geom = new THREE.PlaneGeometry(mapSizeX, mapSizeY,32);
  	let buttonGeomXDim = 400;
  	let buttonGeomYDim = 200;
  	// let geom = new THREE.PlaneGeometry(1000, 500,32);
@@ -360,7 +345,8 @@ export const load = () => {
 	blankTex = getTexture(require('../pics/red.png').default, 6);
 	physicalTex = getTexture(require('../pics/physical.png').default, 7);
 	secondaryTex = getTexture(require('../pics/secondary.png').default, 8);
-	let geom = new THREE.PlaneGeometry(4378, 2435,32);
+	// let geom = new THREE.PlaneGeometry(4378, 2435,32);
+	let geom = new THREE.PlaneGeometry(mapSizeX, mapSizeY,32);
 	maps.push(getBackgroundMesh(secondaryTex , 0, 0, geom, 1));
 	maps.push(getBackgroundMesh(bordersTex , 0, 0, geom, 1));
 	maps.push(getBackgroundMesh(physicalTex , 0, 0, geom, 1));

@@ -14,6 +14,10 @@ let playerPoints = 0;
 let totalPoints = 0;
 let distanceFromPoint = 10000000;
 let resultPoints = 0;
+let guessLat = 0;
+let guessLong = 0;
+let answerLat = 0;
+let answerLong = 0;
 
 export let myTimer;
 
@@ -213,11 +217,15 @@ const getMapCoords = () => {
         tmp.sub(mapPos);   
         convertToLatLong(tmp);
         distanceFromPoint = calculateScore(tmp.x, tmp.y, currentCity.latLong.x, currentCity.latLong.y);
-        (pos, tmp, convertLatLongToWorldCoords(tmp));
+        guessLat = tmp.y.toFixed(2);
+        guessLong = tmp.x.toFixed(2);
+        answerLat = currentCity.latLong.y.toFixed(2);
+        answerLong = currentCity.latLong.x.toFixed(2);
+        // (pos, tmp, convertLatLongToWorldCoords(tmp));
         let cityPosition = new THREE.Vector3();
         cityPosition.set(currentCity.latLong.x, currentCity.latLong.y, 0);
-        let wrldCrds = convertLatLongToWorldCoords(cityPosition)
-        let distance = wrldCrds.distanceTo(pos);
+        let wrldCrds = convertLatLongToWorldCoords(cityPosition);
+        let distance = wrldCrds.distanceTo(pos)-50;
         let positionText = pos.x + ", " + pos.y;
         // console.log("position of mouse: " + positionText);
         // console.log("position of city: " + wrldCrds.x + ", " + wrldCrds.y);
@@ -230,33 +238,6 @@ const getMapCoords = () => {
     }
 }
 
-export const displayMouseAndPointCoords = () => {
-    console.log('displaying mouse coords!!!');
-    if (!bg) bg = Initialize.background; //bg image
-    let mapPos = new THREE.Vector3(); //blank v3
-    mapPos.set(bg.position.x, bg.position.y, bg.position.z); //store the position of the map. it may be offset from screen coords a bit
-    let width = bg.geometry.parameters.width; //help locate mouse in relation to map
-    let height = bg.geometry.parameters.height; // same
-    getMousePos()
-    let tmp = new THREE.Vector3(); //temporary vluae
-    tmp.set(pos.x, pos.y, pos.z); //set tmp to pos of mouse. pos is global variable that is set by getMousePos
-    tmp.sub(mapPos);   
-    convertToLatLong(tmp);
-    distanceFromPoint = calculateScore(tmp.x, tmp.y, currentCity.latLong.x, currentCity.latLong.y);
-    (pos, tmp, convertLatLongToWorldCoords(tmp));
-    let cityPosition = new THREE.Vector3();
-    cityPosition.set(currentCity.latLong.x, currentCity.latLong.y, 0);
-    let wrldCrds = convertLatLongToWorldCoords(cityPosition)
-    let distance = wrldCrds.distanceTo(pos);
-    let positionText = pos.x + ", " + pos.y;
-    console.log("position of mouse: " + positionText);
-    // mouseposText.innerHTML = positionText;
-    // cityposText.innerHTML = wrldCrds.x + ", " + wrldCrds.y;
-    // distanceText.innerHTML = distance;
-        // window.clearTimeout(myTimer);
-        // showScore(distance, distanceFromPoint);
-}
-
 const getButtonCoords = () => {
     if (checkMapCollision(pos, button)){
         currentQuestion++;
@@ -264,11 +245,12 @@ const getButtonCoords = () => {
         distanceFromPoint = 1000000;
         App.setGameState("during");
         // if (window.innerHeight/window.innerWidth > .55) {
-            // makeHTMLScoreboard();
+            makeHTMLScoreboard();
         // } else {
-            makeMeshScoreboard();
+            // makeMeshScoreboard();
         // }
         currentCity = Locations.getRandomLocation(numLocs[level]);
+        // currentCity = Locations.getRandomLocation(1);
         App.resetTime();
     }
 }
@@ -285,10 +267,11 @@ const getStartButtonCoords = () => {
         App.setGameState("during");
         highScore.innerHTML = "Highscore: " + App.checkCookie() + " Current: " + totalPoints;
         currentCity = Locations.getRandomLocation(numLocs[level]);
+        // currentCity = Locations.getRandomLocation(1);
         // if (window.innerHeight/window.innerWidth > .55) {
-        //     makeHTMLScoreboard();
+            makeHTMLScoreboard();
         // } else {
-            makeMeshScoreboard();
+            // makeMeshScoreboard();
         // }
         App.resetTime();
     }
@@ -311,10 +294,11 @@ const getRestartCoords = () => {
             newHighscore = null;
         }
         currentCity = Locations.getRandomLocation(numLocs[level]);
+        // currentCity = Locations.getRandomLocation(1);
         // if (window.innerHeight/window.innerWidth > .55) {
-            makeMeshScoreboard();
+            // makeMeshScoreboard();
         // } else {
-        //     // makeHTMLScoreboard();
+            // makeHTMLScoreboard();
         // }
         App.resetTime();
     }
@@ -350,8 +334,8 @@ export const showScore = (distance, distanceMi) => {
     playerPoints += resultPoints;
     totalPoints += resultPoints;
     App.setGameState("after");// = "after";
-    // makeHTMLScoreboard();
-    makeMeshScoreboard();
+    makeHTMLScoreboard();
+    // makeMeshScoreboard();
     if (currentQuestion == questions[level]) {
         console.log("level over");
         if (levels[level] <= playerPoints){
@@ -363,8 +347,8 @@ export const showScore = (distance, distanceMi) => {
                 console.log("here");
                 App.setGameState("game over");// = "game over";
                 if (App.checkCookie() < totalPoints) App.setCookie("data", totalPoints, 365);
-                makeMeshScoreboard();
-                // makeHTMLScoreboard();
+                // makeMeshScoreboard();
+                makeHTMLScoreboard();
                 level = 0;
                 showGameOver("win");
                 return;
@@ -375,8 +359,8 @@ export const showScore = (distance, distanceMi) => {
         } else {
             App.setGameState("game over");// = "game over";
             if (App.checkCookie() < totalPoints) App.setCookie("data", totalPoints, 365);
-            makeMeshScoreboard();
-            // makeHTMLScoreboard();
+            // makeMeshScoreboard();
+            makeHTMLScoreboard();
             showGameOver("lose");
             return;
         }
@@ -673,54 +657,54 @@ let locationText2 = null;
 let locationText3 = null;
 
 export const makeMeshScoreboard = (distance) => {
-    if (questionsText2 != null) {
-        scene.remove(questionsText2);
-        scene.remove(levelText2);
-        scene.remove(resultText2);
-        scene.remove(goalText2);
-        scene.remove(highScore2);
-    }
-    const fontJson = require( '../fonts/Arial_regular.json' );
-    const font = new THREE.Font( fontJson );
-    let fontInfo = {
-        font: font,
-        size: 70,
-        height: 0,
-        curveSegments: 2,
-        bevelThickness: 1,
-        bevelSize: 1,
-        bevelEnabled: false
-    };
+    // if (questionsText2 != null) {
+    //     scene.remove(questionsText2);
+    //     scene.remove(levelText2);
+    //     scene.remove(resultText2);
+    //     scene.remove(goalText2);
+    //     scene.remove(highScore2);
+    // }
+    // const fontJson = require( '../fonts/Arial_regular.json' );
+    // const font = new THREE.Font( fontJson );
+    // let fontInfo = {
+    //     font: font,
+    //     size: 70,
+    //     height: 0,
+    //     curveSegments: 2,
+    //     bevelThickness: 1,
+    //     bevelSize: 1,
+    //     bevelEnabled: false
+    // };
 
-    questionsText2 = new THREE.TextGeometry( "Question: " + currentQuestion + "/" + questions[level], fontInfo);
-    levelText2 = new THREE.TextGeometry( "Level " + (level + 1) + ": Top " + numLocs[level] + " Cities", fontInfo);
-    if (distanceFromPoint >= 100000) {
-        resultText2 = new THREE.TextGeometry( "Result: Out of Time", fontInfo );
-    } else {
-        resultText2 = new THREE.TextGeometry( "Result: " + distanceFromPoint + " mi." , fontInfo);
-    }
-    resultPointsText2 = new THREE.TextGeometry(  "Points: " + resultPoints, fontInfo);
-    goalText2 = new THREE.TextGeometry( "Question: " + currentQuestion + "/" + questions[level], fontInfo);
-    highScore2 = new THREE.TextGeometry( "Highscore: " + App.checkCookie() + " Current: " + totalPoints, fontInfo);
-    // currentCity = Locations.getLocationText(numLocs[level]);
-    if (currentCity.secondary.length == 0) {
-        locationText2 = new THREE.TextGeometry( currentCity.city, fontInfo);
-        locationText3 = new THREE.TextGeometry( currentCity.secondary, fontInfo);
-    } else {
-        locationText2 = new THREE.TextGeometry( currentCity.city + ", " + currentCity.secondary, fontInfo);
-        locationText3 = new THREE.TextGeometry( currentCity.country, fontInfo);
-    }
-    // var textGeometry = new THREE.TextGeometry( );
-    // let meshes = [questionsText2, levelText2, resultText2, goalText2, highScore2];
+    // questionsText2 = new THREE.TextGeometry( "Question: " + currentQuestion + "/" + questions[level], fontInfo);
+    // levelText2 = new THREE.TextGeometry( "Level " + (level + 1) + ": Top " + numLocs[level] + " Cities", fontInfo);
+    // if (distanceFromPoint >= 100000) {
+    //     resultText2 = new THREE.TextGeometry( "Result: Out of Time", fontInfo );
+    // } else {
+    //     resultText2 = new THREE.TextGeometry( "Result: " + distanceFromPoint + " mi." , fontInfo);
+    // }
+    // resultPointsText2 = new THREE.TextGeometry(  "Points: " + resultPoints, fontInfo);
+    // goalText2 = new THREE.TextGeometry( "Question: " + currentQuestion + "/" + questions[level], fontInfo);
+    // highScore2 = new THREE.TextGeometry( "Highscore: " + App.checkCookie() + " Current: " + totalPoints, fontInfo);
+    // // currentCity = Locations.getLocationText(numLocs[level]);
+    // if (currentCity.secondary.length == 0) {
+    //     locationText2 = new THREE.TextGeometry( currentCity.city, fontInfo);
+    //     locationText3 = new THREE.TextGeometry( currentCity.secondary, fontInfo);
+    // } else {
+    //     locationText2 = new THREE.TextGeometry( currentCity.city + ", " + currentCity.secondary, fontInfo);
+    //     locationText3 = new THREE.TextGeometry( currentCity.country, fontInfo);
+    // }
+    // // var textGeometry = new THREE.TextGeometry( );
+    // // let meshes = [questionsText2, levelText2, resultText2, goalText2, highScore2];
 
-    var textMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, specular: 0xffffff });
-    getTextMesh(-2000, 100, questionsText2, new THREE.MeshBasicMaterial({ color: 0x009900, specular: 0xffffff }));
-    getTextMesh(-2000, -100, resultText2, new THREE.MeshBasicMaterial({ color: 0xffff00, specular: 0xffffff }));
-    getTextMesh(-2000, 0, levelText2, new THREE.MeshBasicMaterial({ color: 0x009900, specular: 0xffffff }));
-    getTextMesh(0, 0, resultPointsText2, new THREE.MeshBasicMaterial({ color: 0xffff00, specular: 0xffffff }));
-    getTextMesh(-2000, 1000, highScore2, new THREE.MeshBasicMaterial({ color: 0xffff00, specular: 0xffffff }));
-    getTextMesh(-2000, 300, locationText2, new THREE.MeshBasicMaterial({ color: 0x0000ff, specular: 0xffffff }));
-    getTextMesh(-2000, 200, locationText3, new THREE.MeshBasicMaterial({ color: 0x0000ff, specular: 0xffffff }));
+    // var textMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, specular: 0xffffff });
+    // getTextMesh(-2000, 100, questionsText2, new THREE.MeshBasicMaterial({ color: 0x009900, specular: 0xffffff }));
+    // getTextMesh(-2000, -100, resultText2, new THREE.MeshBasicMaterial({ color: 0xffff00, specular: 0xffffff }));
+    // getTextMesh(-2000, 0, levelText2, new THREE.MeshBasicMaterial({ color: 0x009900, specular: 0xffffff }));
+    // getTextMesh(0, 0, resultPointsText2, new THREE.MeshBasicMaterial({ color: 0xffff00, specular: 0xffffff }));
+    // getTextMesh(-2000, 1000, highScore2, new THREE.MeshBasicMaterial({ color: 0xffff00, specular: 0xffffff }));
+    // getTextMesh(-2000, 300, locationText2, new THREE.MeshBasicMaterial({ color: 0x0000ff, specular: 0xffffff }));
+    // getTextMesh(-2000, 200, locationText3, new THREE.MeshBasicMaterial({ color: 0x0000ff, specular: 0xffffff }));
 }
 
 const getTextMesh = (x, y, mesh, tm) => {
@@ -770,7 +754,7 @@ export const makeHTMLScoreboard = (distance) => {
     
     if (App.getGameState() == 'after'){
         resultPointsText.style.display = "inline-block";
-        resultPointsText.innerHTML = "Points: " + resultPoints;
+        resultPointsText.innerHTML = "Points: " + resultPoints + ", Your Guess: " + guessLat + ", " + guessLong + " Answer: " + answerLat + ", " + answerLong ;
     } else if (resultPointsText) resultPointsText.style.display = "none";
 
     if (App.getGameState() == 'after'){
@@ -918,16 +902,19 @@ const convertLatLongToWorldCoords = (vec) => {
     return tmp;
 }
 
+let conversionFactorX = 13.8;
+let conversionFactorY = 16.7;
+
 const convertToLatLong = (vec) => {
     vec.x += windowOffset;
-    vec.y += windowOffsetY
-    vec.x /= 12;
-    vec.y /= 14.5;
+    vec.y += windowOffsetY;
+    vec.x /= 13.3;
+    vec.y /= 16.2;
 }
 
 export const convertToPixelCoords = (vec) => {
-    vec.x *= 12;
-    vec.y *= 14.5;
+    vec.x *= conversionFactorX;
+    vec.y *= conversionFactorY;
     vec.x -= windowOffset;
     vec.y -= windowOffsetY;
     let mapPos = new THREE.Vector3();
@@ -971,6 +958,13 @@ export const getMousePos = () => {
     vec.sub( camera.position ).normalize();
     let distance = ( targetZ - camera.position.z ) / vec.z;
     pos.copy( camera.position ).add( vec.multiplyScalar( distance ) );
+    let vector = new THREE.Vector3();
+//     pos.set(
+//     (event.clientX / window.innerWidth) * 2 - 1,
+//     - (event.clientY / window.innerHeight) * 2 + 1,
+//     0
+// );
+// pos.unproject(camera);
 }
 
 const checkMapCollision = (a, b) => {

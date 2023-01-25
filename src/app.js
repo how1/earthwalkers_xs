@@ -374,13 +374,6 @@ document.addEventListener("mousemove", function(event){
 let windowOffsetx = 110; //was 125
 let windowOffsetY = -20;
 
-const convertToLatLong = (vec) => {
-    vec.x += windowOffsetx;
-    vec.y += windowOffsetY
-    vec.x /= 12;
-    vec.y /= 14.5;
-}
-
 let mouse = {
     clientX: 0,
     clientY:0

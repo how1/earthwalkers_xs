@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { convertToPixelCoords, getTop, makeMeshScoreboard } from "./gameStep.js";
+import { convertToPixelCoords, getTop } from "./gameStep.js";
 import txt from "./cities.txt";
 import * as Initialize from "./Initialize.js";
 
@@ -26,6 +26,8 @@ export const newLocation = (city, secondary, country, lat, long) => {
 export const getLocations = () => {
 	const splitLines = str => str.split(/\r?\n/);
 	let lines = splitLines(txt);
+	// let portland = newLocation("Portland", "Maine", "United States", 43.6591, -70.2568);
+	// locations.push(portland);
 	for (var i = 1; i < lines.length; i++) {
 		let city = "";
 		let lat = "";
