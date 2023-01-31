@@ -181,7 +181,7 @@ export const getScores = () => {
     if (window.innerHeight/window.innerWidth > .55){
         console.log(window.innerHeight, window.innerWidth, window.innerHeight/window.innerWidth);
         scoreboardDiv.style.top = (window.innerWidth * .55) / 25 + 'px';
-        scoreboardDiv.style.maxHeight = (window.innerWidth * .55) * 0.8 + 'px';
+        scoreboardDiv.style.maxHeight = (window.innerWidth * .55) * 0.5 + 'px';
         scoreboard.style.width = ((window.innerWidth * .55) - 4) * 1.5 + 'px';
         scoreboardDiv.style.left = windowOffset;
         scoreboardDiv.style.position= 'fixed';
@@ -191,7 +191,7 @@ export const getScores = () => {
     } else {
         console.log('asdf');
         // scoreboardDiv.style.top = window.innerHeight / 25 + 'px';
-        scoreboardDiv.style.maxHeight = window.innerHeight * 0.8 + 'px';
+        scoreboardDiv.style.maxHeight = window.innerHeight * 0.5 + 'px';
         scoreboard.style.width = (window.innerHeight - 4) * 1.5 + 'px';
         // scoreboardDiv.style.left = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + window.innerHeight/40 + 'px';
         scoreboardDiv.style.top = 45 + '%';

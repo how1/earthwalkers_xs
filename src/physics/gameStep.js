@@ -22,7 +22,8 @@ let answerLong = 0;
 export let myTimer;
 
 let levels = [125, 200, 275, 300, 325, 415, 415, 415, 500, 580]; //580
-let numLocs = [50, 100, 200, 500, 750, 1000, 5000, 5000, 10000, 15000];
+let numLocs = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
+// let numLocs = [50, 100, 200, 500, 750, 1000, 5000, 5000, 10000, 15000];
 let musicIndex = [0, 0, 1, 1, 0, 0, 0, 2, 2, 2];
 let points = 100;
 let questions = [3, 4, 5, 5, 5, 6, 6 , 6, 7, 8];
@@ -31,8 +32,8 @@ let mapIndex = [0, 0, 1, 1, 2, 2, 2, 3, 3, 3];
 let maps = []
 let currentQuestion = 1;
 
-export let windowOffset = 110; //was 125
-export let windowOffsetY = -20;
+export let windowOffset = 125; //was 125
+export let windowOffsetY = -30;
 
 // let portland = 43.6591;
 // let xCoord = -70.2568;
@@ -225,7 +226,10 @@ const getMapCoords = () => {
         let cityPosition = new THREE.Vector3();
         cityPosition.set(currentCity.latLong.x, currentCity.latLong.y, 0);
         let wrldCrds = convertLatLongToWorldCoords(cityPosition);
-        let distance = wrldCrds.distanceTo(pos)-50;
+        let tmpPos = new THREE.Vector3(pos.x, pos.y, pos.z);
+        tmpPos.x -= 45;
+        tmpPos.y += 45;
+        let distance = wrldCrds.distanceTo(tmpPos);
         let positionText = pos.x + ", " + pos.y;
         // console.log("position of mouse: " + positionText);
         // console.log("position of city: " + wrldCrds.x + ", " + wrldCrds.y);
@@ -879,21 +883,32 @@ const makeCircle = (distance, position) => {
     let geometry = new THREE.CircleGeometry( 1, Math.round(distance) );
     var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, opacity: 0.2, transparent: true } );
     circle = new THREE.Mesh( geometry, material );
-    circle.position.set(tmp.x, tmp.y, 1);
+    circle.position.set(tmp.x, tmp.y, 2);
     scene.add( circle );
-    geometry = new THREE.CircleGeometry( 6, 8 );
+    geometry = new THREE.CircleGeometry( 8, 8 );
     if (mapIndex[level] == 3)
         material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.FrontSide } );
     else
         material = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.FrontSide } );
     var circle2 = new THREE.Mesh( geometry, material );
-    circle2.position.set(tmp.x, tmp.y, 1);
+    circle2.position.set(tmp.x, tmp.y, 3);
     scene.add( circle2 );
     geometry = new THREE.RingGeometry( 0, 2, Math.round(distance) );
     var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.FrontSide } );
     circle3 = new THREE.Mesh( geometry, material );
-    circle3.position.set(tmp.x, tmp.y, 1);
+    circle3.position.set(tmp.x, tmp.y, 2);
     scene.add( circle3 );
+}
+
+const putDotOnMap = (position) => {
+    circle = new THREE.Mesh( geometry, material );
+    circle.position.set(tmp.x, tmp.y, 2);
+    scene.add( circle );
+    geometry = new THREE.CircleGeometry( 8, 8 );
+    material = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.FrontSide } );
+    var circle2 = new THREE.Mesh( geometry, material );
+    circle2.position.set(tmp.x, tmp.y, 3);
+    scene.add( circle2 );
 }
 
 const convertLatLongToWorldCoords = (vec) => {
@@ -902,19 +917,18 @@ const convertLatLongToWorldCoords = (vec) => {
     return tmp;
 }
 
-let conversionFactorX = 13.8;
-let conversionFactorY = 16.7;
+let conversionFactor = 13.88;
 
 const convertToLatLong = (vec) => {
     vec.x += windowOffset;
     vec.y += windowOffsetY;
-    vec.x /= 13.3;
-    vec.y /= 16.2;
+    vec.x /= conversionFactor;
+    vec.y /= conversionFactor;
 }
 
 export const convertToPixelCoords = (vec) => {
-    vec.x *= conversionFactorX;
-    vec.y *= conversionFactorY;
+    vec.x *= conversionFactor;
+    vec.y *= conversionFactor;
     vec.x -= windowOffset;
     vec.y -= windowOffsetY;
     let mapPos = new THREE.Vector3();
@@ -956,8 +970,8 @@ export const getMousePos = () => {
     0.5 );
     vec.unproject( camera );
     vec.sub( camera.position ).normalize();
-    let distance = ( targetZ - camera.position.z ) / vec.z;
-    pos.copy( camera.position ).add( vec.multiplyScalar( distance ) );
+    let distance2 = ( targetZ - camera.position.z ) / vec.z;
+    pos.copy( camera.position ).add( vec.multiplyScalar( distance2 ) );
     let vector = new THREE.Vector3();
 //     pos.set(
 //     (event.clientX / window.innerWidth) * 2 - 1,

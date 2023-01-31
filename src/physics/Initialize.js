@@ -3,13 +3,21 @@ import * as App from'../app.js';
 import {setThreeJSElements, setButtons, restyleHTML} from './gameStep.js';
 import * as Loc from './locations.js';
 
+const mapSizeX = 5000;
+const mapSizeY = 2500;
+const mapSquishY = 100;
+const mapSquishX = -75;
+// const mapSizeX = 1000;
+// const mapSizeY = 500;
+
 const margin = 4;
 
 let height = window.innerHeight-margin;
 let width = window.innerWidth-margin;
 
 export let scene = new THREE.Scene();
-export let camera = new THREE.PerspectiveCamera(75, (window.innerWidth-margin) / (window.innerHeight-margin), 0.1, 10001);
+// export let camera = new THREE.PerspectiveCamera(75, (window.innerWidth-margin) / (window.innerHeight-margin), 0.1, 10001);
+export let camera = new THREE.PerspectiveCamera(75, mapSizeX / mapSizeY, 0.1, 10001);
 // export let camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 0.1, 10001 );
 export let renderer = new THREE.WebGLRenderer();
 // renderer.sortObjects = false;
@@ -32,7 +40,7 @@ if (height/width > .55) {
 	renderer.domElement.style.left = 50 + '%';
 	renderer.domElement.style.transform =  'translate(-50%, -50%)';
 }
-renderer.setSize(width, height);
+renderer.setSize(mapSizeX, mapSizeY);
 
 camera.aspect = width/height;
 camera.updateProjectionMatrix();
@@ -106,14 +114,9 @@ export const setBackground = (tex) => {
 	background = maps[tex];
 }
 
-const mapSizeX = 5000;
-const mapSizeY = 2800;
-// const mapSizeX = 1000;
-// const mapSizeY = 500;
-
 export const init = () => {
  	// let geom = new THREE.PlaneGeometry(4378, 2435,32);
- 	let geom = new THREE.PlaneGeometry(mapSizeX, mapSizeY,32);
+ 	let geom = new THREE.PlaneGeometry(mapSizeX - mapSquishX, mapSizeY - mapSquishY,32);
  	let buttonGeomXDim = 400;
  	let buttonGeomYDim = 200;
  	// let geom = new THREE.PlaneGeometry(1000, 500,32);
@@ -346,7 +349,7 @@ export const load = () => {
 	physicalTex = getTexture(require('../pics/physical.png').default, 7);
 	secondaryTex = getTexture(require('../pics/secondary.png').default, 8);
 	// let geom = new THREE.PlaneGeometry(4378, 2435,32);
-	let geom = new THREE.PlaneGeometry(mapSizeX, mapSizeY,32);
+	let geom = new THREE.PlaneGeometry(mapSizeX - mapSquishX, mapSizeY - mapSquishY,32);
 	maps.push(getBackgroundMesh(secondaryTex , 0, 0, geom, 1));
 	maps.push(getBackgroundMesh(bordersTex , 0, 0, geom, 1));
 	maps.push(getBackgroundMesh(physicalTex , 0, 0, geom, 1));
