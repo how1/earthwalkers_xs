@@ -8,6 +8,4 @@ To run locally
 
 Known bugs:
   Since commit 32450e6
-    Lat/long coords no longer accurate
     No audio
-    No back button on highscores popup
