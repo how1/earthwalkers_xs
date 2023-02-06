@@ -27,7 +27,7 @@ let numLocs = [50, 100, 200, 500, 750, 1000, 5000, 5000, 10000, 15000];
 let musicIndex = [0, 0, 1, 1, 0, 0, 0, 2, 2, 2];
 let points = 100;
 let questions = [3, 4, 5, 5, 5, 6, 6 , 6, 7, 8];
-console.log(levels[0]/questions[0], levels[1]/questions[1], levels[2]/questions[2], levels[3]/questions[3], levels[4]/questions[4], levels[5]/questions[5], levels[6]/questions[6], levels[7]/questions[7], levels[8]/questions[8], levels[9]/questions[9]);
+//console.log(levels[0]/questions[0], levels[1]/questions[1], levels[2]/questions[2], levels[3]/questions[3], levels[4]/questions[4], levels[5]/questions[5], levels[6]/questions[6], levels[7]/questions[7], levels[8]/questions[8], levels[9]/questions[9]);
 let mapIndex = [0, 0, 1, 1, 2, 2, 2, 3, 3, 3];
 let maps = []
 let currentQuestion = 1;
@@ -81,25 +81,50 @@ let pos = new THREE.Vector3(0,0,0);
 document.addEventListener("mouseup", function(event){
     getMouseCoords(event);
     getMousePos();
+    if (App.getGameState() != "animation") playSound(Initialize.click);//.play();
     if (App.getGameState() == "loading done"){
-        Initialize.click.play();
         getStartButtonCoords();
         getHighscoresButtonCoords();
         getMenuCoords();
     }
     else if (App.getGameState() == "during"){
-        Initialize.click.play()
         getMapCoords();
     }
     else if (App.getGameState() == "after"){
-        Initialize.click.play();
         getButtonCoords();
     }
     else if (App.getGameState() == "game over"){
-        Initialize.click.play();
         getRestartCoords();
         getMenuCoords();
         getSubmitCoords();
+    }
+});
+
+const playSound = (sound) => {
+    if (!App.mute){
+        sound.play();
+    }
+}
+
+
+document.addEventListener("keydown", function(event){
+    console.log("keydown event!");
+    console.log(event.keyCode);
+    if (event.keyCode == 77) { //m
+        App.toggleMute();
+        if (App.mute) {
+            Initialize.music.setVolume(0);
+            Initialize.bigCheer.setVolume(0)
+            Initialize.smallCheer.setVolume(0)
+            Initialize.mediumCheer.setVolume(0)
+            Initialize.click.setVolume(0);
+        } else {
+            Initialize.music.setVolume(0.4);
+            Initialize.bigCheer.setVolume(0.4)
+            Initialize.smallCheer.setVolume(0.4)
+            Initialize.mediumCheer.setVolume(0.4)
+            Initialize.click.setVolume(0.4);
+        }
     }
 });
 
@@ -132,10 +157,10 @@ const getHighscoresButtonCoords = () => {
         App.setGameState("loading done");
         clearScreen();
         scene.add(Initialize.menuButton);
-        console.log(Initialize.menuButton.position);
+        //console.log(Initialize.menuButton.position);
         App.getScores();
         Initialize.menuButton.position.y = -900;
-        console.log(Initialize.menuButton.position);
+        //console.log(Initialize.menuButton.position);
     }
 }
 
@@ -181,7 +206,7 @@ const getSubmitCoords = () => {
             newHighscore.style.paddingRight = window.innerHeight/78 + 'px';
             header.innerHTML = "Score: " + totalPoints;
             newHighscore.style.top = 2 + 'px';
-            console.log(window.innerWidth/2 - width/2);
+            //console.log(window.innerWidth/2 - width/2);
             newHighscore.style.left = window.innerWidth/2 - width/2 + 'px';
             newHighscore.appendChild(header);
             newHighscore.appendChild(inputBar);
@@ -227,13 +252,13 @@ const getMapCoords = () => {
         cityPosition.set(currentCity.latLong.x, currentCity.latLong.y, 0);
         let wrldCrds = convertLatLongToWorldCoords(cityPosition);
         let tmpPos = new THREE.Vector3(pos.x, pos.y, pos.z);
-        tmpPos.x -= 45;
-        tmpPos.y += 45;
+        // tmpPos.x -= 45;
+        // tmpPos.y += 45;
         let distance = wrldCrds.distanceTo(tmpPos);
         let positionText = pos.x + ", " + pos.y;
-        // console.log("position of mouse: " + positionText);
-        // console.log("position of city: " + wrldCrds.x + ", " + wrldCrds.y);
-        // console.log("distance: " + distance);
+        // //console.log("position of mouse: " + positionText);
+        // //console.log("position of city: " + wrldCrds.x + ", " + wrldCrds.y);
+        // //console.log("distance: " + distance);
         makeCircle(distance, cityPosition);
         distances = [distance, distanceFromPoint];
         App.setGameState("animation");
@@ -285,7 +310,7 @@ const getStartButtonCoords = () => {
 const getRestartCoords = () => {
     if (checkMapCollision(pos, restartButton)){
         level = 0;
-        console.log(mapIndex[level]);
+        //console.log(mapIndex[level]);
         Initialize.setBackground(mapIndex[level]);
         clearScreen();
         App.setGameState("during");
@@ -302,7 +327,7 @@ const getRestartCoords = () => {
         // if (window.innerHeight/window.innerWidth > .55) {
             // makeMeshScoreboard();
         // } else {
-            // makeHTMLScoreboard();
+            makeHTMLScoreboard();
         // }
         App.resetTime();
     }
@@ -315,17 +340,20 @@ export const showScore = (distance, distanceMi) => {
     if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
     if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
     if (Initialize.bigCheer.isPlaying) Initialize.bigCheer.stop();
-    if (distance < 10){
+    //console.log("distance: " + distance);
+    if (distanceMi < 50){
         if (Initialize.bigCheer.isPlaying) Initialize.bigCheer.stop();
-        Initialize.bigCheer.play();
-    } else if (distance < 30) {
+        playSound(Initialize.bigCheer);//.play();
+    } else if (distanceMi < 250) {
         if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
-        Initialize.mediumCheer.play();
-    } else if (distance < 75) {
+        playSound(Initialize.mediumCheer);//.play();
+    } else if (distanceMi < 10000) {
+        //console.log("do nothing plz");
         //Do nothing
     } else {
         if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
-        Initialize.smallCheer.play();
+        playSound(Initialize.smallCheer);//.play();
+        //console.log("sarcastic clap");
     }
     if (distanceMi > 2000){
         distanceMi = 2000;
@@ -341,14 +369,14 @@ export const showScore = (distance, distanceMi) => {
     makeHTMLScoreboard();
     // makeMeshScoreboard();
     if (currentQuestion == questions[level]) {
-        console.log("level over");
+        //console.log("level over");
         if (levels[level] <= playerPoints){
             let levelWin = false;
             if (level == 9) levelWin = true 
             else level++;
             // Initialize.setMusic(musicIndex[level]);
             if (levelWin) {
-                console.log("here");
+                //console.log("here");
                 App.setGameState("game over");// = "game over";
                 if (App.checkCookie() < totalPoints) App.setCookie("data", totalPoints, 365);
                 // makeMeshScoreboard();
@@ -385,10 +413,10 @@ const getLeft = (num) => {
 }
 
 export const getTop = (num, msg) => {
-    console.log(num, msg);
+    //console.log(num, msg);
     if (window.innerHeight/window.innerWidth > .55) {
         // let w = window.innerWidth * .55;
-        // console.log('top', num);
+        // //console.log('top', num);
         // let top = null;
         // if (num == 14) { //timer bar bar
         //     top = w-(w * .27);
@@ -410,7 +438,6 @@ export const getTop = (num, msg) => {
         else if (num < 0) return (window.innerWidth * .55) / 2 - (window.innerWidth * .55)/num + 'px';
         return (window.innerWidth * .55) / 2 + (window.innerWidth * .55)/num + 'px';
     }
-    console.log('top2', num);
     return window.innerHeight / 2 - window.innerHeight/num + 'px'; //+40
 }
 
@@ -482,7 +509,7 @@ resultText.style.width = 100;
 resultText.style.height = 100;
 resultText.style.color = 'black';
 resultText.style.backgroundColor = "yellow";
-resultText.style.top = getTop(-28);
+resultText.style.top = getTop(-40);
 resultText.style.left = innerWidth / 2 + 'px';
 resultText.style.fontSize = Initialize.fontSize;
 document.body.appendChild(resultText);
@@ -564,6 +591,7 @@ const hideHTMLScoreboard = () => {
     questionsText.style.display = 'none';
     levelText.style.display = 'none';
     resultText.style.display = 'none';
+    resultPointsText.style.display = 'none';
     goalText.style.display = 'none';
     progressBar.style.display = 'none';
     progressBarBorder.style.display = 'none';
@@ -750,15 +778,15 @@ export const makeHTMLScoreboard = (distance) => {
     if (progressPercentage > 1) progressPercentage = 1;
     progressBar.style.width = window.innerHeight/4.25 * progressPercentage + 'px';
 
-    if (App.getGameState() == 'after'){
+    if (App.getGameState() == 'after' || App.getGameState() =="game over"){
         resultText.style.display = "inline-block";
         if (distanceFromPoint >= 100000) resultText.innerHTML = "Result: Out of Time";
-        else resultText.innerHTML = "Result: " + distanceFromPoint + " mi.";
+        else resultText.innerHTML = "Result: " + distanceFromPoint + " miles";
     } else if (resultText) resultText.style.display = "none";
     
-    if (App.getGameState() == 'after'){
+    if (App.getGameState() == 'after' || App.getGameState() == "game over"){
         resultPointsText.style.display = "inline-block";
-        resultPointsText.innerHTML = "Points: " + resultPoints + ", Your Guess: " + guessLat + ", " + guessLong + " Answer: " + answerLat + ", " + answerLong ;
+        resultPointsText.innerHTML = "Points: " + resultPoints + "<br> Your Guess: " + getLatLongForDisplay(guessLat, guessLong) + "<br> Answer:&nbsp&nbsp&nbsp&nbsp " + getLatLongForDisplay(answerLat, answerLong) ;
     } else if (resultPointsText) resultPointsText.style.display = "none";
 
     if (App.getGameState() == 'after'){
@@ -773,6 +801,109 @@ export const makeHTMLScoreboard = (distance) => {
     }
     highScore.innerHTML = "Highscore: " + App.checkCookie() + " Current: " + totalPoints;
 }
+
+const getLatLongForDisplay = (lat, long) => {
+    return getDMS(lat, true) + ", " + getDMS(long, false);
+}
+
+const getDMS = (num, isLat) => {
+    num = (Math.round(num * 10000)) / 10000; //round to ten thou
+
+// The whole number is degrees. So 156.742 gives you 156 degrees.
+// Multiply the remaining decimal by 60.
+// 0.742*60 = 44.52, so the whole number 44 equals minutes.
+// Multiply the remaining decimal by 60.
+// 0.52*60 = 31.2, so the whole number 31 equals seconds.
+// Decimal degrees 156.742 converts to 156 degrees, 44 minutes and 31 seconds, or 156° 44' 31".
+// Be sure to follow math rules of rounding when calculating seconds by hand. If your resulting seconds is something like 31.9 you may round up to 32.
+
+    //N
+  //W   E
+    //S    
+    let dir = "N";
+
+    let degreeSymbol = "°";
+    let minutesSymbol = "\'"
+    let secondsSymbol = "\"";
+
+    //weird and confusing way to do this, but ok.
+    let tmp = getDegrees(num);
+    let degs = tmp[0];
+    tmp = getMinutes(tmp[1]);
+    let mins = tmp[0];
+    let secs = getSeconds(tmp[1]);
+
+    if (isLat){
+        if (degs < 0) {
+            dir = "S";
+        }
+    } else {
+        if (degs < 0) {
+            dir = "W";
+        } else {
+            dir = "E";
+        }
+    }
+
+    degs = Math.abs(degs);
+    mins = Math.abs(mins);
+    secs = Math.abs(secs);
+
+    degs = padNumber(degs);
+    mins = padNumber(mins);
+    secs = padNumber(secs);
+
+    return dir + degs + degreeSymbol + mins + minutesSymbol + secs + secondsSymbol;
+    
+
+}
+
+const padNumber = (num) => {
+    if (num < 10) return "0"+num;
+    else return num;
+}
+
+
+const getDegrees = (degs) => {
+    //modify num and return the decimal seconds portion
+    //example: 50.11 is 50 degrees and return .11 to be converted to minutes
+    let tmp = degs;
+    degs = Math.round(degs);
+    tmp =  Math.abs(tmp - degs);
+    tmp = (Math.round(tmp * 100)) / 100; //round to hund
+    return [degs,tmp];
+}
+
+const getMinutes = (mins) => {
+    mins = mins * 60;
+    let tmp = mins;
+    mins = Math.round(mins);
+    tmp = Math.abs(tmp - mins);
+    tmp = (Math.round(tmp * 100)) / 100; //round to hund
+    return [mins,tmp];
+}
+
+const getSeconds = (secs) => {
+    secs = secs * 60;
+    secs = Math.round(secs);
+    return secs;
+}
+
+//This would be good if it was mercator... its gall peters!!!
+// const getScaleFactor = (degreesGuess, degreesAnswer) => {
+//     //average scale factor, S = (S1 + 4 Sm + S2) / 6
+//     let difference = Math.abs(degreesGuess - degreesAnswer);
+
+//     let s1 = 1/Math.cos(toRadians(degreesGuess));
+//     let s2 = 1/Math.cos(toRadians(degreesAnswer));
+//     let middle = Math.min(degreesGuess, degreesAnswer) + difference/2
+//     let sm = 1/Math.cos(middle);
+
+//     let s = Math.abs((s1 + 4 * sm + s2) / 6);
+
+//     return s;
+
+// }
 
 const calculateScore = (lat1, lon1, lat2, lon2) => {
     var R = 6371e3; // metres
@@ -796,7 +927,6 @@ const toRadians = (degrees) => {
 }
 
 const showGameOver = (result) => {
-    console.log(result);
     // window.clearTimeout(myTimer);
     goalText.style.left = window.innerWidth / 2 + window.innerWidth/14 + 'px';
     resultPointsText.style.left = window.innerWidth / 2 + window.innerWidth/14 + 'px';
@@ -804,10 +934,12 @@ const showGameOver = (result) => {
     if (result == "win") {
         if (!winButton) winButton = Initialize.winButton;
         Initialize.scene.add(winButton);
+        playSound(Initialize.bigCheer);
     }
     if (result == "lose") {
         if (!gameOverButton) gameOverButton = Initialize.gameoverButton;
         Initialize.scene.add(gameOverButton);
+        playSound(Initialize.smallCheer);
     }
     if (!restartButton) restartButton = Initialize.restartButton;
     Initialize.scene.add(restartButton);
@@ -815,7 +947,10 @@ const showGameOver = (result) => {
     menuButton.position.y = window.innerHeight/2 - 800;
     Initialize.scene.add(menuButton);
     if (!submitButton) submitButton = Initialize.submitButton;
-    if (App.checkCookie() == totalPoints) Initialize.scene.add(submitButton);
+    if (App.checkCookie() == totalPoints) {
+        Initialize.scene.add(submitButton);
+        resultText.innerHTML = "New Highscore! <br> " + resultText.innerHTML;
+    }
 }
 
 const clearScreen = () => {
@@ -838,21 +973,21 @@ export const updateCircleRadius = () => {
         if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
         if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
         if (Initialize.bigCheer.isPlaying) Initialize.bigCheer.stop();
-        if (distance < 10){
-            console.log("this is good!!!");
+        if (distanceMi < 25){
+            //console.log("this is good!!!");
             if (Initialize.bigCheer.isPlaying) Initialize.bigCheer.stop();
-            Initialize.bigCheer.play();
-        } else if (distance < 100/level) {
-            console.log("ok!!!!");
+            playSound(Initialize.bigCheer);//.play();
+        } else if (distanceMi < 100) {
+            //console.log("ok!!!!");
             if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
-            Initialize.mediumCheer.play();
-        } else if (distance < 2000) {
-            console.log("bad");
+            playSound(Initialize.mediumCheer);//.play();
+        } else if (distanceMi < 10000) {
+            //console.log("bad");
             //Do nothing
         } else {
-            console.log("watf" + distance + " " + distanceMi);
+            //console.log("watf" + distance + " " + distanceMi);
             if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
-            Initialize.smallCheer.play();
+            playSound(Initialize.smallCheer);//.play();
         }
     }
     circleStart = 1;
@@ -900,17 +1035,6 @@ const makeCircle = (distance, position) => {
     scene.add( circle3 );
 }
 
-const putDotOnMap = (position) => {
-    circle = new THREE.Mesh( geometry, material );
-    circle.position.set(tmp.x, tmp.y, 2);
-    scene.add( circle );
-    geometry = new THREE.CircleGeometry( 8, 8 );
-    material = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.FrontSide } );
-    var circle2 = new THREE.Mesh( geometry, material );
-    circle2.position.set(tmp.x, tmp.y, 3);
-    scene.add( circle2 );
-}
-
 const convertLatLongToWorldCoords = (vec) => {
     let tmp = new THREE.Vector3(vec.x, vec.y, 0);
     convertToPixelCoords(tmp);
@@ -956,7 +1080,7 @@ const getMouseCoords = (event) => {
     mouse.clientY = event.clientY;
     if (window.innerHeight/window.innerWidth > .55) {
         mouse.clientY += (renderer.domElement.height - window.innerHeight) / 2;
-        console.log(mouse.clientY, event.clientY);
+        //(mouse.clientY, event.clientY);
     }
     // mouse.clientX -= windowOffset;
     // mouse.clientY -= windowOffsetY;
@@ -972,7 +1096,10 @@ export const getMousePos = () => {
     vec.sub( camera.position ).normalize();
     let distance2 = ( targetZ - camera.position.z ) / vec.z;
     pos.copy( camera.position ).add( vec.multiplyScalar( distance2 ) );
-    let vector = new THREE.Vector3();
+        //why is this offset idk!.
+    pos.x -= 35; 
+    pos.y += 35;
+ 
 //     pos.set(
 //     (event.clientX / window.innerWidth) * 2 - 1,
 //     - (event.clientY / window.innerHeight) * 2 + 1,

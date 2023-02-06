@@ -6,7 +6,7 @@ import * as Loc from './locations.js';
 const mapSizeX = 5000;
 const mapSizeY = 2500;
 const mapSquishY = 100;
-const mapSquishX = -75;
+const mapSquishX = -100;
 // const mapSizeX = 1000;
 // const mapSizeY = 500;
 
@@ -28,10 +28,10 @@ let canvasParent = document.createElement('div');
 
 renderer.domElement.id = 'canvas';
 camera.position.z = 1400;
-console.log('ratio', height/width);
+//console.log('ratio', height/width);
 if (height/width > .55) {
 	camera.position.z = 2075;
-	console.log('qwerty');
+	//console.log('qwerty');
 	height = width * .75;
 	// renderer.domElement.style.width = width + 'px';
 	// renderer.domElement.style.height = height + 'px';
@@ -110,7 +110,7 @@ let highscoresTex;
 let bar = App.bar;
 
 export const setBackground = (tex) => {
-	console.log(tex);
+	//console.log(tex);
 	background = maps[tex];
 }
 
@@ -123,12 +123,12 @@ export const init = () => {
  	let geom2 = new THREE.PlaneGeometry(10000, 5000,32);
  	let mat = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.FrontSide});
  	let bgPlate = new THREE.Mesh (geom2, mat);
- 	bgPlate.position.z = -1;
+ 	bgPlate.position.z = -3;
  	scene.add(bgPlate);
  	let middleHeight = 200;
  	let lowerHeight = -200;
 	if (!background){
-		background = getBackgroundMesh( bgTex , 0, 0, geom, 1 );
+		background = getBackgroundMesh( bgTex , 0, -1, geom, 1 );
 	}
  	if (!button){
  		geom = new THREE.PlaneGeometry(buttonGeomXDim, buttonGeomYDim, 32);
@@ -231,7 +231,7 @@ const getTexture = (path, index) => {
 }
 
 export const setMusic = (i) => {
-	console.log(songs);
+	//console.log(songs);
 	if (song)
 		song.stop();
 	song = songs[i];
@@ -239,28 +239,38 @@ export const setMusic = (i) => {
 }
 
 let listener;
-let smallCheerFile = require("../sfx/smallCheer.mp3").default;
-let mediumCheerFile = require("../sfx/mediumCheer.mp3").default;
-let xtraBigCheerFile = require("../sfx/xtraBigCheer.mp3").default;
-let musicFile = require("../sfx/lofi.mp3").default;
-let music2File = require('../sfx/perroLoco.mp3').default;
-let music3File = require('../sfx/20s.mp3').default;
-let clickFile = require("../sfx/click.mp3").default;
+let smallCheerFile = require("../sfx/smallCheer.ogg"); 
 
-export let smallCheer;
-export let mediumCheer;
-export let bigCheer;
-export let music;
+let mediumCheerFile = require("../sfx/mediumCheer.ogg");
+let xtraBigCheerFile = require("../sfx/xtraBigCheer.ogg");
+let musicFile = require("../sfx/lofi.ogg");
+// let music2File = require('../sfx/perroLoco.mp3').default;
+// let music3File = require('../sfx/20s.mp3').default;
+let clickFile = require("../pics/click.ogg");
+
+export let smallCheer;// = new THREE.Audio();
+export let mediumCheer;// = new THREE.Audio();
+export let bigCheer;// = new THREE.Audio();
+export let music;// = new THREE.Audio();
 export let music2;
 export let music3;
-export let click;
+export let click;// = new THREE.Audio();
 
 let songs;
 let song;
+
+//Not used anywhere, songs 2 and 3 are not loaded/heard
 export const setSongs = () => {
 	songs = [music, music2, music3];
 	song = music3;
 }
+
+export let timerBar222 = document.createElement('div');
+// timerBar222.style.top=window.innerHeight-100;
+// timerBar222.style.position = 'absolute';
+// timerBar222.style.left=window.innerWidth/2;
+document.body.appendChild(timerBar222);
+timerBar222.innerHTML = "Henry"
 
 
 let htmlLoadingBar;

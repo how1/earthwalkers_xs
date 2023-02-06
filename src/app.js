@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { init, load, scene, renderer, camera, updateLoaderBar, textureLoadingProgress, startButton, 
-	removeLoaderBar, title, titleTex, highscoresButton, setSongs} from "./physics/Initialize.js";
+	removeLoaderBar, title, titleTex, highscoresButton, setSongs, timerBar222} from "./physics/Initialize.js";
 import {makeHTMLScoreboard, showScore, updateCircleRadius, setButtons, getTop} from "./physics/gameStep.js";
 
 import 'normalize.css';
@@ -30,9 +30,15 @@ firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error
   // Handle Errors here.
   var errorCode = error.code;
   var errorMessage = error.message;
-  console.log(errorCode, errorMessage);
+  //console.log(errorCode, errorMessage);
   // ...
 });
+
+export let mute = false;
+
+export const toggleMute = () => {
+    mute = !mute;
+}
 
 function getCookie(cname) {
     var name = cname + "=";
@@ -64,12 +70,6 @@ function getCookie(cname) {
 // document.body.appendChild(timerBar22);
 // timerBar22.innerHTML = "Henry"
 
-// let timerBar222 = document.createElement('div');
-// timerBar222.style.top=window.innerHeight-100;
-// timerBar222.style.position = 'absolute';
-// timerBar222.style.left=window.innerWidth/2;
-// document.body.appendChild(timerBar222);
-// timerBar222.innerHTML = "Henry"
 
 export function setCookie(cname, cvalue, exdays) {
     let encHighScore = crypto.AES.encrypt(cvalue + "", key);
@@ -112,6 +112,7 @@ export const submitScore = (name, score) => {
         });
     }
 }
+
 export const incrementUniqueUserCount = () => {
     let count;
     let ref = database.ref("counts");
@@ -119,10 +120,10 @@ export const incrementUniqueUserCount = () => {
     uniqueCount.once("value", function(snapshot) {
         count = snapshot.val();
         count++;
-        console.log("unique count: ", count);
+        //console.log("unique count: ", count);
         ref.update({uniqueCount: count});
     }, function (errorObject) {
-        console.log("The read failed: " + errorObject.code);
+        //console.log("The read failed: " + errorObject.code);
     });
 }
 
@@ -132,9 +133,9 @@ const getUniqueCount = () => {
     let uniqueCount = ref.child("uniqueCount");
     uniqueCount.once("value", function(snapshot) {
         count = snapshot.val();
-        console.log("unique count: ", count);
+        //console.log("unique count: ", count);
     }, function (errorObject) {
-        console.log("The read failed: " + errorObject.code);
+        //console.log("The read failed: " + errorObject.code);
     });
 }
 
@@ -147,10 +148,10 @@ export const incrementPlayCount = () => {
     uniqueCount.once("value", function(snapshot) {
         count = snapshot.val();
         count++;
-        console.log("count: ", count);
+        //console.log("count: ", count);
         ref.update({count: count});
     }, function (errorObject) {
-        console.log("The read failed: " + errorObject.code);
+        //console.log("The read failed: " + errorObject.code);
     });
 }
 
@@ -179,7 +180,7 @@ export const getScores = () => {
     scoreboardDiv.style.position = 'absolute';
     scoreboardDiv.style.overflow = 'auto';
     if (window.innerHeight/window.innerWidth > .55){
-        console.log(window.innerHeight, window.innerWidth, window.innerHeight/window.innerWidth);
+        //console.log(window.innerHeight, window.innerWidth, window.innerHeight/window.innerWidth);
         scoreboardDiv.style.top = (window.innerWidth * .55) / 25 + 'px';
         scoreboardDiv.style.maxHeight = (window.innerWidth * .55) * 0.5 + 'px';
         scoreboard.style.width = ((window.innerWidth * .55) - 4) * 1.5 + 'px';
@@ -189,7 +190,7 @@ export const getScores = () => {
         scoreboardDiv.style.left = 50 + '%';
         scoreboardDiv.style.transform =  'translate(-50%, -50%)';
     } else {
-        console.log('asdf');
+        //console.log('asdf');
         // scoreboardDiv.style.top = window.innerHeight / 25 + 'px';
         scoreboardDiv.style.maxHeight = window.innerHeight * 0.5 + 'px';
         scoreboard.style.width = (window.innerHeight - 4) * 1.5 + 'px';
@@ -288,7 +289,7 @@ export const getGameState = () => {
 export const setGameState = (s) => {
 	gameState = s;
 }
-
+//console.log("about to load!!!!");   
 load();
 
 let date = new Date();
@@ -399,18 +400,34 @@ export const getMousePos = () => {
     vec.sub( camera.position ).normalize();
     let distance = ( targetZ - camera.position.z ) / vec.z;
     pos.copy( camera.position ).add( vec.multiplyScalar( distance ) );
+    //why is this offset. idk!.
+    pos.x -= 35; 
+    pos.y += 35;
+}
+
+
+let littleDot = null;
+
+export const putDotOnMap = (position) => {
+    let geometry = new THREE.CircleGeometry( 8, 8 );
+    let material = new THREE.MeshBasicMaterial( { color: 0xff00ff, side: THREE.FrontSide } );
+    littleDot = new THREE.Mesh( geometry, material );
+    littleDot.position.set(position.x, position.y, 1);
+    scene.add( littleDot );
 }
 
 const update = () => {
-    // let tmp = new THREE.Vector3(0,0,0);
-    // let tmp2 = new THREE.Vector3(0,0,0);
-    // tmp.copy(pos);
+    let tmp = new THREE.Vector3(0,0,0);
+    let tmp2 = new THREE.Vector3(0,0,0);
+    tmp.copy(pos);
+    if (littleDot == null) putDotOnMap(pos);
+    else littleDot.position.set(pos.x, pos.y, 1);
     // convertToLatLong(tmp);
     // timerBar222.innerHTML= tmp.x.toFixed(2) + ", " + tmp.y.toFixed(2);
-    // timerBar222.innerHTML= mouse.clientX.toFixed(2) + ", " + mouse.clientY.toFixed(2);
+    timerBar222.innerHTML= "mouse pos: " + mouse.clientX.toFixed(2) + ", " + mouse.clientY.toFixed(2);
 	if (getGameState() == 'loading') {
 		updateLoaderBar();
-		console.log(textureLoadingProgress);
+		//console.log(textureLoadingProgress);
 		if (textureLoadingProgress >= 19) {
 			removeLoaderBar();
 			setGameState('loading done');

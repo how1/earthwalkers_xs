@@ -47,6 +47,14 @@ module.exports = (env) => {
 			path: path.join(__dirname, 'public'),
 			filename: 'bundle.js'
 		},
+		resolve:{
+			fallback: {
+				"fs" : false
+			}
+		},
+		experiments: {
+			topLevelAwait: true
+		},
 		module: {
 			rules: [{
 				loader: 'babel-loader',
@@ -73,7 +81,7 @@ module.exports = (env) => {
 					loader: 'raw-loader'
 				}
 			}, {
-			    test: /\.mp3$/,
+			    test: /\.ogg$/,
 			    use: {
 			    	loader: 'file-loader',
 			    	 options: {
@@ -93,7 +101,7 @@ module.exports = (env) => {
 		devtool: isProduction ? 'source-map' : 'eval-cheap-module-source-map',// 'inline-source-map',
 		devServer: {
 			static: {
-      			directory: path.join(__dirname, "./")
+      			directory: path.join(__dirname, "./public")
     		}
 		},
 		node: {
