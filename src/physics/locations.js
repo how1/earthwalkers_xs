@@ -70,6 +70,7 @@ export const restyleHTMLLoc = (offset) => {
 	text2.style.height = 100;
 	text2.style.backgroundColor = "blue";
 	text2.style.zIndex = 1;
+	text2.style.color="white";
 	if (window.innerHeight/window.innerWidth > .55) {
 		text2.style.top = getTop(0);
 		text2.style.fontSize = Initialize.fontSize;//window.innerHeight/40 + 'px';
@@ -96,13 +97,15 @@ export const getHTMLLocation = (num) => {
 	let loc = locations[index];
 	if (!text2){
 		text2 = document.createElement('div');
-		text2.className = 'hover';
+		//text2.className = 'hover';
 		text2.style.position = 'absolute';
+		text2.id='loc';
+		text2.style.id='loc';
 		//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
 		text2.style.width = 100;
 		text2.style.height = 100;
 		// text2.style.color = 'black';
-		text2.style.color = "black";
+		text2.style.color = "white";
 		text2.style.backgroundColor = "blue";
 		if (window.innerHeight/window.innerWidth > .55) {
 			text2.style.top = getTop(0);

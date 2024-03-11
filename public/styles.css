@@ -5,6 +5,13 @@
   cursor: default;
 }
 
+#loc:hover {
+  /*display: none !important;*/
+  background-color: rgba(0,0,0,0) !important;
+  cursor: default;
+  color:black !important;
+}
+
 div {
   z-index: 1;
   font-family: monospace;
