@@ -238,14 +238,14 @@ export const setMusic = (i) => {
 }
 
 let listener;
-let smallCheerFile = require("../sfx/smallCheer.ogg"); 
+let smallCheerFile = require("../sfx/smallCheer.mp3"); 
 
-let mediumCheerFile = require("../sfx/mediumCheer.ogg");
-let xtraBigCheerFile = require("../sfx/xtraBigCheer.ogg");
-let musicFile = require("../sfx/lofi.ogg");
+let mediumCheerFile = require("../sfx/mediumCheer.mp3");
+let xtraBigCheerFile = require("../sfx/xtraBigCheer.mp3");
+let musicFile = require("../sfx/lofi.mp3");
 // let music2File = require('../sfx/perroLoco.mp3').default;
 // let music3File = require('../sfx/20s.mp3').default;
-let clickFile = require("../pics/click.ogg");
+let clickFile = require("../sfx/click.mp3");
 
 export let smallCheer;// = new THREE.Audio();
 export let mediumCheer;// = new THREE.Audio();

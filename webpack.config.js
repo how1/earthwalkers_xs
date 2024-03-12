@@ -81,7 +81,7 @@ module.exports = (env) => {
 					loader: 'raw-loader'
 				}
 			}, {
-			    test: /\.ogg$/,
+			    test: /\.(ogg|mp3)$/,
 			    use: {
 			    	loader: 'file-loader',
 			    	 options: {
