@@ -2,13 +2,11 @@
 .hover:hover {
   /*display: none !important;*/
   background-color: rgba(0,0,0,0) !important;
-  cursor: default;
 }
 
 #loc:hover {
   /*display: none !important;*/
   background-color: rgba(0,0,0,0) !important;
-  cursor: default;
   color:black !important;
 }
 
@@ -17,3 +15,5 @@ div {
   font-family: monospace;
 
 }
+
+div { cursor: none !important; }

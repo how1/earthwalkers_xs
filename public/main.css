@@ -361,12 +361,14 @@ body {
   font-size: 1.6rem;
   margin: 0px; }
 
-button {
-  cursor: pointer; }
+/*button {
+	cursor: pointer;
+
+}
 
 button:disabled {
-  cursor: default; }
-
+	cursor: default;
+}*/
 /*
 #playerPointsText {
 	position : 'absolute';

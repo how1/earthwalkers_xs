@@ -1,15 +1,34 @@
 import * as THREE from 'three';
 import { init, load, scene, renderer, camera, updateLoaderBar, textureLoadingProgress, startButton, 
-	removeLoaderBar, title, titleTex, highscoresButton, setSongs, timerBar222} from "./physics/Initialize.js";
-import {makeHTMLScoreboard, showScore, updateCircleRadius, setButtons, getTop} from "./physics/gameStep.js";
+	removeLoaderBar, title, titleTex, highscoresButton, setSongs, timerBar222} from "./js/Initialize.js";
+import {makeHTMLScoreboard, showScore, updateCircleRadius, setButtons, getTop} from "./js/gameStep.js";
 
 import 'normalize.css';
 import './styles/styles.scss';
 import * as crypto from 'crypto-js';
-import {key, email, password} from './physics/key.js';
+import {key, email, password} from './js/key.js';
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/database";
+import * as Utils from './js/utils.js';
+
+export let timerBar;
+export let mute = false;
+export let scoreboardDiv;
+export let highscore = 0;
+export let bar;
+let vec = new THREE.Vector3(0,0,0);
+let pos = new THREE.Vector3(0,0,0);
+let windowOffset = Utils.getWindowOffset();// ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';  
+let fontSize = Utils.getFontSize();
+let gameState = "loading";
+let date = new Date();
+let startTime = date.getTime();
+let timerBarBar;
+let timeRemaining;
+let loading = true;
+
+document.documentElement.style.cursor = 'none';
 
 var firebaseConfig = {
 	apiKey: "AIzaSyB-6vBUk8IjAgZVpCr1aXswyUmc8f2qOjc",
@@ -24,17 +43,11 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-let database = firebase.database();
-
 firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
   // Handle Errors here.
   var errorCode = error.code;
   var errorMessage = error.message;
-  //console.log(errorCode, errorMessage);
-  // ...
 });
-
-export let mute = false;
 
 export const toggleMute = () => {
     mute = !mute;
@@ -56,21 +69,6 @@ function getCookie(cname) {
     return "";
 }
 
-// let timerBar2 = document.createElement('div');
-// timerBar2.style.top=window.innerHeight-75;
-// timerBar2.style.position = 'absolute';
-// timerBar2.style.left=window.innerWidth/2;
-// document.body.appendChild(timerBar2);
-// timerBar2.innerHTML = "Henry"
-
-// let timerBar22 = document.createElement('div');
-// timerBar22.style.top=window.innerHeight-75;
-// timerBar22.style.position = 'absolute';
-// timerBar22.style.left=window.innerWidth/2;
-// document.body.appendChild(timerBar22);
-// timerBar22.innerHTML = "Henry"
-
-
 export function setCookie(cname, cvalue, exdays) {
     let encHighScore = crypto.AES.encrypt(cvalue + "", key);
     var d = new Date();
@@ -78,12 +76,6 @@ export function setCookie(cname, cvalue, exdays) {
     var expires = "expires="+ d.toUTCString();
     document.cookie = cname + "=" + encHighScore + ";" + expires + ";path=/";
 }
-
-export let highscore = 0;
-
-// export const setHighscore = (score) => {
-//     highscore = score;
-// }
 
 export function checkCookie() {
     let hs = getCookie("data");
@@ -104,7 +96,7 @@ export const submitScore = (name, score) => {
         let date = new Date().getTime();
         let now = (new Date().getMonth() + 1) + "/" + new Date().getDate() + "/" + new Date().getFullYear();
         // let now = date.toUTCString();
-        let firebaseRef = database.ref('scores/');
+        let firebaseRef = firebase.database().ref('scores/');
         firebaseRef.push().set({
             name, 
             date: now,
@@ -115,7 +107,7 @@ export const submitScore = (name, score) => {
 
 export const incrementUniqueUserCount = () => {
     let count;
-    let ref = database.ref("counts");
+    let ref = firebase.database().ref("counts");
     let uniqueCount = ref.child("uniqueCount");
     uniqueCount.once("value", function(snapshot) {
         count = snapshot.val();
@@ -129,7 +121,7 @@ export const incrementUniqueUserCount = () => {
 
 const getUniqueCount = () => {
     let count;
-    let ref = database.ref("counts");
+    let ref = firebase.database().ref("counts");
     let uniqueCount = ref.child("uniqueCount");
     uniqueCount.once("value", function(snapshot) {
         count = snapshot.val();
@@ -143,7 +135,7 @@ getUniqueCount();
 
 export const incrementPlayCount = () => {
     let count;
-    let ref = database.ref("counts");
+    let ref = firebase.database().ref("counts");
     let uniqueCount = ref.child("count");
     uniqueCount.once("value", function(snapshot) {
         count = snapshot.val();
@@ -157,19 +149,16 @@ export const incrementPlayCount = () => {
 
 checkCookie();
 
-export let scoreboardDiv;
-let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';  
-
 export const getScores = () => {
     let fontSize = '2vmin';
     let windowOffset;
-    if (window.innerHeight/window.innerWidth > .55){
-        windowOffset = ((window.innerWidth) - ((window.innerWidth * .55) - 4) * 2) / 2 + 'px';  
-    } else {
-        windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';  
-    }
+    // if (window.innerHeight/window.innerWidth > .55){
+    //     windowOffset = ((window.innerWidth) - ((window.innerWidth * .55) - 4) * 2) / 2 + 'px';  
+    // } else {
+        windowOffset = Utils.getWindowOffset(); //((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';  
+    // }
     let scores = [];
-    let ref = database.ref("scores");
+    let ref = firebase.database().ref("scores");
     ref.orderByChild("score").limitToLast(100).on("child_added", function(snapshot) {
         scores.push(snapshot);
     });
@@ -179,17 +168,17 @@ export const getScores = () => {
     let scoreboard = document.createElement('table');
     scoreboardDiv.style.position = 'absolute';
     scoreboardDiv.style.overflow = 'auto';
-    if (window.innerHeight/window.innerWidth > .55){
-        //console.log(window.innerHeight, window.innerWidth, window.innerHeight/window.innerWidth);
-        scoreboardDiv.style.top = (window.innerWidth * .55) / 25 + 'px';
-        scoreboardDiv.style.maxHeight = (window.innerWidth * .55) * 0.5 + 'px';
-        scoreboard.style.width = ((window.innerWidth * .55) - 4) * 1.5 + 'px';
-        scoreboardDiv.style.left = windowOffset;
-        scoreboardDiv.style.position= 'fixed';
-        scoreboardDiv.style.top = 45 + '%';
-        scoreboardDiv.style.left = 50 + '%';
-        scoreboardDiv.style.transform =  'translate(-50%, -50%)';
-    } else {
+    // if (window.innerHeight/window.innerWidth > .55){
+    //     //console.log(window.innerHeight, window.innerWidth, window.innerHeight/window.innerWidth);
+    //     scoreboardDiv.style.top = (window.innerWidth * .55) / 25 + 'px';
+    //     scoreboardDiv.style.maxHeight = (window.innerWidth * .55) * 0.5 + 'px';
+    //     scoreboard.style.width = ((window.innerWidth * .55) - 4) * 1.5 + 'px';
+    //     scoreboardDiv.style.left = windowOffset;
+    //     scoreboardDiv.style.position= 'fixed';
+    //     scoreboardDiv.style.top = 45 + '%';
+    //     scoreboardDiv.style.left = 50 + '%';
+    //     scoreboardDiv.style.transform =  'translate(-50%, -50%)';
+    // } else {
         //console.log('asdf');
         // scoreboardDiv.style.top = window.innerHeight / 25 + 'px';
         scoreboardDiv.style.maxHeight = window.innerHeight * 0.5 + 'px';
@@ -198,7 +187,7 @@ export const getScores = () => {
         scoreboardDiv.style.top = 45 + '%';
         scoreboardDiv.style.left = 50 + '%';
         scoreboardDiv.style.transform =  'translate(-50%, -50%)';
-    }
+    // }
 
     // scoreboard.style.position = 'absolute';
     scoreboard.style.overflow = 'auto';
@@ -281,7 +270,6 @@ function sortByScore(array) {
     });
 }
 
-let gameState = "loading";
 export const getGameState = () => {
 	return gameState;
 }
@@ -292,73 +280,47 @@ export const setGameState = (s) => {
 //console.log("about to load!!!!");   
 load();
 
-let date = new Date();
-let startTime = date.getTime();
 export const resetTime = () => {
 	startTime = new Date().getTime();
 }
 
-let currentTime = 0;
-let totalTime = 15000;
-export let bar;
-let geom = new THREE.PlaneGeometry(500,100, 32);
-geom.translate(250, 0, 0);
-let mat = new THREE.MeshBasicMaterial({color: 0xff0000, side: THREE.FrontSide});
-bar = new THREE.Mesh(geom, mat);
-bar.position.x = -window.innerWidth;
-bar.position.y = window.innerHeight/2 - 300;
-bar.position.z = 2;
-// scene.add(bar);
-
-export let timerBar;
-let timerBarBar;
-let timeRemaining;
-
-let currentAnTime = 0;
-// let startAnTime;
-// let totalAnTime = 1000;
-// export const resetAnTime = () => {
-// 	startAnTime = new Date().getTime();
-// }
-
-let loading = true;
 export const setLoading = () => {
 	loading = false;
 }
 
 export const restyleHTMLApp = (offset) => {
-	timerBar.style.position = 'absolute';
+	// timerBar.style.position = 'absolute';
 	// levelText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-	timerBar.style.width = 100;
-	timerBar.style.height = 100;
-    timerBarBar.style.zIndex = 1;
-    timerBar.style.zIndex = 1;
+	// timerBar.style.width = 100;
+	// timerBar.style.height = 100;
+    // timerBarBar.style.zIndex = 1;
+    // timerBar.style.zIndex = 1;
 	// timerBar.style.color = "red";
-    if (window.innerHeight/window.innerWidth > .55) {
-        // timerBar.style.top = getTop(28); //(window.innerWidth * .55) / 2 + (window.innerWidth * .55)/28 + 'px'; //+20
-        // timerBar.style.left = '0px'; //offset;//window.innerHeight/57.5 + 'px';
-        // timerBar.style.fontSize = (window.innerWidth * .55)/40 + 'px';
-        // timerBarBar.style.position = 'absolute';
-        // // levelText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-        // timerBarBar.style.width = 125 + "px";
-        // timerBarBar.style.height = (window.innerWidth * .55)/40 + "px";
-        // // timerBarBar.style.backgroundColor = "#f00";
-        // timerBarBar.style.top = getTop(14); //(window.innerWidth * .55) / 2 + (window.innerWidth * .55)/14 + 'px'; //+40
-        // timerBarBar.style.left = '0px'; //offset;//window.innerHeight/57.5 + 'px';
-        // timerBarBar.style.width = ((window.innerWidth * .55)/4.25) * (timeRemaining/10) + "px";
-    } else {
-        timerBar.style.top = window.innerHeight / 2 + window.innerHeight/28 + 'px'; //+20
+    // if (window.innerHeight/window.innerWidth > .55) {
+    //     // timerBar.style.top = getTop(28); //(window.innerWidth * .55) / 2 + (window.innerWidth * .55)/28 + 'px'; //+20
+    //     // timerBar.style.left = '0px'; //offset;//window.innerHeight/57.5 + 'px';
+    //     // timerBar.style.fontSize = (window.innerWidth * .55)/40 + 'px';
+    //     // timerBarBar.style.position = 'absolute';
+    //     // // levelText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+    //     // timerBarBar.style.width = 125 + "px";
+    //     // timerBarBar.style.height = (window.innerWidth * .55)/40 + "px";
+    //     // // timerBarBar.style.backgroundColor = "#f00";
+    //     // timerBarBar.style.top = getTop(14); //(window.innerWidth * .55) / 2 + (window.innerWidth * .55)/14 + 'px'; //+40
+    //     // timerBarBar.style.left = '0px'; //offset;//window.innerHeight/57.5 + 'px';
+    //     // timerBarBar.style.width = ((window.innerWidth * .55)/4.25) * (timeRemaining/10) + "px";
+    // } else {
+        // timerBar.style.top = window.innerHeight / 2 + window.innerHeight/28 + 'px'; //+20
         timerBar.style.left = offset;//window.innerHeight/57.5 + 'px';
-        timerBar.style.fontSize = window.innerHeight/40 + 'px';
-        timerBarBar.style.position = 'absolute';
+        // timerBar.style.fontSize = window.innerHeight/40 + 'px';
+        // timerBarBar.style.position = 'absolute';
         // levelText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-        timerBarBar.style.width = 125 + "px";
-        timerBarBar.style.height = window.innerHeight/40 + "px";
+        // timerBarBar.style.width = 125 + "px";
+        // timerBarBar.style.height = window.innerHeight/40 + "px";
         // timerBarBar.style.backgroundColor = "#f00";
-        timerBarBar.style.top = window.innerHeight / 2 + window.innerHeight/14 + 'px'; //+40
+        // timerBarBar.style.top = timerBar.style.top //+40
         timerBarBar.style.left = offset;//window.innerHeight/57.5 + 'px';
-        timerBarBar.style.width = (window.innerHeight/4.25) * (timeRemaining/10) + "px";
-    }
+        // timerBarBar.style.width = (window.innerHeight/4.25) * (timeRemaining/10) + "px";
+    // }
 }
 
 export const restyleHighScoreboard = () => {
@@ -372,16 +334,10 @@ document.addEventListener("mousemove", function(event){
     getMousePos();
 });
 
-let windowOffsetx = 110; //was 125
-let windowOffsetY = -20;
-
 let mouse = {
     clientX: 0,
     clientY:0
 }
-
-let vec = new THREE.Vector3(0,0,0);
-let pos = new THREE.Vector3(0,0,0);
 
 const getMouseCoords = (event) => {
     mouse.clientX = event.clientX;
@@ -413,18 +369,91 @@ export const putDotOnMap = (position) => {
     let material = new THREE.MeshBasicMaterial( { color: 0xff00ff, side: THREE.FrontSide } );
     littleDot = new THREE.Mesh( geometry, material );
     littleDot.position.set(position.x, position.y, 1);
+    littleDot.zIndex = 1;
     scene.add( littleDot );
+}
+
+const showTimerBar = () => {
+    if (!timerBar || !timerBarBar){
+        timerBar = document.createElement('div');
+        timerBar.className = 'hover';
+        timerBar.style.position = 'absolute';
+        timerBar.style.zIndex = 1;
+        timerBar.style.width = 100;
+        timerBar.style.height = 100;
+        timerBar.style.color = 'black';
+        timerBar.style.backgroundColor = "red";
+        // timerBar.style.backgroundColor = "rgb(f,f,f,0.3)";
+        // if (window.innerHeight/window.innerWidth > .55) {
+        //     timerBar.style.top = getTop(28); //(window.innerWidth * .55) / 2 + (window.innerWidth * .55)/28 + 'px'; //+20
+        //     timerBar.style.left = '0px'; //windowOffset;//window.innerHeight/57.5 + 'px';
+        //     timerBar.style.fontSize = (window.innerWidth * .55)/40 + 'px';
+        // } else {
+            timerBar.style.top = window.innerHeight / 2 + window.innerHeight/28 + 'px'; //+20
+            timerBar.style.left = windowOffset;//window.innerHeight/57.5 + 'px';
+            timerBar.style.fontSize = Utils.getFontSize();
+        // }
+        timerBarBar = document.createElement('div');
+        timerBarBar.className = 'hover';
+        timerBarBar.style.position = 'absolute';
+        timerBarBar.style.zIndex = 1;
+        timerBarBar.style.width = 100;
+        timerBarBar.style.left = windowOffset;
+        timerBarBar.style.backgroundColor = "#f00";
+        // if (window.innerHeight/window.innerWidth > .55) {
+        //     timerBarBar.style.height = (window.innerWidth * .55)/40 + "px";
+        //     timerBarBar.style.top = getTop(14);//(window.innerHeight) / 2 + (window.innerWidth * .55)/14 + 'px'; //+40
+        //     timerBarBar.style.left = '0px'; //window.innerWidth/50 + 'px'; ;// window.innerHeight/57.5 + 'px';
+        // } else {
+        timerBarBar.style.height = window.innerHeight/40 + "px";
+        timerBarBar.style.top = window.innerHeight / 2 + window.innerHeight/14 + 'px'; //+40
+        timerBarBar.style.left = windowOffset;// window.innerHeight/57.5 + 'px';
+        document.body.appendChild(timerBar);        
+        document.body.appendChild(timerBarBar);
+    }
+}
+
+const updateTimerBars = () => {
+        let totalTime = 15000;
+        let currentTime = new Date().getTime();
+        timeRemaining = ((1 - (currentTime/(startTime+totalTime)))*1000000000);
+        if (timeRemaining < 0) timeRemaining = 0;
+        let timeRemainingDec = timeRemaining / 10;
+        let timeRemainingInt = Math.round(timeRemaining) + 1;
+        if (timeRemainingInt <= 0) timeRemainingInt = 1;
+        let r = 0;
+        let g = 255;
+        if (timeRemainingDec > .5){
+            r = 255 * ((1 - timeRemainingDec) * 2);
+            g = 255;
+        } else {
+            r = 255;
+            g = 255 * timeRemainingDec * 2;
+        }
+        r = Math.round(r);
+        g = Math.round(g);
+        if (timeRemaining <= 0) {
+            showScore();
+        }
+
+        timerBarBar.style.backgroundColor = "rgb(" + r + "," + g + ",0)";
+        timerBarBar.style.display = "inline-block";
+        timerBarBar.style.width = (window.innerHeight/4.25) * (timeRemaining/10) + "px";
+        timerBar.style.display = "inline-block";
+        timerBar.innerHTML = "Time Remaining: " + timeRemaining.toFixed(1);
 }
 
 const update = () => {
     let tmp = new THREE.Vector3(0,0,0);
     let tmp2 = new THREE.Vector3(0,0,0);
     tmp.copy(pos);
-    if (littleDot == null) putDotOnMap(pos);
-    else littleDot.position.set(pos.x, pos.y, 1);
+    scene.remove(littleDot);
+    putDotOnMap(pos);
+    littleDot.position.set(pos.x, pos.y, 3);
+
     // convertToLatLong(tmp);
     // timerBar222.innerHTML= tmp.x.toFixed(2) + ", " + tmp.y.toFixed(2);
-    timerBar222.innerHTML= "mouse pos: " + mouse.clientX.toFixed(2) + ", " + mouse.clientY.toFixed(2);
+    //timerBar222.innerHTML= "mouse pos: " + mouse.clientX.toFixed(2) + ", " + mouse.clientY.toFixed(2);
 	if (getGameState() == 'loading') {
 		updateLoaderBar();
 		//console.log(textureLoadingProgress);
@@ -442,49 +471,10 @@ const update = () => {
 		}
 	}
 	if (gameState != "loading" && gameState != "loading done"){
-		let windowOffset = ((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';  
+		let windowOffset = Utils.getWindowOffset()//((window.innerWidth) - (window.innerHeight - 4) * 2) / 2 + 'px';  	    
 
-	    if (!timerBar){
-	        timerBar = document.createElement('div');
-            timerBar.className = 'hover';
-	        timerBar.style.position = 'absolute';
-            timerBar.style.zIndex = 1;
-	        timerBar.style.width = 100;
-	        timerBar.style.height = 100;
-            timerBar.style.color = 'black';
-	        timerBar.style.backgroundColor = "red";
-            // timerBar.style.backgroundColor = "rgb(f,f,f,0.3)";
-            if (window.innerHeight/window.innerWidth > .55) {
-                timerBar.style.top = getTop(28); //(window.innerWidth * .55) / 2 + (window.innerWidth * .55)/28 + 'px'; //+20
-                timerBar.style.left = '0px'; //windowOffset;//window.innerHeight/57.5 + 'px';
-                timerBar.style.fontSize = (window.innerWidth * .55)/40 + 'px';
-            } else {
-                timerBar.style.top = window.innerHeight / 2 + window.innerHeight/28 + 'px'; //+20
-                timerBar.style.left = windowOffset;//window.innerHeight/57.5 + 'px';
-                timerBar.style.fontSize = window.innerHeight/40 + 'px';
-            }
-	        document.body.appendChild(timerBar);
-	    }	    
+	 	showTimerBar();
 
-	 	if (!timerBarBar){
-	    	timerBarBar = document.createElement('div');
-            timerBarBar.className = 'hover';
-	        timerBarBar.style.position = 'absolute';
-            timerBarBar.style.zIndex = 1;
-	        timerBarBar.style.width = (window.innerWidth-windowOffset*2)/50 + "px";
-	       
-	        timerBarBar.style.backgroundColor = "#f00";
-            if (window.innerHeight/window.innerWidth > .55) {
-                timerBarBar.style.height = (window.innerWidth * .55)/40 + "px";
-                timerBarBar.style.top = getTop(14);//(window.innerHeight) / 2 + (window.innerWidth * .55)/14 + 'px'; //+40
-                timerBarBar.style.left = '0px'; //window.innerWidth/50 + 'px'; ;// window.innerHeight/57.5 + 'px';
-            } else {
-                timerBarBar.style.height = window.innerHeight/40 + "px";
-                timerBarBar.style.top = window.innerHeight / 2 + window.innerHeight/14 + 'px'; //+40
-                timerBarBar.style.left = windowOffset;// window.innerHeight/57.5 + 'px';
-            }
-	        document.body.appendChild(timerBarBar);
-	    }
 	    if (getGameState() == 'during' || getGameState() == 'after' || getGameState() == 'animation'){
 	        timerBar.style.display = 'inline-block';
 	    	timerBarBar.style.display = 'inline-block';
@@ -493,32 +483,7 @@ const update = () => {
 	    	timerBarBar.style.display = 'none';
 	    }
 	    if (getGameState() == "during"){
-	    	currentTime = new Date().getTime();
-			timeRemaining = ((1 - (currentTime/(startTime+totalTime)))*1000000000);
-			if (timeRemaining < 0) timeRemaining = 0;
-			let timeRemainingDec = timeRemaining / 10;
-			let timeRemainingInt = Math.round(timeRemaining) + 1;
-			if (timeRemainingInt <= 0) timeRemainingInt = 1;
-			let r = 0;
-			let g = 255;
-			if (timeRemainingDec > .5){
-				r = 255 * ((1 - timeRemainingDec) * 2);
-				g = 255;
-			} else {
-				r = 255;
-				g = 255 * timeRemainingDec * 2;
-			}
-			r = Math.round(r);
-			g = Math.round(g);
-			if (timeRemaining <= 0) {
-				showScore();
-			}
-
-	    	timerBarBar.style.backgroundColor = "rgb(" + r + "," + g + ",0)";
-	    	timerBarBar.style.display = "inline-block";
-	   		timerBarBar.style.width = (window.innerHeight/4.25) * (timeRemaining/10) + "px";
-	   		timerBar.style.display = "inline-block";
-	   		timerBar.innerHTML = "Time Remaining: " + timeRemaining.toFixed(1);
+            updateTimerBars();
 	    }
 	}
 
