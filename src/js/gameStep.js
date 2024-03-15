@@ -1083,7 +1083,21 @@ export const updateCircleRadius3 = () => {
         }
     }
     circleStart = 1;
-    circle.scale.set(circle.scale.x + 10, circle.scale.y + 10, 1);
+
+    let tmpTime = new Date().getTime();
+    // console.log("current " + currentTime);
+    // console.log("tmp " + tmpTime);
+    elapsedTime = tmpTime - currentTime;
+    currentTime = new Date().getTime();
+    let dist = elapsedTime * circleSpeed;
+    circleProgress += dist;
+    circleProgress = Math.abs(circleProgress);
+    // console.log("elapsed: " + elapsedTime);
+    // console.log("dist: " + dist);
+
+    if (circleProgress > distances[0]) dist = distances[0];
+
+    circle.scale.set(circleProgress, circleProgress, 1);
     scene.remove(circle3);
     let geometry = new THREE.RingGeometry( circle.scale.x-7, circle.scale.x, Math.round(distances[0]) );
     var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.FrontSide } );
@@ -1132,9 +1146,7 @@ export const updateCircleRadius2 = () => {
     // console.log("tmp " + tmpTime);
     elapsedTime = tmpTime - currentTime;
     currentTime = new Date().getTime();
-    
     let dist = elapsedTime * circleSpeed;
-
     circleProgress += dist;
 
     // console.log("elapsed: " + elapsedTime);
