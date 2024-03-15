@@ -29,7 +29,7 @@ let circleStart = 0
 let circle4;
 let circle5;
 let circle6;
-let circleSpeed = .4;
+let circleSpeed = .3;
 let elapsedTime = 0;
 let currentTime = 0;
 let circleProgress = 0;
