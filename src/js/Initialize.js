@@ -60,7 +60,6 @@ window.addEventListener('resize', () => {
 	// 	fontSize = (window.innerWidth * .55)/40 + 'px';
 	// }
 	windowOffset = Utils.getWindowOffset();
-	console.log(windowOffset);
 	height = window.innerHeight-margin;
 	width = window.innerWidth-margin;
 	renderer.setSize(width, height);
@@ -113,16 +112,35 @@ export const setBackground = (tex) => {
 	background = maps[tex];
 }
 
+const addBackgroundPlates = (geom, mat, width, height) => {
+	let i = 0;
+	let x = [-1,-1,-1, 0, 0, 1, 1, 1];
+	let y = [-1, 0, 1,-1, 1,-1, 0, 1];
+	while (i < 8){
+		let plate = new THREE.Mesh(geom, mat);
+		scene.add(plate);
+		let xPos = width * x[i];
+		let pos = new THREE.Vector3(width * x[i], height * y[i], 5);
+		plate.position.x = pos.x;
+		plate.position.y = pos.y;
+		plate.position.z = pos.z;
+		i++;
+	}
+}
+
 export const init = () => {
  	// let geom = new THREE.PlaneGeometry(4378, 2435,32);
- 	let geom = new THREE.PlaneGeometry(mapSizeX - mapSquishX, mapSizeY - mapSquishY,32);
+ 	let plateWidth = mapSizeX - mapSquishX;
+ 	let plateHeight = mapSizeY - mapSquishY
+ 	let geom = new THREE.PlaneGeometry(plateWidth, plateHeight,32);
  	let buttonGeomXDim = 400;
  	let buttonGeomYDim = 200;
  	// let geom = new THREE.PlaneGeometry(1000, 500,32);
  	let geom2 = new THREE.PlaneGeometry(10000, 5000,32);
  	let mat = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.FrontSide});
  	let bgPlate = new THREE.Mesh (geom2, mat);
- 	bgPlate.position.z = -3;
+ 	addBackgroundPlates(geom, mat, plateWidth, plateHeight);
+ 	// addBackgroundPlates(geom, mat, plateWidth, plateHeight);
  	scene.add(bgPlate);
  	let middleHeight = 200;
  	let lowerHeight = -200;

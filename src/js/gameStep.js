@@ -20,6 +20,21 @@ let guessLong = 0;
 let answerLat = 0;
 let answerLong = 0;
 
+
+//circle animations
+let circle;
+let circle3;
+let radius = 0;
+let circleStart = 0
+let circle4;
+let circle5;
+let circle6;
+let circleSpeed = .4;
+let elapsedTime = 0;
+let currentTime = 0;
+let circleProgress = 0;
+let twoCircles = false;
+
 export let myTimer;
 
 let levels = [125, 200, 275, 300, 325, 415, 415, 415, 500, 580]; //580
@@ -249,20 +264,70 @@ const getMapCoords = () => {
         cityPosition.set(currentCity.latLong.x, currentCity.latLong.y, 0);
         let wrldCrds = convertLatLongToWorldCoords(cityPosition);
         let tmpPos = new THREE.Vector3(pos.x, pos.y, pos.z);
+
+        //anti-meridian (example: hawaii to sydney the short way is wrapping around the edge of the map to get circle diameter/distance)
+        let antiMeridianWest = new THREE.Vector3(-180, currentCity.latLong.y, 0);
+        let antiMeridianEast = new THREE.Vector3(179, currentCity.latLong.y, 0)
+        antiMeridianWest = convertLatLongToWorldCoords(antiMeridianWest);
+        antiMeridianEast = convertLatLongToWorldCoords(antiMeridianEast);
+        let diff = 0;
+        let secondCirclePos = new THREE.Vector3(0,wrldCrds.y,0);
+        if (wrldCrds.x < 0) {
+            diff = Math.abs(antiMeridianWest.x - wrldCrds.x);
+            secondCirclePos.x = antiMeridianEast.x + diff;
+        } else {
+            diff = Math.abs(antiMeridianEast.x - wrldCrds.x);
+            secondCirclePos.x = antiMeridianWest.x - diff;
+        }    
+
         // tmpPos.x -= 45;
         // tmpPos.y += 45;
         let distance = wrldCrds.distanceTo(tmpPos);
         let positionText = pos.x + ", " + pos.y;
+        let antiDist = secondCirclePos.distanceTo(tmpPos);
+        if (antiDist < distance){
+            distances = [antiDist, distanceFromPoint];
+        } else {
+            distances = [distance, distanceFromPoint];
+        }
+
+        elapsedTime = 0;
+        makeCircle(distance, cityPosition);
+        twoCircles = false;
+        if (antiDist < distance){
+            makeOtherCircle(antiDist, secondCirclePos);
+            twoCircles = true;
+        }
+        
         // //console.log("position of mouse: " + positionText);
         // //console.log("position of city: " + wrldCrds.x + ", " + wrldCrds.y);
         // //console.log("distance: " + distance);
-        makeCircle(distance, cityPosition);
-        distances = [distance, distanceFromPoint];
         App.setGameState("animation");
         // window.clearTimeout(myTimer);
         // showScore(distance, distanceFromPoint);
     }
 }
+//Suva,"Suva","-18.1330","178.4417","Fiji","FJ","FJI","Rewa","primary","175399","1242615095"            
+
+// const getAntiPosition = (wrldCrds, firstCircle) => {
+//     console.log(currentCity.latLong.x);
+//     let antiMeridianWest = new THREE.Vector3(currentCity.latLong.x, -180, 0);
+//     console.log(antiMeridianWest);
+//     let antiMeridianEast = new THREE.Vector3(currentCity.latLong.x, 180, 0);
+//     antiMeridianWest = convertLatLongToWorldCoords(antiMeridianWest);
+//     console.log(antiMeridianWest);
+//     antiMeridianEast = convertLatLongToWorldCoords(antiMeridianEast);
+//     let maximumX = antiMeridianEast.x;
+//     let minimumX = antiMeridianWest.x;
+//     if (firstCircle){
+//         let result = new THREE.Vector3(maximumX + wrldCrds.x, wrldCrds.y, 0); //minimum is around -2500
+//         console.log("result: " + result.x + " " + result.y);
+//         return result;
+//     } else {
+//         return new THREE.Vector3(minimumX - ((maximumX - wrldCrds.x)), wrldCrds.y, 0);
+//     }
+
+// }
 
 const getButtonCoords = () => {
     if (checkMapCollision(pos, button)){
@@ -958,12 +1023,44 @@ const clearScreen = () => {
     Initialize.init();
 }
 
-let circle;
-let circle3;
-let radius = 0;
-let circleStart = 0
-
 export const updateCircleRadius = () => {
+    if (circleStart == 0) { 
+        currentTime = new Date().getTime();
+        circleProgress = 0;
+        let distance = distances[0];
+        let distanceMi = distances[1];
+        if (!distance) distance = 10000;
+        if (!distanceMi) distanceMi = 10000;
+        if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
+        if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
+        if (Initialize.bigCheer.isPlaying) Initialize.bigCheer.stop();
+        if (distanceMi < 25){
+            if (Initialize.bigCheer.isPlaying) Initialize.bigCheer.stop();
+            playSound(Initialize.bigCheer);//.play();
+        } else if (distanceMi < 100) {
+            if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
+            playSound(Initialize.mediumCheer);//.play();
+        } else if (distanceMi < 10000) {
+            //Do nothing
+            if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
+            playSound(Initialize.smallCheer);//.play();
+        } else {
+            // if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
+            // playSound(Initialize.smallCheer);//.play();
+        }
+    }
+     circleStart = 1;
+     if (twoCircles){
+        updateCircleRadius2();
+     } else {
+        updateCircleRadius3();
+     }
+     // animateCircleRadius(true);
+     // animateCircleRadius(false);
+   
+}
+
+export const updateCircleRadius3 = () => {
     if (circleStart == 0) { 
         let distance = distances[0];
         let distanceMi = distances[1];
@@ -1006,6 +1103,82 @@ export const updateCircleRadius = () => {
     }
 }
 
+export const updateCircleRadius2 = () => {
+    if (circleStart == 0) { 
+        let distance = distances[0];
+        let distanceMi = distances[1];
+        if (!distance) distance = 10000;
+        if (!distanceMi) distanceMi = 10000;
+        if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
+        if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
+        if (Initialize.bigCheer.isPlaying) Initialize.bigCheer.stop();
+        if (distanceMi < 25){
+            if (Initialize.bigCheer.isPlaying) Initialize.bigCheer.stop();
+            playSound(Initialize.bigCheer);//.play();
+        } else if (distanceMi < 100) {
+            if (Initialize.mediumCheer.isPlaying) Initialize.mediumCheer.stop();
+            playSound(Initialize.mediumCheer);//.play();
+        } else if (distanceMi < 10000) {
+            //Do nothing
+        } else {
+            if (Initialize.smallCheer.isPlaying) Initialize.smallCheer.stop();
+            playSound(Initialize.smallCheer);//.play();
+        }
+    }
+    circleStart = 1;
+
+    let tmpTime = new Date().getTime();
+    // console.log("current " + currentTime);
+    // console.log("tmp " + tmpTime);
+    elapsedTime = tmpTime - currentTime;
+    currentTime = new Date().getTime();
+    
+    let dist = elapsedTime * circleSpeed;
+
+    circleProgress += dist;
+
+    // console.log("elapsed: " + elapsedTime);
+    // console.log("dist: " + dist);
+
+    if (Math.abs(circleProgress) > distances[0]) dist = distances[0];
+
+
+    circle.scale.set(Math.abs(circleProgress), Math.abs(circleProgress), 1);
+    circle4.scale.set(Math.abs(circleProgress), Math.abs(circleProgress), 1);
+    // circle.scale.set(circle.scale.x + 10, circle.scale.y + 10, 1);
+    scene.remove(circle3);
+    scene.remove(circle5);
+    let geometry = new THREE.RingGeometry( circle.scale.x-7, circle.scale.x, Math.round(distances[0]) );
+    var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.FrontSide } );
+    circle3 = new THREE.Mesh( geometry, material );
+    circle5 = new THREE.Mesh( geometry, material );
+    circle3.position.set(circle.position.x, circle.position.y, 1);
+    circle5.position.set(circle4.position.x, circle4.position.y, 1);
+    scene.add(circle3);
+    scene.add(circle5);
+    if (circle.scale.x >= distances[0] || circle4.scale.x >= distances[0]) {
+        circleStart = 0;
+        circle.scale.set(distances[0], distances[0], 1);
+        circle4.scale.set(distances[0], distances[0], 1);
+        scene.remove(circle3);
+        scene.remove(circle5);
+        let geometry = new THREE.RingGeometry( circle.scale.x-7, circle.scale.x, Math.round(distances[0]) );
+        let geometry2 = new THREE.RingGeometry( circle4.scale.x-7, circle4.scale.x, Math.round(distances[0]) );
+        var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.FrontSide } );
+        circle3 = new THREE.Mesh( geometry, material );
+        circle5 = new THREE.Mesh( geometry2, material );
+        circle3.position.set(circle.position.x, circle.position.y, 1);
+        circle5.position.set(circle4.position.x, circle4.position.y, 1);
+        scene.add(circle3);
+        scene.add(circle5);
+        showScore(distances[0], distances[1]);
+    }
+}
+
+
+//circle is the green circle
+//circle2 is the red dot
+//circle3 is the green ring around circle
 const makeCircle = (distance, position) => {
     let tmp = new THREE.Vector3(position.x, position.y, 0);
     tmp = convertLatLongToWorldCoords(tmp);
@@ -1028,6 +1201,29 @@ const makeCircle = (distance, position) => {
     circle3 = new THREE.Mesh( geometry, material );
     circle3.position.set(tmp.x, tmp.y, 2);
     scene.add( circle3 );
+}
+
+const makeOtherCircle = (distance, position) => {
+    let tmp = position;
+    // convertToPixelCoords(tmp);
+    let geometry = new THREE.CircleGeometry( 1, Math.round(distance) );
+    var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, opacity: 0.2, transparent: true } );
+    circle4 = new THREE.Mesh( geometry, material );
+    circle4.position.set(tmp.x, tmp.y, 2);
+    scene.add( circle4 );
+    geometry = new THREE.CircleGeometry( 8, 8 );
+    if (mapIndex[level] == 3)
+        material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.FrontSide } );
+    else
+        material = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.FrontSide } );
+    var circle6 = new THREE.Mesh( geometry, material );
+    circle6.position.set(tmp.x, tmp.y, 3);
+    scene.add( circle6 );
+    geometry = new THREE.RingGeometry( 0, 2, Math.round(distance) );
+    var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.FrontSide } );
+    circle5 = new THREE.Mesh( geometry, material );
+    circle5.position.set(tmp.x, tmp.y, 2);
+    scene.add( circle5 );
 }
 
 const convertLatLongToWorldCoords = (vec) => {

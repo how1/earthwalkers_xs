@@ -96,6 +96,7 @@ export const getHTMLLocation = (num) => {
 	let windowOffset = Utils.getWindowOffset();
 	// let index = Math.floor(Math.random() * locations.length);  
 	let index = Math.floor(Math.random() * num);  
+	//let loc = locations[index];
 	let loc = locations[index];
 	if (!text2){
 		text2 = document.createElement('div');
