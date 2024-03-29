@@ -11,6 +11,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/database";
 import * as Utils from './js/utils.js';
+import {level} from './js/gameStep.js'
 
 export let timerBar;
 export let mute = false;
@@ -363,14 +364,41 @@ export const getMousePos = () => {
 
 
 let littleDot = null;
+let bigDot = null;
+let bigRing = null;
+
+    // let geometry = new THREE.CircleGeometry( 1, Math.round(distance) );
+    // var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, opacity: 0.2, transparent: true } );
+    // circle = new THREE.Mesh( geometry, material );
+
+    // geometry = new THREE.RingGeometry( 0, 2, Math.round(distance) );
+    // var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.FrontSide } );
+    // circle3 = new THREE.Mesh( geometry, material );
 
 export const putDotOnMap = (position) => {
     let geometry = new THREE.CircleGeometry( 8, 8 );
-    let material = new THREE.MeshBasicMaterial( { color: 0xff00ff, side: THREE.FrontSide } );
+    let material;
+    if (level < 7)
+        material = new THREE.MeshBasicMaterial( { color: 0xff00ff, side: THREE.FrontSide } );
+    else {
+        material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.FrontSide } );
+    }
     littleDot = new THREE.Mesh( geometry, material );
     littleDot.position.set(position.x, position.y, 1);
     littleDot.zIndex = 1;
     scene.add( littleDot );
+    // geometry = new THREE.CircleGeometry( 75, 75 );
+    // material = new THREE.MeshBasicMaterial( { color: 0xff00ff, opacity:0.1, transparent: true} );
+    // bigDot = new THREE.Mesh( geometry, material );
+    // bigDot.position.set(position.x, position.y, 1);
+    // bigDot.zIndex = 1;
+    // scene.add( bigDot );
+
+    // geometry = new THREE.RingGeometry( 68, 75, 32 );
+    // material = new THREE.MeshBasicMaterial( { color: 0xff00ff, side: THREE.FrontSide } );
+    // bigRing = new THREE.Mesh( geometry, material );
+    // scene.add(bigRing);
+
 }
 
 const showTimerBar = () => {
@@ -448,8 +476,12 @@ const update = () => {
     let tmp2 = new THREE.Vector3(0,0,0);
     tmp.copy(pos);
     scene.remove(littleDot);
+    // scene.remove(bigDot);
+    //scene.remove(bigRing);
     putDotOnMap(pos);
     littleDot.position.set(pos.x, pos.y, 3);
+    // bigDot.position.set(pos.x, pos.y, 3);
+    //bigRing.position.set(pos.x, pos.y, 3);
 
     // convertToLatLong(tmp);
     // timerBar222.innerHTML= tmp.x.toFixed(2) + ", " + tmp.y.toFixed(2);

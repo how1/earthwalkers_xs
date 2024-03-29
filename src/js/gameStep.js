@@ -8,11 +8,12 @@ import * as Utils from './utils.js';
 // var loadFont = require('load-bmfont')
 
 
-let level = 0;
+export let level = 0;
 let time = 10000;
 let timer = 0;
 let playerPoints = 0;
 let totalPoints = 0;
+let avgPoints = 0;
 let distanceFromPoint = 10000000;
 let resultPoints = 0;
 let guessLat = 0;
@@ -354,9 +355,10 @@ const getStartButtonCoords = () => {
         clearScreen();
         playerPoints = 0;
         totalPoints = 0;
+        avgPoints = 0;
         currentQuestion = 1;
         App.setGameState("during");
-        highScore.innerHTML = "Highscore: " + App.checkCookie() + " Current: " + totalPoints;
+        highScore.innerHTML = "Highscore: " + App.checkCookie() + " Current: " + totalPoints + " Avg Pts/Ques: " + avgPoints;
         currentCity = Locations.getRandomLocation(numLocs[level]);
         // currentCity = Locations.getRandomLocation(1);
         // if (window.innerHeight/window.innerWidth > .55) {
@@ -368,6 +370,20 @@ const getStartButtonCoords = () => {
     }
 }
 
+const calculateAvgPts = () => {
+    let queses = 0;
+    for (let i = 0; i < level; i++){
+        queses += questions[i];
+    }
+    queses += currentQuestion; 
+    if (queses <= 0) {
+        avgPoints = totalPoints;
+        return;
+    }
+    avgPoints = totalPoints/queses;
+    avgPoints = avgPoints.toFixed(2);
+}
+
 
 const getRestartCoords = () => {
     if (checkMapCollision(pos, restartButton)){
@@ -377,6 +393,7 @@ const getRestartCoords = () => {
         App.setGameState("during");
         playerPoints = 0;
         totalPoints = 0;
+        avgPoints = 0;
         currentQuestion = 1;
         if (newHighscore) {
             if (document.body.contains(newHighscore))
@@ -423,6 +440,8 @@ export const showScore = (distance, distanceMi) => {
     if (resultPoints < 0) resultPoints = 0;
     playerPoints += resultPoints;
     totalPoints += resultPoints;
+    calculateAvgPts();
+    highScore.innerHTML = "Highscore: " + App.checkCookie() + " Current: " + totalPoints + " Avg Pts/Ques: " + avgPoints
     App.setGameState("after");// = "after";
     makeHTMLScoreboard();
     // makeMeshScoreboard();
@@ -863,7 +882,7 @@ export const makeHTMLScoreboard = (distance) => {
     if (App.getGameState() == 'during' || App.getGameState() == 'after'){
         highScore.style.display = 'inline-block';
     }
-    highScore.innerHTML = "Highscore: " + App.checkCookie() + " Current: " + totalPoints;
+    highScore.innerHTML = "Highscore: " + App.checkCookie() + " Current: " + totalPoints + " | Avg Pts/Ques: " + avgPoints;
 }
 
 const getLatLongForDisplay = (lat, long) => {

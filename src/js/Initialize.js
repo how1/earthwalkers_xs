@@ -255,15 +255,22 @@ export const setMusic = (i) => {
 	song.play();
 }
 
+
 let listener;
 let smallCheerFile = require("../sfx/smallCheer.mp3"); 
-
 let mediumCheerFile = require("../sfx/mediumCheer.mp3");
 let xtraBigCheerFile = require("../sfx/xtraBigCheer.mp3");
 let musicFile = require("../sfx/lofi.mp3");
-// let music2File = require('../sfx/perroLoco.mp3').default;
-// let music3File = require('../sfx/20s.mp3').default;
 let clickFile = require("../sfx/click.mp3");
+if (!navigator.userAgent.includes("Safari")) {
+	smallCheerFile = require("../sfx/smallCheer.ogg"); 
+	mediumCheerFile = require("../sfx/mediumCheer.ogg");
+	xtraBigCheerFile = require("../sfx/xtraBigCheer.ogg");
+	musicFile = require("../sfx/lofi.ogg");
+	clickFile = require("../sfx/click.ogg");
+}
+
+
 
 export let smallCheer;// = new THREE.Audio();
 export let mediumCheer;// = new THREE.Audio();
@@ -376,59 +383,16 @@ export const load = () => {
 	bgTex = new THREE.TextureLoader().load(require('../pics/physical.png').default, function () {
 		arrProgress[9] = 1;
 	});
+
 	listener = new THREE.AudioListener();
     camera.add( listener );
-	smallCheer = new THREE.Audio(listener);
-    let smallCheerLoader = new THREE.AudioLoader();
-    smallCheerLoader.load(smallCheerFile, 
-        function(buffer){
-            smallCheer.setBuffer( buffer );
-            smallCheer.setLoop(false);
-            smallCheer.setVolume(0.4);
-        }, function ( xhr ) {
-      		arrProgress[10] = xhr.loaded / xhr.total;
-    });
-    mediumCheer = new THREE.Audio(listener);
-    let medCheerLoader = new THREE.AudioLoader();
-    medCheerLoader.load(mediumCheerFile, 
-        function(buffer){
-            mediumCheer.setBuffer( buffer );
-            mediumCheer.setLoop(false);
-            mediumCheer.setVolume(0.4);
-        }, function ( xhr ) {
-      		arrProgress[11] = xhr.loaded / xhr.total;
-    });
-    bigCheer = new THREE.Audio(listener);
-    let bigCheerLoader = new THREE.AudioLoader();
-    bigCheerLoader.load(xtraBigCheerFile, 
-        function(buffer){
-            bigCheer.setBuffer( buffer );
-            bigCheer.setLoop(false);
-            bigCheer.setVolume(0.4);
-        }, function ( xhr ) {
-      		arrProgress[12] = xhr.loaded / xhr.total;
-    });
-    click = new THREE.Audio(listener);
-    let clickLoader = new THREE.AudioLoader();
-    clickLoader.load(clickFile, 
-        function(buffer){
-            click.setBuffer( buffer );
-            click.setLoop(false);
-            click.setVolume(0.4);
-        }, function ( xhr ) {
- 			arrProgress[13] = xhr.loaded / xhr.total;
-    });
-    music = new THREE.Audio(listener);
-    let musicLoader = new THREE.AudioLoader();
-    musicLoader.load(musicFile, 
-        function(buffer){
-            music.setBuffer( buffer );
-            music.setLoop(true);
-            music.setVolume(0.5);
-            music.play();
-        }, function ( xhr ) {
-      		arrProgress[14] = xhr.loaded / xhr.total;
-    });
+
+    smallCheer = loadMusicFile(smallCheerFile, 10, false, 0.4)
+    mediumCheer = loadMusicFile(mediumCheerFile, 11, false, 0.4)
+    bigCheer = loadMusicFile(xtraBigCheerFile, 12, false, 0.4);
+    click = loadMusicFile(clickFile, 13, false, 0.4);
+    music = loadMusicFile(musicFile, 14, true, 0.5, true)
+
     // music2 = new THREE.Audio(listener);
     // let music2Loader = new THREE.AudioLoader();
     // music2Loader.load(music2File, 
@@ -446,11 +410,28 @@ export const load = () => {
     //     function(buffer){
     //         music3.setBuffer( buffer );
     //         music3.setLoop(true);
-    //         music3.setVolume(0.5);
+    //         music3.setVolume(0.5); 
     //         music3.play();
     //     }, function ( xhr ) {
     //   		arrProgress[20] = xhr.loaded / xhr.total;
     // });
+}
+
+const loadMusicFile = (file, index, loop, vol, play = false) => {
+ 	let aud = new THREE.Audio(listener);
+    let musicLoader = new THREE.AudioLoader();
+	musicLoader.load(file, 
+    function(buffer){
+        aud.setBuffer( buffer );
+        aud.setLoop(loop);
+        aud.setVolume(vol);
+        if (play) aud.play();
+    }, function ( xhr ) {
+  		arrProgress[index] = xhr.loaded / xhr.total;
+	}, function (err){
+		console.log(err);
+	});
+    return aud;
 }
 
 
